@@ -5,7 +5,6 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import OpenAI from 'openai';
 
-
 // Types
 interface ChatHistory {
   role: 'user' | 'assistant';
