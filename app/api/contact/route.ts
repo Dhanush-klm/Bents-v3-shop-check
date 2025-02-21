@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { Pool } from '@neondatabase/serverless';
 
+
+
 // Use the same database connection configuration
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL!,
