@@ -48,9 +48,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (type === "user.created") {
     const email = data.email_addresses?.[0]?.email_address;
     const firstName = data.first_name || "";
-    const lastName = data.last_name || "";
     if (email) {
-      await addToAudience(email, firstName, lastName);
+      await addToAudience(email, firstName);
       await resend.emails.send({
         from: "Loft <noreply@loftit.ai>",
         to: email,
@@ -67,7 +66,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (type === "user.deleted") {
     const email = data.email_addresses?.[0]?.email_address;
     const firstName = data.first_name || "";
-    const lastName = data.last_name || "";
     if (email) {
       await removeFromAudience(email);
       await resend.emails.send({
