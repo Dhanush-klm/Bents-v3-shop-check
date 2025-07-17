@@ -16,13 +16,14 @@ export async function POST(req: NextRequest) {
     const firstName = data.first_name || "";
     const lastName = data.last_name || "";
     if (email) {
-      await resend.contacts.create({
+      const addResult = await resend.contacts.create({
         email,
         firstName,
         lastName,
         unsubscribed: false,
         audienceId: AUDIENCE_ID,
       });
+      console.log("[Resend] API response (add contact):", addResult);
       console.log("[Resend] Added to audience:", email);
       await resend.emails.send({
         from: "Loft <noreply@loftit.ai>",
@@ -41,10 +42,11 @@ export async function POST(req: NextRequest) {
     const email = data.email_addresses?.[0]?.email_address;
     const firstName = data.first_name || "";
     if (email) {
-      await resend.contacts.remove({
+      const removeResult = await resend.contacts.remove({
         email,
         audienceId: AUDIENCE_ID,
       });
+      console.log("[Resend] API response (remove contact):", removeResult);
       console.log("[Resend] Removed from audience:", email);
       await resend.emails.send({
         from: "Loft <noreply@loftit.ai>",
