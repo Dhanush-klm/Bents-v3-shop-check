@@ -88,7 +88,7 @@ export default function WelcomeEmail({
             <Text>Welcome, {username}!</Text>
             <Text>We&apos;re excited to have you join us.</Text>
             <Text>If you have any questions, don&apos;t hesitate to reach out.</Text>
-            <Text>Want to stop getting emails from Loft? <a href={`https://loft-ai-002.vercel.app/unsubscribe?email=${userEmail}`}>Unsubscribe</a></Text>
+            <Text>Want to stop getting emails from Loft? <a href={`https://loft-ai-002-unsubscribe.vercel.app/unsubscribe?email=${userEmail}`}>Unsubscribe</a></Text>
           </Section>
         </Container>
       </Body>
