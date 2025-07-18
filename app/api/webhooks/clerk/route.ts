@@ -3,6 +3,7 @@ import { Resend } from "resend";
 import WelcomeEmail from "@/app/WelcomeEmail";
 import DeleteEmail from "@/app/DeleteEmail";
 
+
 const resend = new Resend(process.env.RESEND_API_KEY!);
 const AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID!;
 
