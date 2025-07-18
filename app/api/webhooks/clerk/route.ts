@@ -2,10 +2,18 @@ import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import WelcomeEmail from "@/app/WelcomeEmail";
 import DeleteEmail from "@/app/DeleteEmail";
-
+import { Pool } from "pg";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 const AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID!;
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+
+async function logUserEvent(clerkUserId: string, email: string, eventType: string) {
+  await pool.query(
+    "INSERT INTO users (clerk_user_id, email, event_type) VALUES ($1, $2, $3)",
+    [clerkUserId, email, eventType]
+  );
+}
 
 export async function POST(req: NextRequest) {
   const event = await req.json();
@@ -16,6 +24,7 @@ export async function POST(req: NextRequest) {
     const email = data.email_addresses?.[0]?.email_address;
     const firstName = data.first_name || "";
     const lastName = data.last_name || "";
+    const clerkUserId = data.id;
     if (email) {
       const addResult = await resend.contacts.create({
         email,
@@ -33,6 +42,7 @@ export async function POST(req: NextRequest) {
         react: WelcomeEmail({ username: firstName, userEmail: email }),
       });
       console.log("[Resend] Welcome email sent to:", email);
+      await logUserEvent(clerkUserId, email, "signed_up");
     } else {
       console.error("[Webhook] No email found in user.created event");
     }
@@ -42,6 +52,7 @@ export async function POST(req: NextRequest) {
   if (type === "user.deleted") {
     const email = data.email_addresses?.[0]?.email_address;
     const firstName = data.first_name || "";
+    const clerkUserId = data.id;
     if (email) {
       const removeResult = await resend.contacts.remove({
         email,
@@ -56,6 +67,7 @@ export async function POST(req: NextRequest) {
         react: DeleteEmail({ username: firstName, userEmail: email }),
       });
       console.log("[Resend] Delete email sent to:", email);
+      await logUserEvent(clerkUserId, email, "deleted");
     } else {
       console.error("[Webhook] No email found in user.deleted event");
     }

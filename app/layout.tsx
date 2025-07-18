@@ -12,11 +12,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}>
       <html lang="en">
         <body>
-          <nav style={{ padding: 16, borderBottom: "1px solid #eee", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <div>
-              <a href="/sign-in" style={{ marginRight: 16 }}>Sign In</a>
-              <a href="/sign-up" style={{ marginRight: 16 }}>Sign Up</a>
-            </div>
+          <nav style={{ padding: 16, borderBottom: "1px solid #eee", display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
             <UserButton afterSignOutUrl="/sign-in" />
           </nav>
           {children}
