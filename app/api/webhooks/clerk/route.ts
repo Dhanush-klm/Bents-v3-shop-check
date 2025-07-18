@@ -8,23 +8,39 @@ const resend = new Resend(process.env.RESEND_API_KEY!);
 const AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID!;
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
-async function logUserEvent(clerkUserId: string, email: string, eventType: string) {
+async function logUserCreated(clerkUserId: string, email: string) {
   await pool.query(
-    "INSERT INTO users (clerk_user_id, email, event_type) VALUES ($1, $2, $3)",
-    [clerkUserId, email, eventType]
+    `INSERT INTO users (clerk_user_id, email, account_created, out_from_marketing, out_from_update, account_deleted)
+     VALUES ($1, $2, NOW(), NULL, NULL, NULL)
+     ON CONFLICT (clerk_user_id) DO NOTHING`,
+    [clerkUserId, email]
   );
 }
 
-async function updateUserEventType(clerkUserId: string, eventType: string) {
+async function setUserDeleted(clerkUserId: string) {
   await pool.query(
-    "UPDATE users SET event_type = $1, event_date = NOW() WHERE clerk_user_id = $2",
-    [eventType, clerkUserId]
+    "UPDATE users SET account_deleted = NOW() WHERE clerk_user_id = $1",
+    [clerkUserId]
+  );
+}
+
+async function setUserOutFromMarketing(clerkUserId: string) {
+  await pool.query(
+    "UPDATE users SET out_from_marketing = NOW() WHERE clerk_user_id = $1",
+    [clerkUserId]
+  );
+}
+
+async function setUserOutFromUpdate(clerkUserId: string) {
+  await pool.query(
+    "UPDATE users SET out_from_update = NOW() WHERE clerk_user_id = $1",
+    [clerkUserId]
   );
 }
 
 async function getEmailByClerkUserId(clerkUserId: string): Promise<string | null> {
   const result = await pool.query(
-    "SELECT email FROM users WHERE clerk_user_id = $1 ORDER BY event_date DESC LIMIT 1",
+    "SELECT email FROM users WHERE clerk_user_id = $1 LIMIT 1",
     [clerkUserId]
   );
   return result.rows[0]?.email || null;
@@ -57,7 +73,7 @@ export async function POST(req: NextRequest) {
         react: WelcomeEmail({ username: firstName, userEmail: email }),
       });
       console.log("[Resend] Welcome email sent to:", email);
-      await logUserEvent(clerkUserId, email, "signed_up");
+      await logUserCreated(clerkUserId, email);
     } else {
       console.error("[Webhook] No email found in user.created event");
     }
@@ -81,10 +97,22 @@ export async function POST(req: NextRequest) {
         react: DeleteEmail({ username: email, userEmail: email }),
       });
       console.log("[Resend] Delete email sent to:", email);
-      await updateUserEventType(clerkUserId, "deleted");
+      await setUserDeleted(clerkUserId);
     } else {
       console.error("[Webhook] No email found in Neon DB for user.deleted event");
     }
+    return NextResponse.json({ received: true });
+  }
+
+  if (type === "user.out_from_marketing") {
+    const clerkUserId = data.id;
+    await setUserOutFromMarketing(clerkUserId);
+    return NextResponse.json({ received: true });
+  }
+
+  if (type === "user.out_from_update") {
+    const clerkUserId = data.id;
+    await setUserOutFromUpdate(clerkUserId);
     return NextResponse.json({ received: true });
   }
 
