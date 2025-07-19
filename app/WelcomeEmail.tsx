@@ -278,7 +278,7 @@ export default function WelcomeEmail({
                           margin: '0 0 24px 0',
                           lineHeight: '1.6',
                         }}>
-                          Thanks for joining Loft — we're so excited to have you here!
+                          Thanks for joining Loft — we&apos;re so excited to have you here!
                         </Text>
 
                         <Text style={{
@@ -306,7 +306,7 @@ export default function WelcomeEmail({
                           margin: '0 0 24px 0',
                           lineHeight: '1.6',
                         }}>
-                          That's exactly what we've built.
+                          That&apos;s exactly what we&apos;ve built.
                         </Text>
 
                         <Text style={{
@@ -326,7 +326,7 @@ export default function WelcomeEmail({
                           margin: '0 0 16px 0',
                           lineHeight: '1.4',
                         }}>
-                          Here's how to get started:
+                          Here&apos;s how to get started:
                         </Text>
 
                         <div style={{
@@ -469,7 +469,7 @@ export default function WelcomeEmail({
                               margin: '0',
                             }}>
                               <a href="https://www.loftit.ai/ios-share-extension" style={{ color: '#2563eb', textDecoration: 'underline' }}>
-                                How to favorite Loft in your phone&#39;s share sheet
+                                How to favorite Loft in your phone&apos;s share sheet
                               </a>
                             </Text>
                           </div>
@@ -481,7 +481,7 @@ export default function WelcomeEmail({
                           margin: '0 0 16px 0',
                           lineHeight: '1.6',
                         }}>
-                          We&#39;re just getting started and we&#39;d love to hear from you.
+                          We&apos;re just getting started and we&apos;d love to hear from you.
                         </Text>
 
                         <Text style={{
@@ -556,7 +556,7 @@ export default function WelcomeEmail({
                           margin: '16px 0',
                           lineHeight: '1.5',
                         }}>
-                          You&#39;re receiving this email because you signed up for <a href="https://loftit.ai/" style={{ color: '#ffffff', textDecoration: 'underline' }}>Loft</a>
+                          You&apos;re receiving this email because you signed up for <a href="https://loftit.ai/" style={{ color: '#ffffff', textDecoration: 'underline' }}>Loft</a>
                         </Text>
 
                         <table cellPadding="0" cellSpacing="0" style={{ borderSpacing: '0', margin: '16px 0' }}>
