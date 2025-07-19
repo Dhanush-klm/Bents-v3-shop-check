@@ -78,7 +78,7 @@ export async function POST(req: NextRequest) {
         from: "Loft <noreply@loftit.ai>",
         to: email,
         subject: "Welcome to Loft!",
-        react: WelcomeEmail({ username: firstName, userEmail: email }),
+        react: WelcomeEmail({ username: firstName && lastName ? `${firstName} ${lastName}` : firstName || lastName || email, userEmail: email }),
       });
       console.log("[Resend] Welcome email sent to:", email);
       await logUserCreated(clerkUserId, email, firstName, lastName);
@@ -128,4 +128,4 @@ export async function POST(req: NextRequest) {
 
   // Ignore other events
   return NextResponse.json({ ignored: true });
-} 
+}
