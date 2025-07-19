@@ -315,7 +315,7 @@ export default function WelcomeEmail({
                           margin: '0 0 32px 0',
                           lineHeight: '1.6',
                         }}>
-                          Whether it's something you want to revisit later, an idea you want to come back to, or just a moment of inspiration, Loft is your AI-enhanced link library — always a snap away.
+                          Whether it&#39;s something you want to revisit later, an idea you want to come back to, or just a moment of inspiration, Loft is your AI-enhanced link library — always a snap away.
                         </Text>
 
                         {/* How to get started section */}
@@ -469,7 +469,7 @@ export default function WelcomeEmail({
                               margin: '0',
                             }}>
                               <a href="https://www.loftit.ai/ios-share-extension" style={{ color: '#2563eb', textDecoration: 'underline' }}>
-                                How to favorite Loft in your phone's share sheet
+                                How to favorite Loft in your phone&#39;s share sheet
                               </a>
                             </Text>
                           </div>
@@ -481,7 +481,7 @@ export default function WelcomeEmail({
                           margin: '0 0 16px 0',
                           lineHeight: '1.6',
                         }}>
-                          We're just getting started and we'd love to hear from you.
+                          We&#39;re just getting started and we&#39;d love to hear from you.
                         </Text>
 
                         <Text style={{
@@ -499,7 +499,7 @@ export default function WelcomeEmail({
                           margin: '0 0 24px 0',
                           lineHeight: '1.6',
                         }}>
-                          Welcome to the smarter way to save — it's all at your fingertips. <span style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji'}}>🤏</span>
+                          Welcome to the smarter way to save — it&#39;s all at your fingertips. <span style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji'}}>🤏</span>
                         </Text>
 
                         <Text style={{
@@ -556,7 +556,7 @@ export default function WelcomeEmail({
                           margin: '16px 0',
                           lineHeight: '1.5',
                         }}>
-                          You're receiving this email because you signed up for <a href="https://loftit.ai/" style={{ color: '#ffffff', textDecoration: 'underline' }}>Loft</a>
+                          You&#39;re receiving this email because you signed up for <a href="https://loftit.ai/" style={{ color: '#ffffff', textDecoration: 'underline' }}>Loft</a>
                         </Text>
 
                         <table cellPadding="0" cellSpacing="0" style={{ borderSpacing: '0', margin: '16px 0' }}>
@@ -586,7 +586,7 @@ export default function WelcomeEmail({
                                 alt: 'Website',
                                 size: 20,
                               },
-                            ].map((social, index) => (
+                            ].map((social) => (
                               <td key={social.alt} style={{ padding: '0 8px' }}>
                                 <a
                                   href={social.href}
@@ -624,7 +624,7 @@ export default function WelcomeEmail({
                         }}>
                           Want to stop getting emails from Loft?{' '}
                           <a
-                            href={`https://loft-ai-002.vercel.app/unsubscribe?email=${userEmail}`}
+                            href={`https://loft-ai-002-unsubscribe.vercel.app/unsubscribe?email=${userEmail}`}
                             style={{
                               color: '#ffffff',
                               textDecoration: 'underline',
