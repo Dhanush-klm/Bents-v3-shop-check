@@ -248,259 +248,269 @@ export default function Welcome({
                 <Section style={{
                   padding: '0 24px 32px 24px',
                 }}>
-                  <table width="100%" cellPadding="0" cellSpacing="0" style={{ borderSpacing: '0' }}>
-                    <tr>
-                      <td>
-                        {/* Greeting */}
-                        <Text style={{
-                          fontSize: '18px',
-                          color: '#111827',
-                          margin: '0 0 24px 0',
-                          lineHeight: '1.5',
-                        }}>
-                          Hi {username},
-                        </Text>
-                        <Text style={{
-                          fontSize: '16px',
-                          color: '#374151',
-                          margin: '0 0 24px 0',
-                          lineHeight: '1.6',
-                        }}>
-                          Thanks for joining Loft — we&apos;re so excited to have you here!
-                        </Text>
-                        <Text style={{
-                          fontSize: '16px',
-                          fontWeight: '600',
-                          color: '#374151',
-                          margin: '0 0 16px 0',
-                          lineHeight: '1.6',
-                        }}>
-                          Loft started with a simple idea:
-                        </Text>
-                        <Text style={{
-                          fontSize: '16px',
-                          color: '#374151',
-                          margin: '0 0 24px 0',
-                          lineHeight: '1.6',
-                        }}>
-                          What if all your saved links, articles, videos, tweets, posts were finally organized, searchable, and surfaced right when you needed them?
-                        </Text>
-                        <Text style={{
-                          fontSize: '16px',
-                          color: '#374151',
-                          margin: '0 0 24px 0',
-                          lineHeight: '1.6',
-                        }}>
-                          That&apos;s exactly what we&apos;ve built.
-                        </Text>
-                        <Text style={{
-                          fontSize: '16px',
-                          color: '#374151',
-                          margin: '0 0 32px 0',
-                          lineHeight: '1.6',
-                        }}>
-                          Whether it&apos;s something you want to revisit later, an idea you want to come back to, or just a moment of inspiration, Loft is your AI-enhanced link library — always a snap away.
-                        </Text>
-                        {/* How to get started section */}
-                        <Text style={{
-                          fontSize: '18px',
-                          fontWeight: '600',
-                          color: '#111827',
-                          margin: '0 0 16px 0',
-                          lineHeight: '1.4',
-                        }}>
-                          Here&apos;s how to get started:
-                        </Text>
-                        <div style={{
-                          backgroundColor: '#f9fafb',
-                          padding: '20px',
-                          borderRadius: '8px',
-                          margin: '0 0 32px 0',
-                        }}>
-                          <div style={{
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            marginBottom: '16px',
+                  <div
+                    style={{
+                      background: '#fff2',
+                      borderRadius: '8px',
+                      padding: '24px',
+                      margin: '0 0 32px 0',
+                      display: 'block',
+                    }}
+                  >
+                    <table width="100%" cellPadding="0" cellSpacing="0" style={{ borderSpacing: '0' }}>
+                      <tr>
+                        <td>
+                          {/* Greeting */}
+                          <Text style={{
+                            fontSize: '18px',
+                            color: '#111827',
+                            margin: '0 0 24px 0',
+                            lineHeight: '1.5',
                           }}>
-                            <span style={{ fontSize: '20px', marginRight: '12px' }}>🔗</span>
-                            <div>
-                              <Text style={{
-                                fontSize: '16px',
-                                fontWeight: '500',
-                                color: '#111827',
-                                margin: '0 0 4px 0',
-                              }}>
-                                Save from anywhere
-                              </Text>
-                              <Text style={{
-                                fontSize: '14px',
-                                color: '#6b7280',
-                                margin: '0',
-                              }}>
-                                Use the Loft app to share links directly from your favorite apps.
-                              </Text>
-                            </div>
-                          </div>
-                          <div style={{
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            marginBottom: '16px',
-                          }}>
-                            <span style={{ fontSize: '20px', marginRight: '12px' }}>🧠</span>
-                            <div>
-                              <Text style={{
-                                fontSize: '16px',
-                                fontWeight: '500',
-                                color: '#111827',
-                                margin: '0 0 4px 0',
-                              }}>
-                                Let AI do the heavy lifting
-                              </Text>
-                              <Text style={{
-                                fontSize: '14px',
-                                color: '#6b7280',
-                                margin: '0',
-                              }}>
-                                Loft auto-categorizes and summarizes your saved content.
-                              </Text>
-                            </div>
-                          </div>
-                          <div style={{
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                          }}>
-                            <span style={{ fontSize: '20px', marginRight: '12px' }}>✨</span>
-                            <div>
-                              <Text style={{
-                                fontSize: '16px',
-                                fontWeight: '500',
-                                color: '#111827',
-                                margin: '0 0 4px 0',
-                              }}>
-                                Search like magic
-                              </Text>
-                              <Text style={{
-                                fontSize: '14px',
-                                color: '#6b7280',
-                                margin: '0',
-                              }}>
-                                Forget scrolling endlessly. Just type what you remember — Loft will find it.
-                              </Text>
-                            </div>
-                          </div>
-                        </div>
-                        {/* Quick links section */}
-                        <Text style={{
-                          fontSize: '18px',
-                          fontWeight: '600',
-                          color: '#111827',
-                          margin: '0 0 16px 0',
-                          lineHeight: '1.4',
-                        }}>
-                          Quick links to help you dive in:
-                        </Text>
-                        <div style={{
-                          margin: '0 0 32px 0',
-                        }}>
-                          <div style={{
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            marginBottom: '12px',
-                          }}>
-                            <span style={{ fontSize: '16px', marginRight: '12px', marginTop: '2px' }}>❓</span>
-                            <Text style={{
-                              fontSize: '16px',
-                              color: '#374151',
-                              margin: '0',
-                            }}>
-                              <a href="https://www.loftit.ai/faq" style={{ color: '#2563eb', textDecoration: 'underline' }}>
-                                FAQs – Get answers to common questions
-                              </a>
-                            </Text>
-                          </div>
-                          <div style={{
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            marginBottom: '12px',
-                          }}>
-                            <span style={{ fontSize: '16px', marginRight: '12px', marginTop: '2px' }}>⚙️</span>
-                            <Text style={{
-                              fontSize: '16px',
-                              color: '#374151',
-                              margin: '0',
-                            }}>
-                              <a href="https://www.youtube.com/shorts/IoQXaCfgXKA" style={{ color: '#2563eb', textDecoration: 'underline' }}>
-                                How Loft works – A quick overview
-                              </a>
-                            </Text>
-                          </div>
-                          <div style={{
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                          }}>
-                            <span style={{ fontSize: '16px', marginRight: '12px', marginTop: '2px' }}>⭐</span>
-                            <Text style={{
-                              fontSize: '16px',
-                              color: '#374151',
-                              margin: '0',
-                            }}>
-                              <a href="https://www.loftit.ai/ios-share-extension" style={{ color: '#2563eb', textDecoration: 'underline' }}>
-                                How to favorite Loft in your phone&apos;s share sheet
-                              </a>
-                            </Text>
-                          </div>
-                        </div>
-                        <Text style={{
-                          fontSize: '16px',
-                          color: '#374151',
-                          margin: '0 0 16px 0',
-                          lineHeight: '1.6',
-                        }}>
-                          We&apos;re just getting started and we&apos;d love to hear from you.
-                        </Text>
-                        <Text style={{
-                          fontSize: '16px',
-                          color: '#374151',
-                          margin: '0 0 24px 0',
-                          lineHeight: '1.6',
-                        }}>
-                          Have ideas? Questions? Just email <a href="mailto:support@loftit.ai" style={{ color: '#2563eb', textDecoration: 'underline' }}>support@loftit.ai</a> or DM us on Instagram or X.
-                        </Text>
-                        <Text style={{
-                          fontSize: '16px',
-                          color: '#374151',
-                          margin: '0 0 24px 0',
-                          lineHeight: '1.6',
-                        }}>
-                          Welcome to the smarter way to save — it&apos;s all at your fingertips. <span style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji'}}>🤏</span>
-                        </Text>
-                        <div
-                          style={{
-                            background: '#fff2',
-                            borderRadius: '6px',
-                            padding: '8px 16px',
-                            display: 'inline-block',
-                            margin: '0 0 8px 0',
-                            color: '#6b7280',
+                            Hi {username},
+                          </Text>
+                          <Text style={{
                             fontSize: '16px',
+                            color: '#374151',
+                            margin: '0 0 24px 0',
                             lineHeight: '1.6',
-                            fontFamily: 'inherit',
-                          }}
-                        >
-                          Warmly,<br />
-                          <strong>The Loft Team</strong>
-                        </div>
-                        <Text style={{
-                          fontSize: '14px',
-                          color: '#9ca3af',
-                          margin: '16px 0 0 0',
-                          textAlign: 'center' as const,
-                        }}>
-                          Link it. Love it. Loft it.
-                        </Text>
-                      </td>
-                    </tr>
-                  </table>
+                          }}>
+                            Thanks for joining Loft — we&apos;re so excited to have you here!
+                          </Text>
+                          <Text style={{
+                            fontSize: '16px',
+                            fontWeight: '600',
+                            color: '#374151',
+                            margin: '0 0 16px 0',
+                            lineHeight: '1.6',
+                          }}>
+                            Loft started with a simple idea:
+                          </Text>
+                          <Text style={{
+                            fontSize: '16px',
+                            color: '#374151',
+                            margin: '0 0 24px 0',
+                            lineHeight: '1.6',
+                          }}>
+                            What if all your saved links, articles, videos, tweets, posts were finally organized, searchable, and surfaced right when you needed them?
+                          </Text>
+                          <Text style={{
+                            fontSize: '16px',
+                            color: '#374151',
+                            margin: '0 0 24px 0',
+                            lineHeight: '1.6',
+                          }}>
+                            That&apos;s exactly what we&apos;ve built.
+                          </Text>
+                          <Text style={{
+                            fontSize: '16px',
+                            color: '#374151',
+                            margin: '0 0 32px 0',
+                            lineHeight: '1.6',
+                          }}>
+                            Whether it&apos;s something you want to revisit later, an idea you want to come back to, or just a moment of inspiration, Loft is your AI-enhanced link library — always a snap away.
+                          </Text>
+                          {/* How to get started section */}
+                          <Text style={{
+                            fontSize: '18px',
+                            fontWeight: '600',
+                            color: '#111827',
+                            margin: '0 0 16px 0',
+                            lineHeight: '1.4',
+                          }}>
+                            Here&apos;s how to get started:
+                          </Text>
+                          <div style={{
+                            backgroundColor: '#f9fafb',
+                            padding: '20px',
+                            borderRadius: '8px',
+                            margin: '0 0 32px 0',
+                          }}>
+                            <div style={{
+                              display: 'flex',
+                              alignItems: 'flex-start',
+                              marginBottom: '16px',
+                            }}>
+                              <span style={{ fontSize: '20px', marginRight: '12px' }}>🔗</span>
+                              <div>
+                                <Text style={{
+                                  fontSize: '16px',
+                                  fontWeight: '500',
+                                  color: '#111827',
+                                  margin: '0 0 4px 0',
+                                }}>
+                                  Save from anywhere
+                                </Text>
+                                <Text style={{
+                                  fontSize: '14px',
+                                  color: '#6b7280',
+                                  margin: '0',
+                                }}>
+                                  Use the Loft app to share links directly from your favorite apps.
+                                </Text>
+                              </div>
+                            </div>
+                            <div style={{
+                              display: 'flex',
+                              alignItems: 'flex-start',
+                              marginBottom: '16px',
+                            }}>
+                              <span style={{ fontSize: '20px', marginRight: '12px' }}>🧠</span>
+                              <div>
+                                <Text style={{
+                                  fontSize: '16px',
+                                  fontWeight: '500',
+                                  color: '#111827',
+                                  margin: '0 0 4px 0',
+                                }}>
+                                  Let AI do the heavy lifting
+                                </Text>
+                                <Text style={{
+                                  fontSize: '14px',
+                                  color: '#6b7280',
+                                  margin: '0',
+                                }}>
+                                  Loft auto-categorizes and summarizes your saved content.
+                                </Text>
+                              </div>
+                            </div>
+                            <div style={{
+                              display: 'flex',
+                              alignItems: 'flex-start',
+                            }}>
+                              <span style={{ fontSize: '20px', marginRight: '12px' }}>✨</span>
+                              <div>
+                                <Text style={{
+                                  fontSize: '16px',
+                                  fontWeight: '500',
+                                  color: '#111827',
+                                  margin: '0 0 4px 0',
+                                }}>
+                                  Search like magic
+                                </Text>
+                                <Text style={{
+                                  fontSize: '14px',
+                                  color: '#6b7280',
+                                  margin: '0',
+                                }}>
+                                  Forget scrolling endlessly. Just type what you remember — Loft will find it.
+                                </Text>
+                              </div>
+                            </div>
+                          </div>
+                          {/* Quick links section */}
+                          <Text style={{
+                            fontSize: '18px',
+                            fontWeight: '600',
+                            color: '#111827',
+                            margin: '0 0 16px 0',
+                            lineHeight: '1.4',
+                          }}>
+                            Quick links to help you dive in:
+                          </Text>
+                          <div style={{
+                            margin: '0 0 32px 0',
+                          }}>
+                            <div style={{
+                              display: 'flex',
+                              alignItems: 'flex-start',
+                              marginBottom: '12px',
+                            }}>
+                              <span style={{ fontSize: '16px', marginRight: '12px', marginTop: '2px' }}>❓</span>
+                              <Text style={{
+                                fontSize: '16px',
+                                color: '#374151',
+                                margin: '0',
+                              }}>
+                                <a href="https://www.loftit.ai/faq" style={{ color: '#2563eb', textDecoration: 'underline' }}>
+                                  FAQs – Get answers to common questions
+                                </a>
+                              </Text>
+                            </div>
+                            <div style={{
+                              display: 'flex',
+                              alignItems: 'flex-start',
+                              marginBottom: '12px',
+                            }}>
+                              <span style={{ fontSize: '16px', marginRight: '12px', marginTop: '2px' }}>⚙️</span>
+                              <Text style={{
+                                fontSize: '16px',
+                                color: '#374151',
+                                margin: '0',
+                              }}>
+                                <a href="https://www.youtube.com/shorts/IoQXaCfgXKA" style={{ color: '#2563eb', textDecoration: 'underline' }}>
+                                  How Loft works – A quick overview
+                                </a>
+                              </Text>
+                            </div>
+                            <div style={{
+                              display: 'flex',
+                              alignItems: 'flex-start',
+                            }}>
+                              <span style={{ fontSize: '16px', marginRight: '12px', marginTop: '2px' }}>⭐</span>
+                              <Text style={{
+                                fontSize: '16px',
+                                color: '#374151',
+                                margin: '0',
+                              }}>
+                                <a href="https://www.loftit.ai/ios-share-extension" style={{ color: '#2563eb', textDecoration: 'underline' }}>
+                                  How to favorite Loft in your phone&apos;s share sheet
+                                </a>
+                              </Text>
+                            </div>
+                          </div>
+                          <Text style={{
+                            fontSize: '16px',
+                            color: '#374151',
+                            margin: '0 0 16px 0',
+                            lineHeight: '1.6',
+                          }}>
+                            We&apos;re just getting started and we&apos;d love to hear from you.
+                          </Text>
+                          <Text style={{
+                            fontSize: '16px',
+                            color: '#374151',
+                            margin: '0 0 24px 0',
+                            lineHeight: '1.6',
+                          }}>
+                            Have ideas? Questions? Just email <a href="mailto:support@loftit.ai" style={{ color: '#2563eb', textDecoration: 'underline' }}>support@loftit.ai</a> or DM us on Instagram or X.
+                          </Text>
+                          <Text style={{
+                            fontSize: '16px',
+                            color: '#374151',
+                            margin: '0 0 24px 0',
+                            lineHeight: '1.6',
+                          }}>
+                            Welcome to the smarter way to save — it&apos;s all at your fingertips. <span style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji'}}>🤏</span>
+                          </Text>
+                          <div
+                            style={{
+                              background: '#fff2',
+                              borderRadius: '6px',
+                              padding: '8px 16px',
+                              display: 'inline-block',
+                              margin: '0 0 8px 0',
+                              color: '#6b7280',
+                              fontSize: '16px',
+                              lineHeight: '1.6',
+                              fontFamily: 'inherit',
+                            }}
+                          >
+                            Warmly,<br />
+                            <strong>The Loft Team</strong>
+                          </div>
+                          <Text style={{
+                            fontSize: '14px',
+                            color: '#9ca3af',
+                            margin: '16px 0 0 0',
+                            textAlign: 'center' as const,
+                          }}>
+                            Link it. Love it. Loft it.
+                          </Text>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
                 </Section>
                 {/* Loft Footer Section */}
                 <Section style={{
