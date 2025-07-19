@@ -5,7 +5,11 @@ import DeleteEmail from "@/app/emails/Delete";
 import { Pool } from "pg";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
-const AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID!;
+const AUDIENCE_IDS = [
+  process.env.RESEND_AUDIENCE_ID_1!,
+  process.env.RESEND_AUDIENCE_ID_2!,
+  process.env.RESEND_AUDIENCE_ID_3!,
+].filter(Boolean);
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
 async function logUserCreated(clerkUserId: string, email: string, firstName: string, lastName: string) {
@@ -65,15 +69,17 @@ export async function POST(req: NextRequest) {
     const lastName = data.last_name || "";
     const clerkUserId = data.id;
     if (email) {
-      const addResult = await resend.contacts.create({
-        email,
-        firstName,
-        lastName,
-        unsubscribed: false,
-        audienceId: AUDIENCE_ID,
-      });
-      console.log("[Resend] API response (add contact):", addResult);
-      console.log("[Resend] Added to audience:", email);
+      for (const audienceId of AUDIENCE_IDS) {
+        const addResult = await resend.contacts.create({
+          email,
+          firstName,
+          lastName,
+          unsubscribed: false,
+          audienceId,
+        });
+        console.log(`[Resend] API response (add contact, audience ${audienceId}):`, addResult);
+        console.log(`[Resend] Added to audience ${audienceId}:`, email);
+      }
       await resend.emails.send({
         from: "Loft <noreply@loftit.ai>",
         to: email,
@@ -94,12 +100,14 @@ export async function POST(req: NextRequest) {
     if (user) {
       const { email, first_name, last_name } = user;
       const username = first_name ? (last_name ? `${first_name} ${last_name}` : first_name) : email;
-      const removeResult = await resend.contacts.remove({
-        email,
-        audienceId: AUDIENCE_ID,
-      });
-      console.log("[Resend] API response (remove contact):", removeResult);
-      console.log("[Resend] Removed from audience:", email);
+      for (const audienceId of AUDIENCE_IDS) {
+        const removeResult = await resend.contacts.remove({
+          email,
+          audienceId,
+        });
+        console.log(`[Resend] API response (remove contact, audience ${audienceId}):`, removeResult);
+        console.log(`[Resend] Removed from audience ${audienceId}:`, email);
+      }
       await resend.emails.send({
         from: "Loft <noreply@loftit.ai>",
         to: email,
