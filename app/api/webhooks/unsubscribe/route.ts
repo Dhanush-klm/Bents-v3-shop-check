@@ -94,39 +94,47 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
-  // Handle GET requests (e.g., unsubscribe links)
-  const { searchParams } = new URL(req.url);
-  const email = searchParams.get('email');
-  const preference = searchParams.get('preference') || 'marketing'; // Default to marketing
-
-  if (!email) {
-    return NextResponse.json(
-      { error: "Missing email parameter" },
-      { status: 400 }
-    );
-  }
-
   try {
-    console.log(`[Unsubscribe] Processing GET unsubscribe for ${email} from ${preference}`);
+    const { searchParams } = new URL(req.url);
+    const email = searchParams.get('email');
+    
+    if (!email) {
+      return NextResponse.json({ error: 'Email parameter is required' }, { status: 400 });
+    }
 
-    // Update database
-    await updateUserPreference(email, preference);
-    console.log(`[Database] Updated ${email} preference for ${preference}`);
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return NextResponse.json({ error: 'Invalid email format' }, { status: 400 });
+    }
 
-    // Remove from Resend audience
-    await removeFromResendAudience(email, preference);
+    // Query your users table for current unsubscribe status
+    const result = await pool.query(
+      'SELECT out_from_update, out_from_marketing FROM users WHERE email = $1',
+      [email]
+    );
 
-    // Return a success page or redirect
+    if (result.rows.length === 0) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    const userStatus = result.rows[0];
+
+    // Return the current status
     return NextResponse.json({ 
       success: true, 
-      message: `Successfully unsubscribed ${email} from ${preference}` 
+      email: email,
+      out_from_update: userStatus.out_from_update,      // timestamp or null
+      out_from_marketing: userStatus.out_from_marketing  // timestamp or null
     });
 
   } catch (error) {
-    console.error("[Unsubscribe] Error processing GET unsubscribe:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    console.error("Error fetching unsubscribe status:", error);
+    return NextResponse.json({ 
+      success: false, 
+      message: "Failed to fetch unsubscribe status" 
+    }, { 
+      status: 500 
+    });
   }
 } 
