@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
-import WelcomeEmail from "@/app/WelcomeEmail";
-import DeleteEmail from "@/app/DeleteEmail";
+import WelcomeEmail from "@/app/emails/Welcome";
+import DeleteEmail from "@/app/emails/Delete";
 import { Pool } from "pg";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);

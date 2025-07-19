@@ -9,15 +9,15 @@ import {
 } from "@react-email/components";
 import * as React from "react";
 
-interface WelcomeEmailProps {
+interface WelcomeProps {
   username?: string;
   userEmail?: string;
 }
 
-export default function WelcomeEmail({
+export default function Welcome({
   username = "there",
   userEmail = "user@example.com",
-}: WelcomeEmailProps) {
+}: WelcomeProps) {
   // Log the userEmail for debugging
   console.log("Unsubscribe link userEmail:", userEmail);
 
@@ -30,8 +30,7 @@ export default function WelcomeEmail({
         <style>
           {`
             @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-            
-            /* Fix for Outlook and other email clients */f
+            /* Fix for Outlook and other email clients */
             * {
               -ms-text-size-adjust: 100%;
               -webkit-text-size-adjust: 100%;
@@ -52,7 +51,6 @@ export default function WelcomeEmail({
             .emoji {
               font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
             }
-            
             @media only screen and (max-width: 600px) {
               .container {
                 width: 100% !important;
@@ -133,7 +131,6 @@ export default function WelcomeEmail({
           `}
         </style>
       </Head>
-
       {/* Robust white background table wrapper */}
       <table
         width="100%"
@@ -202,7 +199,6 @@ export default function WelcomeEmail({
                             }}
                           />
                         </div>
-                        
                         <div
                           style={{
                             display: 'flex',
@@ -236,7 +232,6 @@ export default function WelcomeEmail({
                             👋
                           </span>
                         </div>
-                        
                         <Text style={{
                           fontSize: '18px',
                           color: '#6b7280',
@@ -249,7 +244,6 @@ export default function WelcomeEmail({
                     </tr>
                   </table>
                 </Section>
-
                 {/* Main Content */}
                 <Section style={{
                   padding: '0 24px 32px 24px',
@@ -266,7 +260,6 @@ export default function WelcomeEmail({
                         }}>
                           Hi {username},
                         </Text>
-
                         <Text style={{
                           fontSize: '16px',
                           color: '#374151',
@@ -275,7 +268,6 @@ export default function WelcomeEmail({
                         }}>
                           Thanks for joining Loft — we&apos;re so excited to have you here!
                         </Text>
-
                         <Text style={{
                           fontSize: '16px',
                           fontWeight: '600',
@@ -285,7 +277,6 @@ export default function WelcomeEmail({
                         }}>
                           Loft started with a simple idea:
                         </Text>
-
                         <Text style={{
                           fontSize: '16px',
                           color: '#374151',
@@ -294,7 +285,6 @@ export default function WelcomeEmail({
                         }}>
                           What if all your saved links, articles, videos, tweets, posts were finally organized, searchable, and surfaced right when you needed them?
                         </Text>
-
                         <Text style={{
                           fontSize: '16px',
                           color: '#374151',
@@ -303,16 +293,14 @@ export default function WelcomeEmail({
                         }}>
                           That&apos;s exactly what we&apos;ve built.
                         </Text>
-
                         <Text style={{
                           fontSize: '16px',
                           color: '#374151',
                           margin: '0 0 32px 0',
                           lineHeight: '1.6',
                         }}>
-                          Whether it&#39;s something you want to revisit later, an idea you want to come back to, or just a moment of inspiration, Loft is your AI-enhanced link library — always a snap away.
+                          Whether it&apos;s something you want to revisit later, an idea you want to come back to, or just a moment of inspiration, Loft is your AI-enhanced link library — always a snap away.
                         </Text>
-
                         {/* How to get started section */}
                         <Text style={{
                           fontSize: '18px',
@@ -323,7 +311,6 @@ export default function WelcomeEmail({
                         }}>
                           Here&apos;s how to get started:
                         </Text>
-
                         <div style={{
                           backgroundColor: '#f9fafb',
                           padding: '20px',
@@ -354,7 +341,6 @@ export default function WelcomeEmail({
                               </Text>
                             </div>
                           </div>
-
                           <div style={{
                             display: 'flex',
                             alignItems: 'flex-start',
@@ -379,7 +365,6 @@ export default function WelcomeEmail({
                               </Text>
                             </div>
                           </div>
-
                           <div style={{
                             display: 'flex',
                             alignItems: 'flex-start',
@@ -404,7 +389,6 @@ export default function WelcomeEmail({
                             </div>
                           </div>
                         </div>
-
                         {/* Quick links section */}
                         <Text style={{
                           fontSize: '18px',
@@ -415,7 +399,6 @@ export default function WelcomeEmail({
                         }}>
                           Quick links to help you dive in:
                         </Text>
-
                         <div style={{
                           margin: '0 0 32px 0',
                         }}>
@@ -435,7 +418,6 @@ export default function WelcomeEmail({
                               </a>
                             </Text>
                           </div>
-
                           <div style={{
                             display: 'flex',
                             alignItems: 'flex-start',
@@ -452,7 +434,6 @@ export default function WelcomeEmail({
                               </a>
                             </Text>
                           </div>
-
                           <div style={{
                             display: 'flex',
                             alignItems: 'flex-start',
@@ -469,7 +450,6 @@ export default function WelcomeEmail({
                             </Text>
                           </div>
                         </div>
-
                         <Text style={{
                           fontSize: '16px',
                           color: '#374151',
@@ -478,7 +458,6 @@ export default function WelcomeEmail({
                         }}>
                           We&apos;re just getting started and we&apos;d love to hear from you.
                         </Text>
-
                         <Text style={{
                           fontSize: '16px',
                           color: '#374151',
@@ -487,16 +466,14 @@ export default function WelcomeEmail({
                         }}>
                           Have ideas? Questions? Just email <a href="mailto:support@loftit.ai" style={{ color: '#2563eb', textDecoration: 'underline' }}>support@loftit.ai</a> or DM us on Instagram or X.
                         </Text>
-
                         <Text style={{
                           fontSize: '16px',
                           color: '#374151',
                           margin: '0 0 24px 0',
                           lineHeight: '1.6',
                         }}>
-                          Welcome to the smarter way to save — it&#39;s all at your fingertips. <span style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji'}}>🤏</span>
+                          Welcome to the smarter way to save — it&apos;s all at your fingertips. <span style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji'}}>🤏</span>
                         </Text>
-
                         <Text style={{
                           fontSize: '16px',
                           color: '#6b7280',
@@ -507,7 +484,6 @@ export default function WelcomeEmail({
                           <br />
                           <strong>The Loft Team</strong>
                         </Text>
-
                         <Text style={{
                           fontSize: '14px',
                           color: '#9ca3af',
@@ -553,7 +529,6 @@ export default function WelcomeEmail({
                         }}>
                           You&apos;re receiving this email because you signed up for <a href="https://loftit.ai/" style={{ color: '#ffffff', textDecoration: 'underline' }}>Loft</a>
                         </Text>
-
                         <table cellPadding="0" cellSpacing="0" style={{ borderSpacing: '0', margin: '16px 0' }}>
                           <tr>
                             {[
@@ -581,7 +556,7 @@ export default function WelcomeEmail({
                                 alt: 'Website',
                                 size: 20,
                               },
-                            ].map((social) => (
+                            ].map((social, index) => (
                               <td key={social.alt} style={{ padding: '0 8px' }}>
                                 <a
                                   href={social.href}
@@ -610,7 +585,6 @@ export default function WelcomeEmail({
                             ))}
                           </tr>
                         </table>
-
                         <Text style={{
                           fontSize: '14px',
                           textAlign: 'center' as const,
@@ -619,7 +593,7 @@ export default function WelcomeEmail({
                         }}>
                           Want to stop getting emails from Loft?{' '}
                           <a
-                            href={`https://loft-ai-002-unsubscribe.vercel.app/unsubscribe?email=${userEmail}`}
+                            href={`https://loft-ai-002.vercel.app/unsubscribe?email=${userEmail}`}
                             style={{
                               color: '#ffffff',
                               textDecoration: 'underline',
@@ -639,4 +613,4 @@ export default function WelcomeEmail({
       </table>
     </Html>
   );
-}
+} 
