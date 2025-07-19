@@ -8,12 +8,12 @@ const resend = new Resend(process.env.RESEND_API_KEY!);
 const AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID!;
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
-async function logUserCreated(clerkUserId: string, email: string) {
+async function logUserCreated(clerkUserId: string, email: string, firstName: string, lastName: string) {
   await pool.query(
-    `INSERT INTO users (clerk_user_id, email, account_created, out_from_marketing, out_from_update, account_deleted)
-     VALUES ($1, $2, NOW(), NULL, NULL, NULL)
-     ON CONFLICT (clerk_user_id) DO NOTHING`,
-    [clerkUserId, email]
+    `INSERT INTO users (clerk_user_id, email, first_name, last_name, account_created, out_from_marketing, out_from_update, account_deleted)
+     VALUES ($1, $2, $3, $4, NOW(), NULL, NULL, NULL)
+     ON CONFLICT (clerk_user_id) DO UPDATE SET email = EXCLUDED.email, first_name = EXCLUDED.first_name, last_name = EXCLUDED.last_name`,
+    [clerkUserId, email, firstName, lastName]
   );
 }
 
@@ -46,6 +46,14 @@ async function getEmailByClerkUserId(clerkUserId: string): Promise<string | null
   return result.rows[0]?.email || null;
 }
 
+async function getUserByClerkUserId(clerkUserId: string): Promise<{ email: string, first_name: string, last_name: string } | null> {
+  const result = await pool.query(
+    "SELECT email, first_name, last_name FROM users WHERE clerk_user_id = $1 LIMIT 1",
+    [clerkUserId]
+  );
+  return result.rows[0] || null;
+}
+
 export async function POST(req: NextRequest) {
   const event = await req.json();
   const { type, data } = event;
@@ -73,7 +81,7 @@ export async function POST(req: NextRequest) {
         react: WelcomeEmail({ username: firstName, userEmail: email }),
       });
       console.log("[Resend] Welcome email sent to:", email);
-      await logUserCreated(clerkUserId, email);
+      await logUserCreated(clerkUserId, email, firstName, lastName);
     } else {
       console.error("[Webhook] No email found in user.created event");
     }
@@ -82,8 +90,10 @@ export async function POST(req: NextRequest) {
 
   if (type === "user.deleted") {
     const clerkUserId = data.id;
-    const email = await getEmailByClerkUserId(clerkUserId);
-    if (email) {
+    const user = await getUserByClerkUserId(clerkUserId);
+    if (user) {
+      const { email, first_name, last_name } = user;
+      const username = first_name ? (last_name ? `${first_name} ${last_name}` : first_name) : email;
       const removeResult = await resend.contacts.remove({
         email,
         audienceId: AUDIENCE_ID,
@@ -94,12 +104,12 @@ export async function POST(req: NextRequest) {
         from: "Loft <noreply@loftit.ai>",
         to: email,
         subject: "Your Loft account has been deleted",
-        react: DeleteEmail({ username: email, userEmail: email }),
+        react: DeleteEmail({ username, userEmail: email }),
       });
       console.log("[Resend] Delete email sent to:", email);
       await setUserDeleted(clerkUserId);
     } else {
-      console.error("[Webhook] No email found in Neon DB for user.deleted event");
+      console.error("[Webhook] No user found in Neon DB for user.deleted event");
     }
     return NextResponse.json({ received: true });
   }
