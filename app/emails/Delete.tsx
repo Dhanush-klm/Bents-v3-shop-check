@@ -164,9 +164,22 @@ export default function Delete({
                   <Text style={{ fontSize: '16px', color: '#374151', margin: '24px 0 0 0' }}>
                     Thanks again for being with us,
                   </Text>
-                  <Text style={{ fontSize: '16px', color: '#111827', fontWeight: 700, margin: '16px 0 0 0' }}>
-                    The Loft Team
-                  </Text>
+                  <div
+                    style={{
+                      background: '#fff2',
+                      borderRadius: '6px',
+                      padding: '8px 16px',
+                      display: 'inline-block',
+                      margin: '0 0 8px 0',
+                      color: '#6b7280',
+                      fontSize: '16px',
+                      lineHeight: '1.6',
+                      fontFamily: 'inherit',
+                    }}
+                  >
+                    Warmly,<br />
+                    <strong>The Loft Team</strong>
+                  </div>
                   <Text style={{ fontSize: '15px', color: '#9ca3af', fontStyle: 'italic', margin: '16px 0 0 0' }}>
                     Link it. Love it. Loft it.
                   </Text>

@@ -474,16 +474,22 @@ export default function Welcome({
                         }}>
                           Welcome to the smarter way to save — it&apos;s all at your fingertips. <span style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji'}}>🤏</span>
                         </Text>
-                        <Text style={{
-                          fontSize: '16px',
-                          color: '#6b7280',
-                          margin: '0 0 8px 0',
-                          lineHeight: '1.6',
-                        }}>
-                          Warmly,
-                          <br />
+                        <div
+                          style={{
+                            background: '#fff2',
+                            borderRadius: '6px',
+                            padding: '8px 16px',
+                            display: 'inline-block',
+                            margin: '0 0 8px 0',
+                            color: '#6b7280',
+                            fontSize: '16px',
+                            lineHeight: '1.6',
+                            fontFamily: 'inherit',
+                          }}
+                        >
+                          Warmly,<br />
                           <strong>The Loft Team</strong>
-                        </Text>
+                        </div>
                         <Text style={{
                           fontSize: '14px',
                           color: '#9ca3af',
