@@ -20,11 +20,6 @@ export default function WelcomeEmail({
 }: WelcomeEmailProps) {
   // Log the userEmail for debugging
   console.log("Unsubscribe link userEmail:", userEmail);
-  // Inline styles function for email client compatibility
-  const inlineStyle = (baseStyle: Record<string, any>, additionalStyle: Record<string, any> = {}) => ({
-    ...baseStyle,
-    ...additionalStyle
-  });
 
   return (
     <Html lang="en">
