@@ -231,7 +231,7 @@ export default function Delete({
                                 alt: 'Website',
                                 size: 20,
                               },
-                            ].map((social, index) => (
+                            ].map((social) => (
                               <td key={social.alt} style={{ padding: '0 8px' }}>
                                 <a
                                   href={social.href}
