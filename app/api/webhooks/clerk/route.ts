@@ -6,9 +6,9 @@ import { Pool } from "pg";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 const AUDIENCE_IDS = [
-  process.env.RESEND_AUDIENCE_ID_1!,
-  process.env.RESEND_AUDIENCE_ID_2!,
-  process.env.RESEND_AUDIENCE_ID_3!,
+  process.env.RESEND_AUDIENCE_ID_PRODUCT!,
+  process.env.RESEND_AUDIENCE_ID_MARKETING!,
+  process.env.RESEND_AUDIENCE_ID_UPDATE!,
 ].filter(Boolean);
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
