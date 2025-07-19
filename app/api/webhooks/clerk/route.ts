@@ -58,6 +58,10 @@ async function getUserByClerkUserId(clerkUserId: string): Promise<{ email: strin
   return result.rows[0] || null;
 }
 
+function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 export async function POST(req: NextRequest) {
   const event = await req.json();
   const { type, data } = event;
@@ -78,7 +82,7 @@ export async function POST(req: NextRequest) {
           audienceId,
         });
         console.log(`[Resend] API response (add contact, audience ${audienceId}):`, addResult);
-        console.log(`[Resend] Added to audience ${audienceId}:`, email);
+        await sleep(600);
       }
       await resend.emails.send({
         from: "Loft <noreply@loftit.ai>",
@@ -106,7 +110,7 @@ export async function POST(req: NextRequest) {
           audienceId,
         });
         console.log(`[Resend] API response (remove contact, audience ${audienceId}):`, removeResult);
-        console.log(`[Resend] Removed from audience ${audienceId}:`, email);
+        await sleep(600);
       }
       await resend.emails.send({
         from: "Loft <noreply@loftit.ai>",
