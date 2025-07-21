@@ -186,7 +186,16 @@ export default function UnsubscribedMarketing({
                         boxSizing: 'border-box',
                       }}
                     >
-                      👉 Resubscribe to Loft Updates
+                      <span style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px',
+                        width: '100%',
+                      }}>
+                        <span style={{ fontSize: '22px', lineHeight: 1, display: 'inline-block' }}>👉</span>
+                        <span>Resubscribe to Loft Updates</span>
+                      </span>
                     </a>
                   </div>
                   <Text style={{ fontSize: '16px', color: '#374151', margin: '24px 0 0 0' }}>
