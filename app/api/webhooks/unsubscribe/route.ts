@@ -204,6 +204,9 @@ export async function POST(req: NextRequest) {
     await Promise.all(tasks);
     console.log(`[Webhook] Finished DB and Resend audience updates for:`, email);
 
+    // Add a delay to avoid Resend rate limit
+    await sleep(600);
+
     // Send appropriate email based on unsubscribe preferences
     if (shouldSendMarketingEmail && shouldSendAllEmail) {
       console.log(`[Webhook] Both marketing and updates are true. Sending UnsubscribedAll email.`);
