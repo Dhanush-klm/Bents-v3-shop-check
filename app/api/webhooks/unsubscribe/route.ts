@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { Pool } from "pg";
+import UnsubscribedMarketing from "@/app/emails/UnsubscribedMarketing";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 const AUDIENCE_IDS = {
@@ -84,6 +85,44 @@ async function handlePreferenceChange(
   }
 }
 
+async function sendUnsubscribedMarketingEmail(email: string) {
+  try {
+    // Get user's name from database if available
+    const result = await pool.query(
+      'SELECT first_name, last_name FROM users WHERE email = $1',
+      [email]
+    );
+    
+    let username = "there";
+    if (result.rows.length > 0 && result.rows[0].first_name) {
+      username = result.rows[0].first_name;
+    }
+
+    const resubscribeUrl = `https://loft-ai-002-unsubscribe.vercel.app/unsubscribe?email=${encodeURIComponent(email)}`;
+
+    const { data, error } = await resend.emails.send({
+      from: "Loft <noreply@loftit.ai>",
+      to: [email],
+      subject: "You'll no longer receive Loft updates — but your subscription is still active",
+      react: UnsubscribedMarketing({
+        username,
+        userEmail: email,
+        resubscribeUrl,
+      }),
+    });
+
+    if (error) {
+      console.error("[Email] Error sending unsubscribed marketing email:", error);
+      throw error;
+    }
+
+    console.log("[Email] Successfully sent unsubscribed marketing email to:", email, data);
+  } catch (error) {
+    console.error("[Email] Failed to send unsubscribed marketing email to:", email, error);
+    // Don't throw error to avoid blocking the unsubscribe process
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -106,6 +145,11 @@ export async function POST(req: NextRequest) {
       tasks.push(
         handlePreferenceChange(email, "marketing", out_from_marketing)
       );
+      
+      // Send unsubscribed marketing email if user is unsubscribing
+      if (out_from_marketing === true) {
+        tasks.push(sendUnsubscribedMarketingEmail(email));
+      }
     }
     if (typeof out_from_updates === "boolean") {
       tasks.push(handlePreferenceChange(email, "update", out_from_updates));
