@@ -71,6 +71,13 @@ export default function UnsubscribedMarketing({
                 font-size: 14px !important;
                 line-height: 1.6 !important;
               }
+              .resubscribe-btn {
+                width: 100% !important;
+                max-width: 100% !important;
+                font-size: 15px !important;
+                padding: 14px 8px !important;
+                box-sizing: border-box !important;
+              }
             }
           `}
         </style>
@@ -162,6 +169,7 @@ export default function UnsubscribedMarketing({
                   </Text>
                   <div style={{ margin: '16px 0' }}>
                     <a
+                      className="resubscribe-btn"
                       href={resubscribeUrl}
                       style={{
                         display: 'inline-block',
@@ -172,6 +180,10 @@ export default function UnsubscribedMarketing({
                         fontWeight: 600,
                         textDecoration: 'none',
                         fontSize: '16px',
+                        width: '100%',
+                        maxWidth: '350px',
+                        textAlign: 'center',
+                        boxSizing: 'border-box',
                       }}
                     >
                       👉 Resubscribe to Loft Updates
