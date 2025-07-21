@@ -184,7 +184,7 @@ export default function UnsubscribedAll({
                         gap: '8px',
                         width: '100%',
                       }}>
-                        <span style={{ fontSize: '22px', lineHeight: 1, display: 'inline-block' }}>👉</span>
+                        <span style={{ fontSize: '22px', lineHeight: 1, display: 'inline-block' }}>👉 </span>
                         <span>Resubscribe to Loft Updates</span>
                       </span>
                     </a>
