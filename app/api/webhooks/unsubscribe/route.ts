@@ -109,7 +109,7 @@ async function sendUnsubscribedMarketingEmail(email: string) {
   try {
     const username = await getUserFullName(email);
     const resubscribeUrl = `https://loft-ai-002-unsubscribe.vercel.app/unsubscribe?email=${encodeURIComponent(email)}`;
-
+    console.log(`[Email] Attempting to send UnsubscribedMarketing email to:`, email, `with username:`, username);
     const { data, error } = await resend.emails.send({
       from: "Loft <noreply@loftit.ai>",
       to: [email],
@@ -120,12 +120,10 @@ async function sendUnsubscribedMarketingEmail(email: string) {
         resubscribeUrl,
       }),
     });
-
     if (error) {
       console.error("[Email] Error sending unsubscribed marketing email:", error);
       throw error;
     }
-
     console.log("[Email] Successfully sent unsubscribed marketing email to:", email, data);
   } catch (error) {
     console.error("[Email] Failed to send unsubscribed marketing email to:", email, error);
@@ -137,7 +135,7 @@ async function sendUnsubscribedAllEmail(email: string) {
   try {
     const username = await getUserFullName(email);
     const resubscribeUrl = `https://loft-ai-002-unsubscribe.vercel.app/unsubscribe?email=${encodeURIComponent(email)}`;
-
+    console.log(`[Email] Attempting to send UnsubscribedAll email to:`, email, `with username:`, username);
     const { data, error } = await resend.emails.send({
       from: "Loft <noreply@loftit.ai>",
       to: [email],
@@ -148,12 +146,10 @@ async function sendUnsubscribedAllEmail(email: string) {
         resubscribeUrl,
       }),
     });
-
     if (error) {
       console.error("[Email] Error sending unsubscribed all email:", error);
       throw error;
     }
-
     console.log("[Email] Successfully sent unsubscribed all email to:", email, data);
   } catch (error) {
     console.error("[Email] Failed to send unsubscribed all email to:", email, error);
@@ -166,23 +162,22 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { email, out_from_marketing, out_from_updates } = body;
 
+    console.log(`[Webhook] Received POST /unsubscribe with body:`, body);
+
     if (!email) {
+      console.log(`[Webhook] Missing required field: email`);
       return NextResponse.json(
         { error: "Missing required field: email" },
         { status: 400 }
       );
     }
 
-    console.log(
-      `[Unsubscribe] Processing preferences for ${email}`,
-      body
-    );
-
     const tasks = [];
     let shouldSendMarketingEmail = false;
     let shouldSendAllEmail = false;
 
     if (typeof out_from_marketing === "boolean") {
+      console.log(`[Webhook] Processing out_from_marketing:`, out_from_marketing);
       tasks.push(
         handlePreferenceChange(email, "marketing", out_from_marketing)
       );
@@ -191,6 +186,7 @@ export async function POST(req: NextRequest) {
       }
     }
     if (typeof out_from_updates === "boolean") {
+      console.log(`[Webhook] Processing out_from_updates:`, out_from_updates);
       tasks.push(handlePreferenceChange(email, "update", out_from_updates));
       if (out_from_updates === true) {
         shouldSendAllEmail = true;
@@ -198,6 +194,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (tasks.length === 0) {
+      console.log(`[Webhook] No preference fields provided.`);
       return NextResponse.json(
         { error: "No preference fields provided" },
         { status: 400 }
@@ -205,14 +202,17 @@ export async function POST(req: NextRequest) {
     }
 
     await Promise.all(tasks);
+    console.log(`[Webhook] Finished DB and Resend audience updates for:`, email);
 
     // Send appropriate email based on unsubscribe preferences
     if (shouldSendMarketingEmail && shouldSendAllEmail) {
-      // Both are true - send "unsubscribed all" email
+      console.log(`[Webhook] Both marketing and updates are true. Sending UnsubscribedAll email.`);
       await sendUnsubscribedAllEmail(email);
     } else if (shouldSendMarketingEmail) {
-      // Only marketing is true - send "unsubscribed marketing" email
+      console.log(`[Webhook] Only marketing is true. Sending UnsubscribedMarketing email.`);
       await sendUnsubscribedMarketingEmail(email);
+    } else {
+      console.log(`[Webhook] No email needs to be sent for this request.`);
     }
 
     return NextResponse.json({
