@@ -135,7 +135,14 @@ export default function Delete({
                     Sorry to see you go
                   </Text>
                   <Text style={{ fontSize: '16px', color: '#2563eb', margin: '0 0 8px 0', fontWeight: 500 }}>
-                    You&apos;ve left Loft — but we hope it&apos;s not goodbye 💙
+                    <span style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px'
+                    }}>
+                      You&apos;ve left Loft — but we hope it&apos;s not goodbye
+                      <span style={{ fontSize: '22px', lineHeight: 1, display: 'inline-block' }}>💙</span>
+                    </span>
                   </Text>
                 </Section>
                 {/* Main Content */}
