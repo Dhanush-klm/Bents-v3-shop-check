@@ -6,86 +6,126 @@ const resend = new Resend(process.env.RESEND_API_KEY!);
 const AUDIENCE_IDS = {
   marketing: process.env.RESEND_AUDIENCE_MARKETING!,
   update: process.env.RESEND_AUDIENCE_UPDATES!,
-  product: process.env.RESEND_AUDIENCE_ALL!,
 };
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
 function sleep(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function updateUserPreference(email: string, preference: string) {
+async function handlePreferenceChange(
+  email: string,
+  preference: "marketing" | "update",
+  unsubscribe: boolean
+) {
   let columnName: string;
-  
-  switch (preference.toLowerCase()) {
-    case 'marketing':
-      columnName = 'out_from_marketing';
+  switch (preference) {
+    case "marketing":
+      columnName = "out_from_marketing";
       break;
-    case 'update':
-      columnName = 'out_from_update';
+    case "update":
+      columnName = "out_from_update";
       break;
-    case 'product':
-      // For product, we might want to handle differently or use a different column
-      columnName = 'out_from_marketing'; // Default fallback
-      break;
-    default:
-      throw new Error(`Invalid preference: ${preference}`);
   }
 
+  // Update Database
   await pool.query(
-    `UPDATE users SET ${columnName} = NOW() WHERE email = $1`,
+    `UPDATE users SET ${columnName} = ${
+      unsubscribe ? "NOW()" : "NULL"
+    } WHERE email = $1`,
     [email]
   );
-}
+  console.log(
+    `[Database] For ${email}, set ${columnName} to ${
+      unsubscribe ? "a timestamp" : "NULL"
+    }`
+  );
 
-async function removeFromResendAudience(email: string, preference: string) {
-  const audienceId = AUDIENCE_IDS[preference.toLowerCase() as keyof typeof AUDIENCE_IDS];
-  
+  // Update Resend Audience
+  const audienceId = AUDIENCE_IDS[preference];
+
   if (!audienceId) {
-    console.error(`[Unsubscribe] No audience ID found for preference: ${preference}`);
+    console.error(`[Resend] No audience ID found for preference: ${preference}`);
     return;
   }
 
   try {
-    const removeResult = await resend.contacts.remove({
-      email,
-      audienceId,
-    });
-    console.log(`[Resend] Removed ${email} from ${preference} audience:`, removeResult);
-    await sleep(600); // Rate limiting
+    if (unsubscribe) {
+      const { data, error } = await resend.contacts.remove({
+        email,
+        audienceId,
+      });
+      if (error) throw error;
+      console.log(
+        `[Resend] Removed ${email} from ${preference} audience:`,
+        data
+      );
+    } else {
+      // Re-subscribe user
+      const { data, error } = await resend.contacts.create({
+        email,
+        audienceId,
+        unsubscribed: false,
+      });
+      if (error) throw error;
+      console.log(
+        `[Resend] Added ${email} to ${preference} audience:`,
+        data
+      );
+    }
   } catch (error) {
-    console.error(`[Resend] Error removing ${email} from ${preference} audience:`, error);
+    // Log errors but don't block other preference updates
+    console.error(
+      `[Resend] Error updating ${email} in ${preference} audience:`,
+      error
+    );
+  } finally {
+    await sleep(500); // Avoid rate-limiting
   }
 }
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { email, preference } = body;
+    const { email, out_from_marketing, out_from_updates } = body;
 
-    if (!email || !preference) {
+    if (!email) {
       return NextResponse.json(
-        { error: "Missing required fields: email and preference" },
+        { error: "Missing required field: email" },
         { status: 400 }
       );
     }
 
-    console.log(`[Unsubscribe] Processing unsubscribe for ${email} from ${preference}`);
+    console.log(
+      `[Unsubscribe] Processing preferences for ${email}`,
+      body
+    );
 
-    // Update database
-    await updateUserPreference(email, preference);
-    console.log(`[Database] Updated ${email} preference for ${preference}`);
+    const tasks = [];
+    if (typeof out_from_marketing === "boolean") {
+      tasks.push(
+        handlePreferenceChange(email, "marketing", out_from_marketing)
+      );
+    }
+    if (typeof out_from_updates === "boolean") {
+      tasks.push(handlePreferenceChange(email, "update", out_from_updates));
+    }
 
-    // Remove from Resend audience
-    await removeFromResendAudience(email, preference);
+    if (tasks.length === 0) {
+      return NextResponse.json(
+        { error: "No preference fields provided" },
+        { status: 400 }
+      );
+    }
 
-    return NextResponse.json({ 
-      success: true, 
-      message: `Successfully unsubscribed ${email} from ${preference}` 
+    await Promise.all(tasks);
+
+    return NextResponse.json({
+      success: true,
+      message: `Successfully updated preferences for ${email}`,
     });
-
   } catch (error) {
-    console.error("[Unsubscribe] Error processing unsubscribe:", error);
+    console.error("[Unsubscribe] Error processing request:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
