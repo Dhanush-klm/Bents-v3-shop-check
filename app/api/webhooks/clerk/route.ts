@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
-import WelcomeEmail from "@/app/emails/Welcome";
+import FreeUserWelcome from "@/app/emails/FreeUserWelcome";
 import DeleteEmail from "@/app/emails/Delete";
 import { Pool } from "pg";
 
@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
         from: "Loft <noreply@loftit.ai>",
         to: email,
         subject: "Welcome to Loft!",
-        react: WelcomeEmail({ username: firstName && lastName ? `${firstName} ${lastName}` : firstName || lastName || email, userEmail: email }),
+        react: FreeUserWelcome({ username: firstName && lastName ? `${firstName} ${lastName}` : firstName || lastName || email, userEmail: email }),
       });
       console.log("[Resend] Welcome email sent to:", email);
       await logUserCreated(clerkUserId, email, firstName, lastName);
