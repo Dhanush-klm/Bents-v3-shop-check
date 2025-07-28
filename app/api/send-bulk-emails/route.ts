@@ -63,10 +63,24 @@ async function saveCampaignDetails(templateId: string, audienceId: string, audie
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
     
-    // Direct database insertion instead of fetch
-    
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/campaign/save`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        templateName,
+        audienceName,
+        subjectLine: subject,
+        recipientsCount: contactCount
+      }),
+    });
 
-    console.log('[Bulk Email] Campaign details saved successfully');
+    if (response.ok) {
+      console.log('[Bulk Email] Campaign details saved successfully');
+    } else {
+      console.warn('[Bulk Email] Failed to save campaign details');
+    }
   } catch (error) {
     console.error('[Bulk Email] Error saving campaign details:', error);
   }
@@ -207,11 +221,8 @@ export async function POST(req: NextRequest) {
           // Send to each contact in this audience
           for (const contact of contacts) {
             try {
-              console.log(`[Bulk Email] Attempting to send ${templateId} to ${contact.email}`);
-              
               // Get user's full name for personalization
               const username = await getUserFullName(contact.email);
-              console.log(`[Bulk Email] Got username for ${contact.email}: ${username}`);
               
               const emailResponse = await resend.emails.send({
                 from: 'Loft <noreply@loftit.ai>',
@@ -223,24 +234,19 @@ export async function POST(req: NextRequest) {
                 })
               });
 
-              console.log(`[Bulk Email] Email response for ${contact.email}:`, emailResponse);
-
-              // Check if email was sent successfully
-              if (emailResponse.data || (emailResponse as any).id) {
+              if (emailResponse.data) {
                 emailsSentForTemplate++;
                 audienceEmailsSent++;
                 totalEmailsSent++;
-                console.log(`[Bulk Email] ✅ Successfully sent ${templateId} to ${contact.email}`);
-              } else {
-                console.warn(`[Bulk Email] ⚠️ No success indicator in email response for ${contact.email}:`, emailResponse);
+                console.log(`[Bulk Email] Sent ${templateId} to ${contact.email}`);
               }
 
               // Rate limiting
               await sleep(600);
               
             } catch (emailError) {
-              console.error(`[Bulk Email] ❌ Failed to send ${templateId} to ${contact.email}:`, emailError);
-              warnings.push(`Failed to send to ${contact.email}: ${emailError instanceof Error ? emailError.message : 'Unknown error'}`);
+              console.error(`[Bulk Email] Failed to send ${templateId} to ${contact.email}:`, emailError);
+              warnings.push(`Failed to send to ${contact.email}`);
             }
           }
 
