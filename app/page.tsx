@@ -33,7 +33,7 @@ export default function Home() {
                   <h2 className="text-2xl font-bold text-blue-900">Email Manager</h2>
                 </div>
                 <p className="text-blue-700 leading-relaxed mb-4">
-                  Create and send email campaigns to your audiences. Choose from 17 pre-built templates and target specific user segments.
+                  Create and send email campaigns to your audiences. Choose from pre-built templates and target specific user segments.
                 </p>
                 <div className="text-blue-600 font-semibold group-hover:text-blue-700 transition-colors">
                   Start Campaign →
@@ -64,7 +64,7 @@ export default function Home() {
           <div className="mt-8 text-center">
             <p className="text-gray-600 mb-4">Email Campaign Platform</p>
             <div className="flex justify-center gap-8 text-sm text-gray-500">
-              <span>✅ 17 Email Templates</span>
+              <span>✅ Email Templates</span>
               <span>✅ Audience Management</span>
               <span>✅ Campaign Analytics</span>
               <span>✅ Campaign History</span>
