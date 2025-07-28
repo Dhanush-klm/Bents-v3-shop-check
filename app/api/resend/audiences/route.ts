@@ -11,7 +11,10 @@ export async function GET() {
     
     console.log('[API] Successfully fetched audiences:', result);
     
-    return NextResponse.json(result);
+    // Extract the actual audiences data from the nested structure
+    const audiences = result.data?.data || result.data || [];
+    
+    return NextResponse.json({ data: audiences });
   } catch (error) {
     console.error('[API] Error fetching audiences:', error);
     return NextResponse.json(
