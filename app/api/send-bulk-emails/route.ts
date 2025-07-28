@@ -219,8 +219,11 @@ export async function POST(req: NextRequest) {
           // Send to each contact in this audience
           for (const contact of contacts) {
             try {
+              console.log(`[Bulk Email] Attempting to send ${templateId} to ${contact.email}`);
+              
               // Get user's full name for personalization
               const username = await getUserFullName(contact.email);
+              console.log(`[Bulk Email] Got username for ${contact.email}: ${username}`);
               
               const emailResponse = await resend.emails.send({
                 from: 'Loft <noreply@loftit.ai>',
@@ -232,11 +235,15 @@ export async function POST(req: NextRequest) {
                 })
               });
 
+              console.log(`[Bulk Email] Email response for ${contact.email}:`, emailResponse);
+
               if (emailResponse.data) {
                 emailsSentForTemplate++;
                 audienceEmailsSent++;
                 totalEmailsSent++;
-                console.log(`[Bulk Email] Sent ${templateId} to ${contact.email}`);
+                console.log(`[Bulk Email] ✅ Successfully sent ${templateId} to ${contact.email}`);
+              } else {
+                console.log(`[Bulk Email] ❌ No data in response for ${contact.email}`);
               }
 
               // Rate limiting
