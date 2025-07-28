@@ -236,7 +236,11 @@ export default function EmailManagerPage() {
       
       // Show detailed feedback
       if (result.success) {
-        alert(`✅ Success! ${result.message}\n\nDetails:\n${result.results.map((r: any) => 
+        alert(`✅ Success! ${result.message}\n\nDetails:\n${result.results.map((r: {
+          audienceName: string;
+          emailsSent?: number;
+          contactCount?: number;
+        }) => 
           `• ${r.audienceName}: ${r.emailsSent || 0} emails sent to ${r.contactCount || 0} contacts`
         ).join('\n')}`);
       } else {

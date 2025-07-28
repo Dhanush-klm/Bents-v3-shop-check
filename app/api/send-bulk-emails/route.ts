@@ -43,37 +43,15 @@ const TEMPLATE_COMPONENTS = {
   'Delete': Delete,
 };
 
-interface BulkEmailRequest {
-  templateIds: string[];
-  audienceId: string;
-  subject: string;
+interface Contact {
+  email: string;
+  [key: string]: unknown;
 }
 
-function sleep(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-async function getUserFullName(email: string): Promise<string> {
-  try {
-    const result = await pool.query(
-      'SELECT first_name, last_name FROM users WHERE email = $1',
-      [email]
-    );
-    if (result.rows.length > 0) {
-      const { first_name, last_name } = result.rows[0];
-      if (first_name && last_name) {
-        return `${first_name} ${last_name}`;
-      } else if (first_name) {
-        return first_name;
-      } else if (last_name) {
-        return last_name;
-      }
-    }
-    return "there";
-  } catch (error) {
-    console.error('[DB] Error fetching user name:', error);
-    return "there";
-  }
+interface Audience {
+  id: string;
+  name?: string;
+  [key: string]: unknown;
 }
 
 // Function to save campaign details
@@ -108,6 +86,33 @@ async function saveCampaignDetails(templateId: string, audienceId: string, audie
   }
 }
 
+async function getUserFullName(email: string): Promise<string> {
+  try {
+    const result = await pool.query(
+      'SELECT first_name, last_name FROM users WHERE email = $1',
+      [email]
+    );
+    if (result.rows.length > 0) {
+      const { first_name, last_name } = result.rows[0];
+      if (first_name && last_name) {
+        return `${first_name} ${last_name}`;
+      } else if (first_name) {
+        return first_name;
+      } else if (last_name) {
+        return last_name;
+      }
+    }
+    return "there";
+  } catch (error) {
+    console.error('[Bulk Email] Error fetching user name:', error);
+    return "there";
+  }
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { selectedTemplates, selectedAudiences, subject } = await req.json();
@@ -138,7 +143,7 @@ export async function POST(req: NextRequest) {
     const audiencesResponse = await resend.audiences.list();
     const audienceMap = new Map<string, string>();
     if (audiencesResponse.data && Array.isArray(audiencesResponse.data)) {
-      audiencesResponse.data.forEach((audience: any) => {
+      (audiencesResponse.data as Audience[]).forEach((audience) => {
         audienceMap.set(audience.id, audience.name || `Audience ${audience.id.substring(0, 8)}`);
       });
     }
@@ -158,12 +163,12 @@ export async function POST(req: NextRequest) {
         console.log(`[Bulk Email] Raw contacts response for ${audienceName}:`, JSON.stringify(contactsResponse, null, 2));
 
         // Handle different possible response structures
-        let contacts: any[] = [];
+        let contacts: Contact[] = [];
         if (contactsResponse.data) {
           if (Array.isArray(contactsResponse.data)) {
-            contacts = contactsResponse.data;
+            contacts = contactsResponse.data as unknown as Contact[];
           } else if (contactsResponse.data.data && Array.isArray(contactsResponse.data.data)) {
-            contacts = contactsResponse.data.data;
+            contacts = contactsResponse.data.data as unknown as Contact[];
           }
         }
 

@@ -1,12 +1,17 @@
 import * as React from "react";
 
-interface SeparatorProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface SeparatorProps extends React.HTMLAttributes<HTMLDivElement> {
+  className?: string;
+  orientation?: "horizontal" | "vertical";
+}
 
 const Separator = React.forwardRef<HTMLDivElement, SeparatorProps>(
-  ({ className, ...props }, ref) => (
+  ({ className = "", orientation = "horizontal", ...props }, ref) => (
     <div
       ref={ref}
-      className={`shrink-0 bg-border h-[1px] w-full bg-gray-200 ${className || ''}`}
+      className={`shrink-0 bg-border ${
+        orientation === "horizontal" ? "h-[1px] w-full" : "h-full w-[1px]"
+      } ${className}`}
       {...props}
     />
   )
