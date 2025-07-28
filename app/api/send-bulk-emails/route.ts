@@ -146,6 +146,9 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    // Add initial delay to avoid rate limiting
+    await sleep(1000);
+
     // Process each audience separately
     for (const audienceId of selectedAudiences) {
       try {
@@ -155,6 +158,9 @@ export async function POST(req: NextRequest) {
         const contactsResponse = await resend.contacts.list({
           audienceId: audienceId
         });
+
+        // Add delay between API calls to avoid rate limiting
+        await sleep(500);
 
         const audienceName = audienceMap.get(audienceId) || `Audience ${audienceId.substring(0, 8)}`;
 
@@ -247,7 +253,7 @@ export async function POST(req: NextRequest) {
               }
 
               // Rate limiting - increased delay to avoid 429 errors
-              await sleep(1000);
+              await sleep(1500);
               
             } catch (emailError) {
               console.error(`[Bulk Email] Failed to send ${templateId} to ${contact.email}:`, emailError);
