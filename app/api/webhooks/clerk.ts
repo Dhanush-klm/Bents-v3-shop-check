@@ -1,7 +1,7 @@
 // Required env vars: RESEND_API_KEY, RESEND_AUDIENCE_ID
 import { NextApiRequest, NextApiResponse } from "next";
 import { Resend } from "resend";
-import WelcomeEmail from "@/app/emails/Welcome";
+import FreeUserWelcome from "@/app/emails/FreeUserWelcome";
 import DeleteEmail from "@/app/emails/Delete";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
@@ -54,7 +54,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         from: "Loft <noreply@loftit.ai>",
         to: email,
         subject: "Welcome to Loft!",
-        react: WelcomeEmail({ username: firstName, userEmail: email }),
+        react: FreeUserWelcome({ username: firstName, userEmail: email }),
       });
       console.log("[Resend] Welcome email sent to:", email);
     } else {
