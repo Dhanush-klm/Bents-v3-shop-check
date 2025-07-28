@@ -246,8 +246,8 @@ export async function POST(req: NextRequest) {
                 console.log(`[Bulk Email] ❌ No data in response for ${contact.email}`);
               }
 
-              // Rate limiting
-              await sleep(600);
+              // Rate limiting - increased delay to avoid 429 errors
+              await sleep(1000);
               
             } catch (emailError) {
               console.error(`[Bulk Email] Failed to send ${templateId} to ${contact.email}:`, emailError);
