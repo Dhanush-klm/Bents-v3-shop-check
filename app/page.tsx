@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Mail } from "lucide-react";
+import { Mail, History } from "lucide-react";
 
 export default function Home() {
   return (
@@ -17,27 +17,48 @@ export default function Home() {
             />
             <h1 className="text-5xl font-bold text-black text-center">Loft Email Manager</h1>
             <p className="text-xl text-black text-center max-w-2xl">
-              Powerful email automation platform. Send targeted campaigns, manage audiences, and engage with your users effectively.
+              Powerful email automation platform. Send targeted campaigns, manage audiences, and track your email performance.
             </p>
           </div>
 
-          {/* Email Manager Card */}
-          <Link href="/email-manager" className="w-full max-w-md">
-            <div className="group bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 rounded-2xl p-8 hover:from-blue-100 hover:to-blue-200 hover:border-blue-300 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl">
-              <div className="flex items-center gap-4 mb-4">
-                <div className="bg-blue-600 p-3 rounded-xl group-hover:bg-blue-700 transition-colors">
-                  <Mail className="h-8 w-8 text-white" />
+          {/* Navigation Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl">
+            {/* Email Manager Card */}
+            <Link href="/email-manager" className="group">
+              <div className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 rounded-2xl p-8 hover:from-blue-100 hover:to-blue-200 hover:border-blue-300 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl group-hover:scale-105">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="bg-blue-600 p-3 rounded-xl group-hover:bg-blue-700 transition-colors">
+                    <Mail className="h-8 w-8 text-white" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-blue-900">Email Manager</h2>
                 </div>
-                <h2 className="text-2xl font-bold text-blue-900">Email Manager</h2>
+                <p className="text-blue-700 leading-relaxed mb-4">
+                  Create and send email campaigns to your audiences. Choose from 17 pre-built templates and target specific user segments.
+                </p>
+                <div className="text-blue-600 font-semibold group-hover:text-blue-700 transition-colors">
+                  Start Campaign →
+                </div>
               </div>
-              <p className="text-blue-700 leading-relaxed mb-4">
-                Create and send email campaigns to your audiences. Choose from 17 pre-built templates and target specific user segments.
-              </p>
-              <div className="text-blue-600 font-semibold group-hover:text-blue-700 transition-colors">
-                Start Campaign →
+            </Link>
+
+            {/* Campaign History Card */}
+            <Link href="/campaign-history" className="group">
+              <div className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-200 rounded-2xl p-8 hover:from-green-100 hover:to-green-200 hover:border-green-300 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl group-hover:scale-105">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="bg-green-600 p-3 rounded-xl group-hover:bg-green-700 transition-colors">
+                    <History className="h-8 w-8 text-white" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-green-900">Campaign History</h2>
+                </div>
+                <p className="text-green-700 leading-relaxed mb-4">
+                  Track your email campaigns and performance. View detailed history of sent campaigns, recipients, and analytics.
+                </p>
+                <div className="text-green-600 font-semibold group-hover:text-green-700 transition-colors">
+                  View History →
+                </div>
               </div>
-            </div>
-          </Link>
+            </Link>
+          </div>
 
           {/* Quick Stats */}
           <div className="mt-8 text-center">
@@ -46,6 +67,7 @@ export default function Home() {
               <span>✅ 17 Email Templates</span>
               <span>✅ Audience Management</span>
               <span>✅ Campaign Analytics</span>
+              <span>✅ Campaign History</span>
             </div>
           </div>
         </main>

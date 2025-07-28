@@ -23,24 +23,24 @@ import Delete from "@/app/emails/Delete";
 const resend = new Resend(process.env.RESEND_API_KEY!);
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
-// Template mapping
+// Template mapping - using actual file names
 const TEMPLATE_COMPONENTS = {
-  'free-user-welcome': FreeUserWelcome,
-  'pro-user-welcome': ProUserWelcome,
-  'upgrade-confirmation': UpgradeConfirmation,
-  'week1-post-creation': Week1PostCreation,
-  'week2-post-creation': Week2PostCreation,
-  'week3-post-creation': Week3PostCreation,
-  'week4-post-creation': Week4PostCreation,
-  'day3-trial-reminder': Day3TrialReminder,
-  'day5-trial-ending': Day5TrialEnding,
-  'day6-trial-tomorrow': Day6TrialEndsTomorrow,
-  'day7-trial-today': Day7TrialEndsToday,
-  'no-activity-reengagement': NoActivityReengagement,
-  'feedback-survey-30days': FeedbackSurvey30Days,
-  'unsubscribed-marketing': UnsubscribedMarketing,
-  'unsubscribed-all': UnsubscribedAll,
-  'delete-account': Delete,
+  'FreeUserWelcome': FreeUserWelcome,
+  'ProUserWelcome': ProUserWelcome,
+  'UpgradeConfirmation': UpgradeConfirmation,
+  'Week1PostCreation': Week1PostCreation,
+  'Week2PostCreation': Week2PostCreation,
+  'Week3PostCreation': Week3PostCreation,
+  'Week4PostCreation': Week4PostCreation,
+  'Day3TrialReminder': Day3TrialReminder,
+  'Day5TrialEnding': Day5TrialEnding,
+  'Day6TrialEndsTomorrow': Day6TrialEndsTomorrow,
+  'Day7TrialEndsToday': Day7TrialEndsToday,
+  'NoActivityReengagement': NoActivityReengagement,
+  'FeedbackSurvey30Days': FeedbackSurvey30Days,
+  'UnsubscribedMarketing': UnsubscribedMarketing,
+  'UnsubscribedAll': UnsubscribedAll,
+  'Delete': Delete,
 };
 
 interface BulkEmailRequest {
@@ -76,112 +76,229 @@ async function getUserFullName(email: string): Promise<string> {
   }
 }
 
+// Function to save campaign details
+async function saveCampaignDetails(templateId: string, audienceId: string, audienceName: string, subject: string, contactCount: number) {
+  try {
+    // Get human-readable template name
+    const templateName = templateId
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+    
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/campaign/save`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        templateName,
+        audienceName,
+        subjectLine: subject,
+        recipientsCount: contactCount
+      }),
+    });
+
+    if (response.ok) {
+      console.log('[Bulk Email] Campaign details saved successfully');
+    } else {
+      console.warn('[Bulk Email] Failed to save campaign details');
+    }
+  } catch (error) {
+    console.error('[Bulk Email] Error saving campaign details:', error);
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
-    const body: BulkEmailRequest = await req.json();
-    const { templateIds, audienceId, subject } = body;
+    const { selectedTemplates, selectedAudiences, subject } = await req.json();
+    
+    console.log('[Bulk Email] Starting bulk email send:', {
+      templates: selectedTemplates,
+      audiences: selectedAudiences,
+      subject
+    });
 
-    console.log('[Bulk Email] Starting bulk email send:', { templateIds, audienceId, subject });
-
-    // Validate request
-    if (!templateIds || templateIds.length === 0) {
+    if (!selectedTemplates || !Array.isArray(selectedTemplates) || selectedTemplates.length === 0) {
       return NextResponse.json({ error: 'No templates selected' }, { status: 400 });
     }
 
-    if (!audienceId) {
-      return NextResponse.json({ error: 'No audience selected' }, { status: 400 });
+    if (!selectedAudiences || !Array.isArray(selectedAudiences) || selectedAudiences.length === 0) {
+      return NextResponse.json({ error: 'No audiences selected' }, { status: 400 });
     }
 
-    if (!subject) {
-      return NextResponse.json({ error: 'No subject provided' }, { status: 400 });
+    if (!subject || subject.trim() === '') {
+      return NextResponse.json({ error: 'Subject line is required' }, { status: 400 });
     }
 
-    // Get contacts from the selected audience
-    console.log('[Bulk Email] Fetching contacts from audience:', audienceId);
-    const { data: contactsResponse, error: contactsError } = await resend.contacts.list({
-      audienceId,
-    });
+    let totalEmailsSent = 0;
+    const results = [];
+    const warnings = [];
 
-    if (contactsError) {
-      console.error('[Bulk Email] Error fetching contacts:', contactsError);
-      return NextResponse.json({ error: 'Failed to fetch audience contacts' }, { status: 500 });
+    // First get audience names
+    const audiencesResponse = await resend.audiences.list();
+    const audienceMap = new Map<string, string>();
+    if (audiencesResponse.data && Array.isArray(audiencesResponse.data)) {
+      audiencesResponse.data.forEach((audience: any) => {
+        audienceMap.set(audience.id, audience.name || `Audience ${audience.id.substring(0, 8)}`);
+      });
     }
 
-    const contacts = contactsResponse?.data || [];
-    if (!contacts || contacts.length === 0) {
-      return NextResponse.json({ error: 'No contacts found in selected audience' }, { status: 400 });
-    }
-
-    console.log('[Bulk Email] Found contacts:', contacts.length);
-
-    let sentCount = 0;
-    let errorCount = 0;
-    const errors: string[] = [];
-
-    // Send emails to each contact
-    for (const contact of contacts) {
-      const email = contact.email;
-      const username = await getUserFullName(email);
-
-      console.log(`[Bulk Email] Processing contact: ${email} (${username})`);
-
-      // Send each selected template to this contact
-      for (const templateId of templateIds) {
-        const TemplateComponent = TEMPLATE_COMPONENTS[templateId as keyof typeof TEMPLATE_COMPONENTS];
+    // Process each audience separately
+    for (const audienceId of selectedAudiences) {
+      try {
+        console.log(`[Bulk Email] Processing audience: ${audienceId}`);
         
-        if (!TemplateComponent) {
-          console.error(`[Bulk Email] Template not found: ${templateId}`);
-          errors.push(`Template not found: ${templateId}`);
-          errorCount++;
+        // Fetch contacts for this audience
+        const contactsResponse = await resend.contacts.list({
+          audienceId: audienceId
+        });
+
+        const audienceName = audienceMap.get(audienceId) || `Audience ${audienceId.substring(0, 8)}`;
+
+        console.log(`[Bulk Email] Raw contacts response for ${audienceName}:`, JSON.stringify(contactsResponse, null, 2));
+
+        // Handle different possible response structures
+        let contacts: any[] = [];
+        if (contactsResponse.data) {
+          if (Array.isArray(contactsResponse.data)) {
+            contacts = contactsResponse.data;
+          } else if (contactsResponse.data.data && Array.isArray(contactsResponse.data.data)) {
+            contacts = contactsResponse.data.data;
+          }
+        }
+
+        console.log(`[Bulk Email] Processed contacts for ${audienceName}:`, contacts);
+
+        if (!contacts || contacts.length === 0) {
+          console.warn(`[Bulk Email] No contacts found for audience: ${audienceId}`);
+          warnings.push(`Audience "${audienceName}" has no contacts`);
+          results.push({
+            audienceId,
+            audienceName,
+            contactCount: 0,
+            emailsSent: 0,
+            status: 'skipped - no contacts'
+          });
+          continue;
+        }
+        console.log(`[Bulk Email] Found ${contacts.length} contacts in audience ${audienceName} (${audienceId})`);
+
+        if (contacts.length === 0) {
+          console.warn(`[Bulk Email] Audience ${audienceName} has no contacts, skipping`);
+          warnings.push(`Audience "${audienceName}" has no contacts`);
+          results.push({
+            audienceId,
+            audienceName,
+            contactCount: 0,
+            emailsSent: 0,
+            status: 'skipped - no contacts'
+          });
           continue;
         }
 
-        try {
-          console.log(`[Bulk Email] Sending ${templateId} to ${email}`);
+        let audienceEmailsSent = 0;
 
-          const { data, error } = await resend.emails.send({
-            from: "Loft <noreply@loftit.ai>",
-            to: [email],
-            subject: subject,
-            react: TemplateComponent({
-              username,
-              userEmail: email,
-            }),
-          });
-
-          if (error) {
-            console.error(`[Bulk Email] Error sending ${templateId} to ${email}:`, error);
-            errors.push(`Failed to send ${templateId} to ${email}: ${error.message}`);
-            errorCount++;
-          } else {
-            console.log(`[Bulk Email] Successfully sent ${templateId} to ${email}:`, data?.id);
-            sentCount++;
+        // Send emails for each template to this audience
+        for (const templateId of selectedTemplates) {
+          console.log(`[Bulk Email] Looking for template: ${templateId}`);
+          console.log(`[Bulk Email] Available templates:`, Object.keys(TEMPLATE_COMPONENTS));
+          
+          const TemplateComponent = TEMPLATE_COMPONENTS[templateId as keyof typeof TEMPLATE_COMPONENTS];
+          if (!TemplateComponent) {
+            console.error(`[Bulk Email] Template not found: ${templateId}`);
+            console.error(`[Bulk Email] Available templates:`, Object.keys(TEMPLATE_COMPONENTS));
+            warnings.push(`Template "${templateId}" not found`);
+            continue;
           }
 
-          // Rate limiting - wait between sends
-          await sleep(600);
+          let emailsSentForTemplate = 0;
+          
+          // Send to each contact in this audience
+          for (const contact of contacts) {
+            try {
+              // Get user's full name for personalization
+              const username = await getUserFullName(contact.email);
+              
+              const emailResponse = await resend.emails.send({
+                from: 'Loft <noreply@loftit.ai>',
+                to: [contact.email],
+                subject: subject,
+                react: TemplateComponent({ 
+                  username,
+                  userEmail: contact.email 
+                })
+              });
 
-        } catch (error) {
-          console.error(`[Bulk Email] Exception sending ${templateId} to ${email}:`, error);
-          errors.push(`Exception sending ${templateId} to ${email}: ${(error as Error).message}`);
-          errorCount++;
+              if (emailResponse.data) {
+                emailsSentForTemplate++;
+                audienceEmailsSent++;
+                totalEmailsSent++;
+                console.log(`[Bulk Email] Sent ${templateId} to ${contact.email}`);
+              }
+
+              // Rate limiting
+              await sleep(600);
+              
+            } catch (emailError) {
+              console.error(`[Bulk Email] Failed to send ${templateId} to ${contact.email}:`, emailError);
+              warnings.push(`Failed to send to ${contact.email}`);
+            }
+          }
+
+          // Save campaign details for this template/audience combination
+          await saveCampaignDetails(templateId, audienceId, audienceName, subject, contacts.length);
+          
+          console.log(`[Bulk Email] Completed ${templateId} for audience ${audienceId}: ${emailsSentForTemplate} emails sent`);
         }
+
+        results.push({
+          audienceId,
+          audienceName,
+          contactCount: contacts.length,
+          emailsSent: audienceEmailsSent,
+          templatesProcessed: selectedTemplates.length,
+          status: audienceEmailsSent > 0 ? 'completed' : 'failed'
+        });
+
+      } catch (audienceError) {
+        console.error(`[Bulk Email] Error processing audience ${audienceId}:`, audienceError);
+        const audienceName = audienceMap.get(audienceId) || `Audience ${audienceId.substring(0, 8)}`;
+        warnings.push(`Error processing audience "${audienceName}"`);
+        results.push({
+          audienceId,
+          audienceName,
+          error: audienceError instanceof Error ? audienceError.message : 'Unknown error',
+          status: 'error'
+        });
       }
     }
 
-    console.log('[Bulk Email] Bulk send completed:', { sentCount, errorCount, errors: errors.length });
+    console.log(`[Bulk Email] Bulk email send completed. Total emails sent: ${totalEmailsSent}`);
+
+    // Create response message
+    let message = '';
+    if (totalEmailsSent > 0) {
+      message = `Successfully sent ${totalEmailsSent} emails across ${selectedAudiences.length} audiences and ${selectedTemplates.length} templates`;
+    } else {
+      message = 'No emails were sent';
+      if (warnings.length > 0) {
+        message += `. Issues: ${warnings.join(', ')}`;
+      }
+    }
 
     return NextResponse.json({
-      success: true,
-      sentCount,
-      errorCount,
-      totalContacts: contacts.length,
-      totalTemplates: templateIds.length,
-      errors: errors.slice(0, 10) // Limit errors in response
+      success: totalEmailsSent > 0,
+      totalEmailsSent,
+      results,
+      warnings,
+      message
     });
 
   } catch (error) {
-    console.error('[Bulk Email] Exception in bulk email handler:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error('[Bulk Email] Error in bulk email send:', error);
+    return NextResponse.json(
+      { error: 'Failed to send bulk emails' }, 
+      { status: 500 }
+    );
   }
 } 

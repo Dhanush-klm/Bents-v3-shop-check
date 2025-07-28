@@ -29,7 +29,7 @@ interface Audience {
 
 const EMAIL_TEMPLATES: EmailTemplate[] = [
   {
-    id: 'free-user-welcome',
+    id: 'FreeUserWelcome',
     name: 'Free User Welcome',
     subject: 'Welcome to Loft! Start saving smarter today',
     description: 'Welcome email for new free users',
@@ -37,7 +37,7 @@ const EMAIL_TEMPLATES: EmailTemplate[] = [
     component: 'FreeUserWelcome'
   },
   {
-    id: 'pro-user-welcome',
+    id: 'ProUserWelcome',
     name: 'Pro User Welcome',
     subject: 'Welcome to Loft Pro ✨ Your smarter, AI-powered way to save links',
     description: 'Welcome email for new Pro users',
@@ -45,7 +45,7 @@ const EMAIL_TEMPLATES: EmailTemplate[] = [
     component: 'ProUserWelcome'
   },
   {
-    id: 'upgrade-confirmation',
+    id: 'UpgradeConfirmation',
     name: 'Upgrade Confirmation',
     subject: 'You\'ve unlocked Loft Pro ✨ Smarter saving starts now',
     description: 'Confirmation email when upgrading to Pro',
@@ -53,7 +53,7 @@ const EMAIL_TEMPLATES: EmailTemplate[] = [
     component: 'UpgradeConfirmation'
   },
   {
-    id: 'week1-post-creation',
+    id: 'Week1PostCreation',
     name: 'Week 1 Post Creation',
     subject: 'Getting started with Loft: 3 ways to make it work for you',
     description: 'Week 1 onboarding tips',
@@ -61,7 +61,7 @@ const EMAIL_TEMPLATES: EmailTemplate[] = [
     component: 'Week1PostCreation'
   },
   {
-    id: 'week2-post-creation',
+    id: 'Week2PostCreation',
     name: 'Week 2 Post Creation',
     subject: 'Loft tip: Let AI do the heavy lifting',
     description: 'Week 2 AI features highlight',
@@ -69,7 +69,7 @@ const EMAIL_TEMPLATES: EmailTemplate[] = [
     component: 'Week2PostCreation'
   },
   {
-    id: 'week3-post-creation',
+    id: 'Week3PostCreation',
     name: 'Week 3 Post Creation',
     subject: 'From chaos to clarity: How others use Loft',
     description: 'Week 3 use cases and examples',
@@ -77,47 +77,47 @@ const EMAIL_TEMPLATES: EmailTemplate[] = [
     component: 'Week3PostCreation'
   },
   {
-    id: 'week4-post-creation',
+    id: 'Week4PostCreation',
     name: 'Week 4 Post Creation',
     subject: 'Save smarter. Search faster. Stay organized.',
-    description: 'Week 4 power features reminder',
+    description: 'Week 4 power features overview',
     category: 'Weekly Sequence',
     component: 'Week4PostCreation'
   },
   {
-    id: 'day3-trial-reminder',
+    id: 'Day3TrialReminder',
     name: 'Day 3 Trial Reminder',
     subject: 'Still haven\'t tried Loft? Let\'s get you started',
-    description: 'Trial activation reminder',
+    description: 'Day 3 trial reminder for inactive users',
     category: 'Trial Management',
     component: 'Day3TrialReminder'
   },
   {
-    id: 'day5-trial-ending',
+    id: 'Day5TrialEnding',
     name: 'Day 5 Trial Ending',
     subject: 'Your Loft Pro trial ends in 2 days',
-    description: 'Trial ending in 2 days notification',
+    description: 'Day 5 trial ending notification',
     category: 'Trial Management',
     component: 'Day5TrialEnding'
   },
   {
-    id: 'day6-trial-tomorrow',
-    name: 'Day 6 Trial Tomorrow',
+    id: 'Day6TrialEndsTomorrow',
+    name: 'Day 6 Trial Ends Tomorrow',
     subject: 'Your Loft Pro trial ends tomorrow',
-    description: 'Trial ending tomorrow notification',
+    description: 'Day 6 trial ending reminder',
     category: 'Trial Management',
     component: 'Day6TrialEndsTomorrow'
   },
   {
-    id: 'day7-trial-today',
-    name: 'Day 7 Trial Today',
+    id: 'Day7TrialEndsToday',
+    name: 'Day 7 Trial Ends Today',
     subject: 'Today\'s the last day of your Loft Pro trial',
     description: 'Final day of trial notification',
     category: 'Trial Management',
     component: 'Day7TrialEndsToday'
   },
   {
-    id: 'no-activity-reengagement',
+    id: 'NoActivityReengagement',
     name: 'No Activity Re-engagement',
     subject: 'Still here when you\'re ready',
     description: 'Re-engagement for inactive users',
@@ -125,7 +125,7 @@ const EMAIL_TEMPLATES: EmailTemplate[] = [
     component: 'NoActivityReengagement'
   },
   {
-    id: 'feedback-survey-30days',
+    id: 'FeedbackSurvey30Days',
     name: 'Feedback Survey (30 Days)',
     subject: 'Got a minute? We\'d love your thoughts',
     description: '30-day post-signup feedback survey',
@@ -133,7 +133,7 @@ const EMAIL_TEMPLATES: EmailTemplate[] = [
     component: 'FeedbackSurvey30Days'
   },
   {
-    id: 'unsubscribed-marketing',
+    id: 'UnsubscribedMarketing',
     name: 'Unsubscribed Marketing',
     subject: 'You\'ll no longer receive Loft updates — but your subscription is still active',
     description: 'Marketing unsubscribe confirmation',
@@ -141,21 +141,21 @@ const EMAIL_TEMPLATES: EmailTemplate[] = [
     component: 'UnsubscribedMarketing'
   },
   {
-    id: 'unsubscribed-all',
+    id: 'UnsubscribedAll',
     name: 'Unsubscribed All',
-    subject: 'You\'ve unsubscribed — we\'ll miss you in our inbox',
-    description: 'All emails unsubscribe confirmation',
+    subject: 'You\'ve been unsubscribed from all Loft emails',
+    description: 'Complete unsubscribe confirmation',
     category: 'Unsubscribe',
     component: 'UnsubscribedAll'
   },
   {
-    id: 'delete-account',
+    id: 'Delete',
     name: 'Delete Account',
     subject: 'Your Loft account has been deleted',
     description: 'Account deletion confirmation',
     category: 'Account Management',
     component: 'Delete'
-  }
+  },
 ];
 
 export default function EmailManagerPage() {
@@ -216,26 +216,33 @@ export default function EmailManagerPage() {
 
     setIsLoading(true);
     try {
-      // Send to each audience separately
-      for (const audienceId of selectedAudiences) {
-        const response = await fetch('/api/send-bulk-emails', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            templateIds: [selectedTemplate],
-            audienceId: audienceId,
-            subject: customSubject,
-          }),
-        });
+      const response = await fetch('/api/send-bulk-emails', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          selectedTemplates: [selectedTemplate],
+          selectedAudiences: selectedAudiences,
+          subject: customSubject,
+        }),
+      });
 
-        if (!response.ok) {
-          throw new Error(`Failed to send emails to audience ${audienceId}`);
-        }
+      if (!response.ok) {
+        throw new Error('Failed to send emails');
       }
 
-      alert('Emails sent successfully to all selected audiences!');
+      const result = await response.json();
+      
+      // Show detailed feedback
+      if (result.success) {
+        alert(`✅ Success! ${result.message}\n\nDetails:\n${result.results.map((r: any) => 
+          `• ${r.audienceName}: ${r.emailsSent || 0} emails sent to ${r.contactCount || 0} contacts`
+        ).join('\n')}`);
+      } else {
+        alert(`⚠️ ${result.message}\n\nTo fix this:\n• Add contacts to your audiences in Resend\n• Or select audiences that have contacts`);
+      }
+      
       setSelectedTemplate('');
       setCustomSubject('');
       setSelectedAudiences([]);
