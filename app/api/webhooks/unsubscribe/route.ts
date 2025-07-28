@@ -45,7 +45,7 @@ async function handlePreferenceChange(
 
   // Update Resend Audience
   const audienceId = AUDIENCE_IDS[preference];
-
+  
   if (!audienceId) {
     console.error(`[Resend] No audience ID found for preference: ${preference}`);
     return;
@@ -65,10 +65,10 @@ async function handlePreferenceChange(
     } else {
       // Re-subscribe user
       const { data, error } = await resend.contacts.create({
-        email,
-        audienceId,
+      email,
+      audienceId,
         unsubscribed: false,
-      });
+    });
       if (error) throw error;
       console.log(
         `[Resend] Added ${email} to ${preference} audience:`,
@@ -218,8 +218,8 @@ export async function POST(req: NextRequest) {
       console.log(`[Webhook] No email needs to be sent for this request.`);
     }
 
-    return NextResponse.json({
-      success: true,
+    return NextResponse.json({ 
+      success: true, 
       message: `Successfully updated preferences for ${email}`,
     });
   } catch (error) {

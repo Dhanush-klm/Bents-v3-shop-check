@@ -6,21 +6,19 @@ import {
   Section,
   Text,
   Img,
+  Link,
 } from "@react-email/components";
 import * as React from "react";
 
-interface WelcomeProps {
+interface FreeUserWelcomeProps {
   username?: string;
   userEmail?: string;
 }
 
-export default function Welcome({
+export default function FreeUserWelcome({
   username = "there",
   userEmail = "user@example.com",
-}: WelcomeProps) {
-  // Log the userEmail for debugging
-  console.log("Unsubscribe link userEmail:", userEmail);
-
+}: FreeUserWelcomeProps) {
   return (
     <Html lang="en">
       <Head>
@@ -30,7 +28,6 @@ export default function Welcome({
         <style>
           {`
             @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-            /* Fix for Outlook and other email clients */
             * {
               -ms-text-size-adjust: 100%;
               -webkit-text-size-adjust: 100%;
@@ -47,9 +44,15 @@ export default function Welcome({
               max-width: 100%;
               height: auto;
             }
-            /* Ensure emoji display properly on all devices */
             .emoji {
               font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            }
+            .upgrade-btn {
+              width: 100% !important;
+              max-width: 100% !important;
+              font-size: 15px !important;
+              padding: 14px 8px !important;
+              box-sizing: border-box !important;
             }
             @media only screen and (max-width: 600px) {
               .container {
@@ -77,11 +80,12 @@ export default function Welcome({
               .feature-item, .step-item {
                 margin-bottom: 10px !important;
               }
-              .button {
+              .upgrade-btn {
                 width: 100% !important;
-                max-width: 280px !important;
+                max-width: 100% !important;
                 text-align: center !important;
-                padding: 12px 10px !important;
+                padding: 14px 8px !important;
+                font-size: 15px !important;
               }
               .header-section {
                 padding: 16px 0 !important;
@@ -131,7 +135,6 @@ export default function Welcome({
           `}
         </style>
       </Head>
-      {/* Robust white background table wrapper */}
       <table
         width="100%"
         cellPadding="0"
@@ -168,81 +171,61 @@ export default function Welcome({
                   padding: '32px 24px 24px 24px',
                   textAlign: 'center' as const,
                 }}>
-                  <table width="100%" cellPadding="0" cellSpacing="0" style={{ borderSpacing: '0' }}>
-                    <tr>
-                      <td>
-                        {/* Logo */}
-                        <div
-                          style={{
-                            backgroundColor: '#ffffff',
-                            borderRadius: '16px',
-                            padding: '12px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            width: 'fit-content',
-                            margin: '0 auto 16px auto',
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-                          }}
-                        >
-                          <Img
-                            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/icon-NYLEum0BjNr1QNxE1HCgTvaqV84l0b.png"
-                            width="125"
-                            height="100"
-                            alt="Loft AI Logo"
-                            style={{
-                              display: 'block',
-                              maxWidth: '120px',
-                              width: '120px',
-                              height: '100px',
-                              borderRadius: '8px',
-                            }}
-                          />
-                        </div>
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: '12px',
-                            width: 'fit-content',
-                            margin: '0 auto 8px auto',
-                          }}
-                        >
-                          <Text
-                            style={{
-                              fontSize: '28px',
-                              fontWeight: '700',
-                              color: '#111827',
-                              margin: '0',
-                              lineHeight: '1.2',
-                              whiteSpace: 'nowrap',
-                            }}
-                          >
-                            Welcome to Loft
-                          </Text>
-                          <span 
-                            style={{
-                              fontSize: '28px',
-                              fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji',
-                              whiteSpace: 'nowrap',
-                              display: 'inline-block',
-                            }}
-                          >
-                            👋
-                          </span>
-                        </div>
-                        <Text style={{
-                          fontSize: '18px',
-                          color: '#6b7280',
-                          margin: '0',
-                          lineHeight: '1.4',
-                        }}>
-                          Your smarter way to save, search, and surface links
-                        </Text>
-                      </td>
-                    </tr>
-                  </table>
+                  <Img
+                    src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/icon-NYLEum0BjNr1QNxE1HCgTvaqV84l0b.png"
+                    width="100"
+                    height="80"
+                    alt="Loft AI Logo"
+                    style={{
+                      display: 'block',
+                      maxWidth: '100px',
+                      width: '100px',
+                      height: '80px',
+                      borderRadius: '8px',
+                      margin: '0 auto 16px auto',
+                    }}
+                  />
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '12px',
+                      width: 'fit-content',
+                      margin: '0 auto 8px auto',
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: '28px',
+                        fontWeight: '700',
+                        color: '#111827',
+                        margin: '0',
+                        lineHeight: '1.2',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      Welcome to Loft
+                    </Text>
+                    <span 
+                      style={{
+                        fontSize: '28px',
+                        fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji',
+                        whiteSpace: 'nowrap',
+                        display: 'inline-block',
+                      }}
+                    >
+                      👋
+                    </span>
+                  </div>
+                  <Text style={{
+                    fontSize: '18px',
+                    color: '#6b7280',
+                    margin: '0',
+                    lineHeight: '1.4',
+                  }}>
+                    Your smarter way to save links
+                  </Text>
                 </Section>
                 {/* Main Content */}
                 <Section style={{
@@ -275,8 +258,10 @@ export default function Welcome({
                             margin: '0 0 24px 0',
                             lineHeight: '1.6',
                           }}>
-                            Thanks for joining Loft — we&apos;re so excited to have you here!
+                            Thanks for joining <strong>Loft</strong> — we&apos;re so excited to have you here!
                           </Text>
+                          
+                          {/* Free Features */}
                           <Text style={{
                             fontSize: '16px',
                             fontWeight: '600',
@@ -284,41 +269,7 @@ export default function Welcome({
                             margin: '0 0 16px 0',
                             lineHeight: '1.6',
                           }}>
-                            Loft started with a simple idea:
-                          </Text>
-                          <Text style={{
-                            fontSize: '16px',
-                            color: '#374151',
-                            margin: '0 0 24px 0',
-                            lineHeight: '1.6',
-                          }}>
-                            What if all your saved links, articles, videos, tweets, posts were finally organized, searchable, and surfaced right when you needed them?
-                          </Text>
-                          <Text style={{
-                            fontSize: '16px',
-                            color: '#374151',
-                            margin: '0 0 24px 0',
-                            lineHeight: '1.6',
-                          }}>
-                            That&apos;s exactly what we&apos;ve built.
-                          </Text>
-                          <Text style={{
-                            fontSize: '16px',
-                            color: '#374151',
-                            margin: '0 0 32px 0',
-                            lineHeight: '1.6',
-                          }}>
-                            Whether it&apos;s something you want to revisit later, an idea you want to come back to, or just a moment of inspiration, Loft is your AI-enhanced link library — always a snap away.
-                          </Text>
-                          {/* How to get started section */}
-                          <Text style={{
-                            fontSize: '18px',
-                            fontWeight: '600',
-                            color: '#111827',
-                            margin: '0 0 16px 0',
-                            lineHeight: '1.4',
-                          }}>
-                            Here&apos;s how to get started:
+                            With Loft Free, you can:
                           </Text>
                           <div style={{
                             backgroundColor: '#f9fafb',
@@ -339,14 +290,14 @@ export default function Welcome({
                                   color: '#111827',
                                   margin: '0 0 4px 0',
                                 }}>
-                                  Save from anywhere
+                                  Save links from anywhere
                                 </Text>
                                 <Text style={{
                                   fontSize: '14px',
                                   color: '#6b7280',
                                   margin: '0',
                                 }}>
-                                  Use the Loft app to share links directly from your favorite apps.
+                                  Using our Loft extension or your phone's share sheet
                                 </Text>
                               </div>
                             </div>
@@ -355,7 +306,7 @@ export default function Welcome({
                               alignItems: 'flex-start',
                               marginBottom: '16px',
                             }}>
-                              <span style={{ fontSize: '20px', marginRight: '12px' }}>🧠</span>
+                              <span style={{ fontSize: '20px', marginRight: '12px' }}>📂</span>
                               <div>
                                 <Text style={{
                                   fontSize: '16px',
@@ -363,20 +314,21 @@ export default function Welcome({
                                   color: '#111827',
                                   margin: '0 0 4px 0',
                                 }}>
-                                  Let AI do the heavy lifting
+                                  Organize your content into collections
                                 </Text>
                                 <Text style={{
                                   fontSize: '14px',
                                   color: '#6b7280',
                                   margin: '0',
                                 }}>
-                                  Loft auto-categorizes and summarizes your saved content.
+                                  You create
                                 </Text>
                               </div>
                             </div>
                             <div style={{
                               display: 'flex',
                               alignItems: 'flex-start',
+                              marginBottom: '16px',
                             }}>
                               <span style={{ fontSize: '20px', marginRight: '12px' }}>✨</span>
                               <div>
@@ -386,124 +338,117 @@ export default function Welcome({
                                   color: '#111827',
                                   margin: '0 0 4px 0',
                                 }}>
-                                  Search like magic
+                                  Use smart search
                                 </Text>
                                 <Text style={{
                                   fontSize: '14px',
                                   color: '#6b7280',
                                   margin: '0',
                                 }}>
-                                  Forget scrolling endlessly. Just type what you remember — Loft will find it.
+                                  To find what you've saved
+                                </Text>
+                              </div>
+                            </div>
+                            <div style={{
+                              display: 'flex',
+                              alignItems: 'flex-start',
+                            }}>
+                              <span style={{ fontSize: '20px', marginRight: '12px' }}>🤖</span>
+                              <div>
+                                <Text style={{
+                                  fontSize: '16px',
+                                  fontWeight: '500',
+                                  color: '#111827',
+                                  margin: '0 0 4px 0',
+                                }}>
+                                  Try Ask Loft once
+                                </Text>
+                                <Text style={{
+                                  fontSize: '14px',
+                                  color: '#6b7280',
+                                  margin: '0',
+                                }}>
+                                  Our AI-powered way to summarize and resurface your content
                                 </Text>
                               </div>
                             </div>
                           </div>
-                          {/* Quick links section */}
+                          
+                          {/* Upgrade Prompt */}
                           <Text style={{
-                            fontSize: '18px',
-                            fontWeight: '600',
-                            color: '#111827',
+                            fontSize: '16px',
+                            color: '#374151',
                             margin: '0 0 16px 0',
-                            lineHeight: '1.4',
+                            lineHeight: '1.6',
                           }}>
-                            Quick links to help you dive in:
+                            Want unlimited Ask Loft sessions, AI-powered tagging, and intelligent collections curated for you?
                           </Text>
-                          <div style={{
-                            margin: '0 0 32px 0',
-                          }}>
-                            <div style={{
-                              display: 'flex',
-                              alignItems: 'flex-start',
-                              marginBottom: '12px',
-                            }}>
-                              <span style={{ fontSize: '16px', marginRight: '12px', marginTop: '2px' }}>❓</span>
-                              <Text style={{
+                          
+                          <div style={{ margin: '16px 0 32px 0', textAlign: 'center' }}>
+                            <Link
+                              className="upgrade-btn"
+                              href="loft://upgrade"
+                              style={{
+                                display: 'inline-block',
+                                backgroundColor: '#2563eb',
+                                color: '#fff',
+                                padding: '14px 28px',
+                                borderRadius: '6px',
+                                fontWeight: 600,
+                                textDecoration: 'none',
                                 fontSize: '16px',
-                                color: '#374151',
-                                margin: '0',
+                                width: '100%',
+                                maxWidth: '350px',
+                                textAlign: 'center',
+                                boxSizing: 'border-box',
+                              }}
+                            >
+                              <span style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '8px',
+                                width: '100%',
                               }}>
-                                <a href="https://www.loftit.ai/faq" style={{ color: '#2563eb', textDecoration: 'underline' }}>
-                                  FAQs – Get answers to common questions
-                                </a>
-                              </Text>
-                            </div>
-                            <div style={{
-                              display: 'flex',
-                              alignItems: 'flex-start',
-                              marginBottom: '12px',
-                            }}>
-                              <span style={{ fontSize: '16px', marginRight: '12px', marginTop: '2px' }}>⚙️</span>
-                              <Text style={{
-                                fontSize: '16px',
-                                color: '#374151',
-                                margin: '0',
-                              }}>
-                                <a href="https://www.youtube.com/shorts/IoQXaCfgXKA" style={{ color: '#2563eb', textDecoration: 'underline' }}>
-                                  How Loft works – A quick overview
-                                </a>
-                              </Text>
-                            </div>
-                            <div style={{
-                              display: 'flex',
-                              alignItems: 'flex-start',
-                            }}>
-                              <span style={{ fontSize: '16px', marginRight: '12px', marginTop: '2px' }}>⭐</span>
-                              <Text style={{
-                                fontSize: '16px',
-                                color: '#374151',
-                                margin: '0',
-                              }}>
-                                <a href="https://www.loftit.ai/ios-share-extension" style={{ color: '#2563eb', textDecoration: 'underline' }}>
-                                  How to favorite Loft in your phone&apos;s share sheet
-                                </a>
-                              </Text>
-                            </div>
+                                <span style={{ fontSize: '22px', lineHeight: 1, display: 'inline-block' }}>👉</span>
+                                <span>Upgrade to Loft Pro</span>
+                              </span>
+                            </Link>
                           </div>
+                          
                           <Text style={{
                             fontSize: '16px',
                             color: '#374151',
                             margin: '0 0 16px 0',
                             lineHeight: '1.6',
                           }}>
-                            We&apos;re just getting started and we&apos;d love to hear from you.
+                            Start by saving your first link today:{' '}
+                            <Link href="https://www.youtube.com/shorts/IoQXaCfgXKA" style={{ color: '#2563eb', textDecoration: 'underline' }}>
+                              Watch our help video
+                            </Link>
                           </Text>
-                          <Text style={{
-                            fontSize: '16px',
-                            color: '#374151',
-                            margin: '0 0 24px 0',
-                            lineHeight: '1.6',
-                          }}>
-                            Have ideas? Questions? Just email <a href="mailto:support@loftit.ai" style={{ color: '#2563eb', textDecoration: 'underline' }}>support@loftit.ai</a> or DM us on Instagram or X.
-                          </Text>
-                          <Text style={{
-                            fontSize: '16px',
-                            color: '#374151',
-                            margin: '0 0 24px 0',
-                            lineHeight: '1.6',
-                          }}>
-                            Welcome to the smarter way to save — it&apos;s all at your fingertips. <span style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji'}}>🤏</span>
-                          </Text>
+                          
                           <div
                             style={{
                               background: '#fff2',
                               borderRadius: '6px',
                               padding: '8px 16px',
                               display: 'inline-block',
-                              margin: '0 0 8px 0',
+                              margin: '24px 0 8px 0',
                               color: '#6b7280',
                               fontSize: '16px',
                               lineHeight: '1.6',
                               fontFamily: 'inherit',
                             }}
                           >
-                            Warmly,<br />
-                            <strong>The Loft Team</strong>
+                            — The Loft Team
                           </div>
                           <Text style={{
                             fontSize: '14px',
                             color: '#9ca3af',
                             margin: '16px 0 0 0',
                             textAlign: 'center' as const,
+                            fontStyle: 'italic',
                           }}>
                             Link it. Love it. Loft it.
                           </Text>
@@ -549,7 +494,7 @@ export default function Welcome({
                           <tr>
                             {[
                               {
-                                href: 'https://www.youtube.com/@justloftit', // YouTube link placeholder
+                                href: 'https://www.youtube.com/@justloftit',
                                 icon: 'https://cdn-icons-png.flaticon.com/512/1384/1384060.png',
                                 alt: 'YouTube',
                                 size: 24,
@@ -562,12 +507,12 @@ export default function Welcome({
                               },
                               {
                                 href: 'https://x.com/justloftit?s=21&t=--zBBLxgAAblM7-dOrEx8A',
-                                icon: 'https://cdn-icons-png.flaticon.com/512/5968/5968958.png', // X icon
+                                icon: 'https://cdn-icons-png.flaticon.com/512/5968/5968958.png',
                                 alt: 'Twitter',
                                 size: 20,
                               },
                               {
-                                href: 'https://loftit.ai/', // Website link
+                                href: 'https://loftit.ai/',
                                 icon: 'https://cdn-icons-png.flaticon.com/512/1006/1006771.png',
                                 alt: 'Website',
                                 size: 20,
