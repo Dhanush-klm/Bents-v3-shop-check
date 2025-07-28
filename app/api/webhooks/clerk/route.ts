@@ -81,7 +81,7 @@ export async function POST(req: NextRequest) {
       await resend.emails.send({
         from: "Loft <noreply@loftit.ai>",
         to: email,
-        subject: "Welcome to Loft!",
+        subject: "Welcome to Loft! Start saving smarter today",
         react: FreeUserWelcome({ username: firstName && lastName ? `${firstName} ${lastName}` : firstName || lastName || email, userEmail: email }),
       });
       console.log("[Resend] Welcome email sent to:", email);
