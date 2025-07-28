@@ -64,10 +64,7 @@ async function saveCampaignDetails(templateId: string, audienceId: string, audie
       .join(' ');
     
     // Direct database insertion instead of fetch
-    const result = await pool.query(
-      'INSERT INTO "campaign-details" (template_name, audience_name, subject_line, recipients_count, when_sent) VALUES ($1, $2, $3, $4, NOW())',
-      [templateName, audienceName, subject, contactCount]
-    );
+    
 
     console.log('[Bulk Email] Campaign details saved successfully');
   } catch (error) {
