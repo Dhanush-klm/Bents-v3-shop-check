@@ -210,8 +210,11 @@ export async function POST(req: NextRequest) {
           // Send to each contact in this audience
           for (const contact of contacts) {
             try {
+              console.log(`[Bulk Email] Attempting to send ${templateId} to ${contact.email}`);
+              
               // Get user's full name for personalization
               const username = await getUserFullName(contact.email);
+              console.log(`[Bulk Email] Got username for ${contact.email}: ${username}`);
               
               const emailResponse = await resend.emails.send({
                 from: 'Loft <noreply@loftit.ai>',
@@ -223,19 +226,24 @@ export async function POST(req: NextRequest) {
                 })
               });
 
-              if (emailResponse.data) {
+              console.log(`[Bulk Email] Email response for ${contact.email}:`, emailResponse);
+
+              // Check if email was sent successfully
+              if (emailResponse.data || (emailResponse as any).id) {
                 emailsSentForTemplate++;
                 audienceEmailsSent++;
                 totalEmailsSent++;
-                console.log(`[Bulk Email] Sent ${templateId} to ${contact.email}`);
+                console.log(`[Bulk Email] ✅ Successfully sent ${templateId} to ${contact.email}`);
+              } else {
+                console.warn(`[Bulk Email] ⚠️ No success indicator in email response for ${contact.email}:`, emailResponse);
               }
 
               // Rate limiting
               await sleep(600);
               
             } catch (emailError) {
-              console.error(`[Bulk Email] Failed to send ${templateId} to ${contact.email}:`, emailError);
-              warnings.push(`Failed to send to ${contact.email}`);
+              console.error(`[Bulk Email] ❌ Failed to send ${templateId} to ${contact.email}:`, emailError);
+              warnings.push(`Failed to send to ${contact.email}: ${emailError instanceof Error ? emailError.message : 'Unknown error'}`);
             }
           }
 
