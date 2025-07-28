@@ -63,24 +63,13 @@ async function saveCampaignDetails(templateId: string, audienceId: string, audie
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
     
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/campaign/save`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        templateName,
-        audienceName,
-        subjectLine: subject,
-        recipientsCount: contactCount
-      }),
-    });
+    // Direct database insertion instead of fetch
+    const result = await pool.query(
+      'INSERT INTO "campaign-details" (template_name, audience_name, subject_line, recipients_count, when_sent) VALUES ($1, $2, $3, $4, NOW())',
+      [templateName, audienceName, subject, contactCount]
+    );
 
-    if (response.ok) {
-      console.log('[Bulk Email] Campaign details saved successfully');
-    } else {
-      console.warn('[Bulk Email] Failed to save campaign details');
-    }
+    console.log('[Bulk Email] Campaign details saved successfully');
   } catch (error) {
     console.error('[Bulk Email] Error saving campaign details:', error);
   }
