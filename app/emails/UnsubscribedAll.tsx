@@ -18,7 +18,7 @@ interface UnsubscribedAllProps {
 export default function UnsubscribedAll({
   username = "there",
   userEmail = "user@example.com",
-  resubscribeUrl = "https://loft-ai-002-unsubscribe.vercel.app/unsubscribe?email=" + userEmail,
+  resubscribeUrl = "https://loft-ai-002-subscribe.vercel.app/unsubscribe?email=" + userEmail,
 }: UnsubscribedAllProps) {
   return (
     <Html lang="en">
@@ -308,7 +308,7 @@ export default function UnsubscribedAll({
                         }}>
                           Want to stop getting emails from Loft?{' '}
                           <a
-                            href={`https://loft-ai-002-unsubscribe.vercel.app/unsubscribe?email=${userEmail}`}
+                            href={`https://loft-ai-002-subscribe.vercel.app/unsubscribe?email=${userEmail}`}
                             style={{
                               color: '#ffffff',
                               textDecoration: 'underline',

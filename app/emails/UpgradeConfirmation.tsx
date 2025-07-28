@@ -445,7 +445,7 @@ export default function UpgradeConfirmation({
                         }}>
                           Want to stop getting emails from Loft?{' '}
                           <a
-                            href={`https://loft-ai-002-unsubscribe.vercel.app/unsubscribe?email=${userEmail}`}
+                            href={`https://loft-ai-002-subscribe.vercel.app/unsubscribe?email=${userEmail}`}
                             style={{
                               color: '#ffffff',
                               textDecoration: 'underline',

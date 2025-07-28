@@ -108,7 +108,7 @@ async function getUserFullName(email: string): Promise<string> {
 async function sendUnsubscribedMarketingEmail(email: string) {
   try {
     const username = await getUserFullName(email);
-    const resubscribeUrl = `https://loft-ai-002-unsubscribe.vercel.app/unsubscribe?email=${encodeURIComponent(email)}`;
+    const resubscribeUrl = `https://loft-ai-002-subscribe.vercel.app/unsubscribe?email=${encodeURIComponent(email)}`;
     console.log(`[Email] Attempting to send UnsubscribedMarketing email to:`, email, `with username:`, username);
     const { data, error } = await resend.emails.send({
       from: "Loft <noreply@loftit.ai>",
@@ -134,7 +134,7 @@ async function sendUnsubscribedMarketingEmail(email: string) {
 async function sendUnsubscribedAllEmail(email: string) {
   try {
     const username = await getUserFullName(email);
-    const resubscribeUrl = `https://loft-ai-002-unsubscribe.vercel.app/unsubscribe?email=${encodeURIComponent(email)}`;
+    const resubscribeUrl = `https://loft-ai-002-subscribe.vercel.app/unsubscribe?email=${encodeURIComponent(email)}`;
     console.log(`[Email] Attempting to send UnsubscribedAll email to:`, email, `with username:`, username);
     const { data, error } = await resend.emails.send({
       from: "Loft <noreply@loftit.ai>",
