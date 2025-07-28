@@ -42,13 +42,7 @@ async function setUserOutFromUpdate(clerkUserId: string) {
   );
 }
 
-async function getEmailByClerkUserId(clerkUserId: string): Promise<string | null> {
-  const result = await pool.query(
-    "SELECT email FROM users WHERE clerk_user_id = $1 LIMIT 1",
-    [clerkUserId]
-  );
-  return result.rows[0]?.email || null;
-}
+
 
 async function getUserByClerkUserId(clerkUserId: string): Promise<{ email: string, first_name: string, last_name: string } | null> {
   const result = await pool.query(

@@ -297,7 +297,7 @@ export default function FreeUserWelcome({
                                   color: '#6b7280',
                                   margin: '0',
                                 }}>
-                                  Using our Loft extension or your phone's share sheet
+                                  Using our Loft extension or your phone&apos;s share sheet
                                 </Text>
                               </div>
                             </div>
@@ -345,7 +345,7 @@ export default function FreeUserWelcome({
                                   color: '#6b7280',
                                   margin: '0',
                                 }}>
-                                  To find what you've saved
+                                  To find what you&apos;ve saved
                                 </Text>
                               </div>
                             </div>
