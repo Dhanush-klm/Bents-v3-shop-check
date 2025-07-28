@@ -54,7 +54,7 @@ interface Audience {
   [key: string]: unknown;
 }
 
-// Function to save campaign details
+// Function to save campaign details directly to database
 async function saveCampaignDetails(templateId: string, audienceId: string, audienceName: string, subject: string, contactCount: number) {
   try {
     // Get human-readable template name
@@ -63,21 +63,18 @@ async function saveCampaignDetails(templateId: string, audienceId: string, audie
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
     
-      
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/campaign/save`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        templateName,
-        audienceName,
-        subjectLine: subject,
-        recipientsCount: contactCount
-      }),
-    });
+    // Direct database insertion - much more efficient!
+    const result = await pool.query(`
+      INSERT INTO "campaign-details" (
+        template_name,
+        audience_name,
+        subject_line,
+        recipients_count
+      ) VALUES ($1, $2, $3, $4)
+      RETURNING id, when_sent
+    `, [templateName, audienceName, subject, contactCount]);
 
-    if (response.ok) {
+    if (result.rows.length > 0) {
       console.log('[Bulk Email] Campaign details saved successfully');
     } else {
       console.warn('[Bulk Email] Failed to save campaign details');
