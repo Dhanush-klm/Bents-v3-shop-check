@@ -63,6 +63,7 @@ async function saveCampaignDetails(templateId: string, audienceId: string, audie
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
     
+      
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/campaign/save`, {
       method: 'POST',
       headers: {
