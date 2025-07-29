@@ -162,7 +162,7 @@ export default function Delete({
                   <Text style={{ fontSize: '16px', color: '#fbbf24', margin: '0 0 16px 0' }}>
                     👉 Prefer not to receive updates? No problem, you can{' '}
                     <a
-                      href={`https://loft-ai-002-subscribe.vercel.app/unsubscribe?email=${userEmail}`}
+                      href={`https://loft-ai-002.vercel.app/unsubscribe?email=${userEmail}`}
                       style={{ color: '#2563eb', textDecoration: 'underline' }}
                     >
                       unsubscribe here
@@ -288,7 +288,7 @@ export default function Delete({
                         }}>
                           Want to stop getting emails from Loft?{' '}
                           <a
-                            href={`https://loft-ai-002-subscribe.vercel.app/unsubscribe?email=${userEmail}`}
+                            href={`https://loft-ai-002.vercel.app/unsubscribe?email=${userEmail}`}
                             style={{
                               color: '#ffffff',
                               textDecoration: 'underline',
