@@ -156,6 +156,70 @@ const EMAIL_TEMPLATES: EmailTemplate[] = [
     category: 'Account Management',
     component: 'Delete'
   },
+  {
+    id: 'PaymentError',
+    name: 'Payment Error',
+    subject: 'Trouble processing your Loft subscription',
+    description: 'Payment processing error notification',
+    category: 'Billing',
+    component: 'PaymentError'
+  },
+  {
+    id: 'SubscriptionRenewal',
+    name: 'Subscription Renewal',
+    subject: 'Your Loft subscription renews in 30 days',
+    description: 'Monthly subscription renewal reminder',
+    category: 'Billing',
+    component: 'SubscriptionRenewal'
+  },
+  {
+    id: 'SubscriptionRenewalWeek',
+    name: 'Subscription Renewal (1 Week)',
+    subject: 'Your Loft subscription renews next week',
+    description: 'Weekly subscription renewal reminder',
+    category: 'Billing',
+    component: 'SubscriptionRenewalWeek'
+  },
+  {
+    id: 'SubscriptionRenewalDay',
+    name: 'Subscription Renewal (1 Day)',
+    subject: 'Your Loft subscription renews tomorrow',
+    description: 'Daily subscription renewal reminder',
+    category: 'Billing',
+    component: 'SubscriptionRenewalDay'
+  },
+  {
+    id: 'SubscriptionRenewed',
+    name: 'Subscription Renewed',
+    subject: 'Your Loft subscription has been renewed',
+    description: 'Subscription renewal confirmation',
+    category: 'Billing',
+    component: 'SubscriptionRenewed'
+  },
+  {
+    id: 'SubscriptionCancelled',
+    name: 'Subscription Cancelled',
+    subject: 'Your Loft Pro subscription has been canceled',
+    description: 'Subscription cancellation confirmation',
+    category: 'Billing',
+    component: 'SubscriptionCancelled'
+  },
+  {
+    id: 'Reactivation',
+    name: 'Reactivation',
+    subject: 'Still thinking about Loft? We haven\'t forgotten you',
+    description: 'Re-engagement email for inactive users',
+    category: 'Re-engagement',
+    component: 'Reactivation'
+  },
+  {
+    id: 'Month1PaidUser',
+    name: 'Month 1 Paid User',
+    subject: 'A month with Loft — here\'s what\'s next',
+    description: '1 month milestone for paid users',
+    category: 'Milestone',
+    component: 'Month1PaidUser'
+  },
 ];
 
 export default function EmailManagerPage() {

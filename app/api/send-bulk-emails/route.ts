@@ -19,6 +19,14 @@ import FeedbackSurvey30Days from "@/app/emails/FeedbackSurvey30Days";
 import UnsubscribedMarketing from "@/app/emails/UnsubscribedMarketing";
 import UnsubscribedAll from "@/app/emails/UnsubscribedAll";
 import Delete from "@/app/emails/Delete";
+import PaymentError from "@/app/emails/PaymentError";
+import SubscriptionRenewal from "@/app/emails/SubscriptionRenewal";
+import SubscriptionRenewalWeek from "@/app/emails/SubscriptionRenewalWeek";
+import SubscriptionRenewalDay from "@/app/emails/SubscriptionRenewalDay";
+import SubscriptionRenewed from "@/app/emails/SubscriptionRenewed";
+import SubscriptionCancelled from "@/app/emails/SubscriptionCancelled";
+import Reactivation from "@/app/emails/Reactivation";
+import Month1PaidUser from "@/app/emails/Month1PaidUser";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
@@ -41,6 +49,14 @@ const TEMPLATE_COMPONENTS = {
   'UnsubscribedMarketing': UnsubscribedMarketing,
   'UnsubscribedAll': UnsubscribedAll,
   'Delete': Delete,
+  'PaymentError': PaymentError,
+  'SubscriptionRenewal': SubscriptionRenewal,
+  'SubscriptionRenewalWeek': SubscriptionRenewalWeek,
+  'SubscriptionRenewalDay': SubscriptionRenewalDay,
+  'SubscriptionRenewed': SubscriptionRenewed,
+  'SubscriptionCancelled': SubscriptionCancelled,
+  'Reactivation': Reactivation,
+  'Month1PaidUser': Month1PaidUser,
 };
 
 interface Contact {
