@@ -9,7 +9,12 @@ const AUDIENCE_IDS = {
   marketing: process.env.RESEND_AUDIENCE_MARKETING!,
   update: process.env.RESEND_AUDIENCE_UPDATES!,
 };
-const pool = new Pool({ connectionString: process.env.SUPABASE_URL });
+const pool = new Pool({ 
+  connectionString: process.env.SUPABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
 
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));

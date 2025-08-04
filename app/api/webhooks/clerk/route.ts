@@ -10,7 +10,12 @@ const AUDIENCE_IDS = [
   process.env.RESEND_AUDIENCE_MARKETING!,
   process.env.RESEND_AUDIENCE_UPDATES!,
 ].filter(Boolean);
-const pool = new Pool({ connectionString: process.env.SUPABASE_URL });
+const pool = new Pool({ 
+  connectionString: process.env.SUPABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
 
 async function logUserCreated(clerkUserId: string, email: string, fullName: string) {
   await pool.query(

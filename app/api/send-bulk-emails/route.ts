@@ -29,7 +29,12 @@ import Reactivation from "@/app/emails/Reactivation";
 import Month1PaidUser from "@/app/emails/Month1PaidUser";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
-const pool = new Pool({ connectionString: process.env.SUPABASE_URL });
+const pool = new Pool({ 
+  connectionString: process.env.SUPABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
 
 // Template mapping - using actual file names
 const TEMPLATE_COMPONENTS = {
