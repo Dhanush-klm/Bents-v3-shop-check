@@ -29,7 +29,7 @@ import Reactivation from "@/app/emails/Reactivation";
 import Month1PaidUser from "@/app/emails/Month1PaidUser";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const pool = new Pool({ connectionString: process.env.SUPABASE_URL });
 
 // Template mapping - using actual file names
 const TEMPLATE_COMPONENTS = {
@@ -103,17 +103,13 @@ async function saveCampaignDetails(templateId: string, audienceId: string, audie
 async function getUserFullName(email: string): Promise<string> {
   try {
     const result = await pool.query(
-      'SELECT first_name, last_name FROM users WHERE email = $1',
+      'SELECT full_name FROM users WHERE email = $1',
       [email]
     );
     if (result.rows.length > 0) {
-      const { first_name, last_name } = result.rows[0];
-      if (first_name && last_name) {
-        return `${first_name} ${last_name}`;
-      } else if (first_name) {
-        return first_name;
-      } else if (last_name) {
-        return last_name;
+      const { full_name } = result.rows[0];
+      if (full_name) {
+        return full_name;
       }
     }
     return "there";

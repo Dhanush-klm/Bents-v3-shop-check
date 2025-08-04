@@ -10,43 +10,43 @@ const AUDIENCE_IDS = [
   process.env.RESEND_AUDIENCE_MARKETING!,
   process.env.RESEND_AUDIENCE_UPDATES!,
 ].filter(Boolean);
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const pool = new Pool({ connectionString: process.env.SUPABASE_URL });
 
-async function logUserCreated(clerkUserId: string, email: string, firstName: string, lastName: string) {
+async function logUserCreated(clerkUserId: string, email: string, fullName: string) {
   await pool.query(
-    `INSERT INTO users (clerk_user_id, email, first_name, last_name, account_created, out_from_marketing, out_from_update, account_deleted)
-     VALUES ($1, $2, $3, $4, NOW(), NULL, NULL, NULL)
-     ON CONFLICT (clerk_user_id) DO UPDATE SET email = EXCLUDED.email, first_name = EXCLUDED.first_name, last_name = EXCLUDED.last_name`,
-    [clerkUserId, email, firstName, lastName]
+    `INSERT INTO users (id, email, full_name, created_at, out_from_marketing, out_from_update, account_deleted)
+     VALUES ($1, $2, $3, NOW(), NULL, NULL, NULL)
+     ON CONFLICT (id) DO UPDATE SET email = EXCLUDED.email, full_name = EXCLUDED.full_name`,
+    [clerkUserId, email, fullName]
   );
 }
 
 async function setUserDeleted(clerkUserId: string) {
   await pool.query(
-    "UPDATE users SET account_deleted = NOW() WHERE clerk_user_id = $1",
+    "UPDATE users SET account_deleted = NOW() WHERE id = $1",
     [clerkUserId]
   );
 }
 
 async function setUserOutFromMarketing(clerkUserId: string) {
   await pool.query(
-    "UPDATE users SET out_from_marketing = NOW() WHERE clerk_user_id = $1",
+    "UPDATE users SET out_from_marketing = NOW() WHERE id = $1",
     [clerkUserId]
   );
 }
 
 async function setUserOutFromUpdate(clerkUserId: string) {
   await pool.query(
-    "UPDATE users SET out_from_update = NOW() WHERE clerk_user_id = $1",
+    "UPDATE users SET out_from_update = NOW() WHERE id = $1",
     [clerkUserId]
   );
 }
 
 
 
-async function getUserByClerkUserId(clerkUserId: string): Promise<{ email: string, first_name: string, last_name: string } | null> {
+async function getUserByClerkUserId(clerkUserId: string): Promise<{ email: string, full_name: string } | null> {
   const result = await pool.query(
-    "SELECT email, first_name, last_name FROM users WHERE clerk_user_id = $1 LIMIT 1",
+    "SELECT email, full_name FROM users WHERE id = $1 LIMIT 1",
     [clerkUserId]
   );
   return result.rows[0] || null;
@@ -85,7 +85,8 @@ export async function POST(req: NextRequest) {
         react: FreeUserWelcome({ username: firstName && lastName ? `${firstName} ${lastName}` : firstName || lastName || email, userEmail: email }),
       });
       console.log("[Resend] Welcome email sent to:", email);
-      await logUserCreated(clerkUserId, email, firstName, lastName);
+      const fullName = firstName && lastName ? `${firstName} ${lastName}` : firstName || lastName || "";
+      await logUserCreated(clerkUserId, email, fullName);
     } else {
       console.error("[Webhook] No email found in user.created event");
     }
@@ -96,8 +97,8 @@ export async function POST(req: NextRequest) {
     const clerkUserId = data.id;
     const user = await getUserByClerkUserId(clerkUserId);
     if (user) {
-      const { email, first_name, last_name } = user;
-      const username = first_name ? (last_name ? `${first_name} ${last_name}` : first_name) : email;
+      const { email, full_name } = user;
+      const username = full_name || email;
       for (const audienceId of AUDIENCE_IDS) {
         const removeResult = await resend.contacts.remove({
           email,

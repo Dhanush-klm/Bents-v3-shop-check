@@ -9,7 +9,7 @@ const AUDIENCE_IDS = {
   marketing: process.env.RESEND_AUDIENCE_MARKETING!,
   update: process.env.RESEND_AUDIENCE_UPDATES!,
 };
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const pool = new Pool({ connectionString: process.env.SUPABASE_URL });
 
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -88,18 +88,14 @@ async function handlePreferenceChange(
 
 async function getUserFullName(email: string): Promise<string> {
   const result = await pool.query(
-    'SELECT first_name, last_name FROM users WHERE email = $1',
+    'SELECT full_name FROM users WHERE email = $1',
     [email]
   );
   
   if (result.rows.length > 0) {
-    const { first_name, last_name } = result.rows[0];
-    if (first_name && last_name) {
-      return `${first_name} ${last_name}`;
-    } else if (first_name) {
-      return first_name;
-    } else if (last_name) {
-      return last_name;
+    const { full_name } = result.rows[0];
+    if (full_name) {
+      return full_name;
     }
   }
   return "there";
