@@ -15,13 +15,20 @@ const pool = new Pool({
     rejectUnauthorized: false
   }
 });
+const dataPool = new Pool({
+  connectionString: process.env.SUPABASE_URL_DATA,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
 
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function handlePreferenceChange(
+async function handlePreferenceChangeById(
   email: string,
+  userId: string,
   preference: "marketing" | "update",
   unsubscribe: boolean
 ) {
@@ -39,11 +46,11 @@ async function handlePreferenceChange(
   await pool.query(
     `UPDATE users SET ${columnName} = ${
       unsubscribe ? "NOW()" : "NULL"
-    } WHERE email = $1`,
-    [email]
+    } WHERE id = $1`,
+    [userId]
   );
   console.log(
-    `[Database] For ${email}, set ${columnName} to ${
+    `[Database] For ${email} (id: ${userId}), set ${columnName} to ${
       unsubscribe ? "a timestamp" : "NULL"
     }`
   );
@@ -91,19 +98,39 @@ async function handlePreferenceChange(
   }
 }
 
-async function getUserFullName(email: string): Promise<string> {
-  const result = await pool.query(
-    'SELECT full_name FROM users WHERE email = $1',
+async function resolveUserIdByEmail(email: string): Promise<string | null> {
+  if (!process.env.SUPABASE_URL_DATA) {
+    console.error("[Database] SUPABASE_URL_DATA is not configured");
+    return null;
+  }
+  const result = await dataPool.query(
+    'SELECT id FROM users WHERE email = $1 LIMIT 1',
     [email]
   );
-  
-  if (result.rows.length > 0) {
-    const { full_name } = result.rows[0];
-    if (full_name) {
-      return full_name;
+  return result.rows?.[0]?.id || null;
+}
+
+async function getUserFullName(email: string): Promise<string> {
+  try {
+    const userId = await resolveUserIdByEmail(email);
+    if (!userId) {
+      return "there";
     }
+    const result = await pool.query(
+      'SELECT full_name FROM users WHERE id = $1',
+      [userId]
+    );
+    if (result.rows.length > 0) {
+      const { full_name } = result.rows[0];
+      if (full_name) {
+        return full_name;
+      }
+    }
+    return "there";
+  } catch (error) {
+    console.error('[Database] Error fetching user name by id:', error);
+    return "there";
   }
-  return "there";
 }
 
 async function sendUnsubscribedMarketingEmail(email: string) {
@@ -173,22 +200,29 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const userId = await resolveUserIdByEmail(email);
+    if (!userId) {
+      console.log(`[Webhook] Email not found in data DB:`, email);
+      return NextResponse.json(
+        { error: "User not found" },
+        { status: 404 }
+      );
+    }
+
     const tasks = [];
     let shouldSendMarketingEmail = false;
     let shouldSendAllEmail = false;
 
     if (typeof out_from_marketing === "boolean") {
       console.log(`[Webhook] Processing out_from_marketing:`, out_from_marketing);
-      tasks.push(
-        handlePreferenceChange(email, "marketing", out_from_marketing)
-      );
+      tasks.push(handlePreferenceChangeById(email, userId, "marketing", out_from_marketing));
       if (out_from_marketing === true) {
         shouldSendMarketingEmail = true;
       }
     }
     if (typeof out_from_updates === "boolean") {
       console.log(`[Webhook] Processing out_from_updates:`, out_from_updates);
-      tasks.push(handlePreferenceChange(email, "update", out_from_updates));
+      tasks.push(handlePreferenceChangeById(email, userId, "update", out_from_updates));
       if (out_from_updates === true) {
         shouldSendAllEmail = true;
       }
@@ -247,10 +281,15 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid email format' }, { status: 400 });
     }
 
-    // Query your users table for current unsubscribe status
+    const userId = await resolveUserIdByEmail(email);
+    if (!userId) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    // Query your users table for current unsubscribe status by id
     const result = await pool.query(
-      'SELECT out_from_update, out_from_marketing FROM users WHERE email = $1',
-      [email]
+      'SELECT out_from_update, out_from_marketing FROM users WHERE id = $1',
+      [userId]
     );
 
     if (result.rows.length === 0) {
