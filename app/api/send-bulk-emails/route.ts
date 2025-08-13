@@ -35,6 +35,12 @@ const pool = new Pool({
     rejectUnauthorized: false
   }
 });
+const dataPool = new Pool({
+  connectionString: process.env.SUPABASE_URL_DATA,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
 
 // Template mapping - using actual file names
 const TEMPLATE_COMPONENTS = {
@@ -105,22 +111,37 @@ async function saveCampaignDetails(templateId: string, audienceId: string, audie
   }
 }
 
+async function resolveUserIdByEmail(email: string): Promise<string | null> {
+  try {
+    if (!process.env.SUPABASE_URL_DATA) {
+      console.error('[Bulk Email] SUPABASE_URL_DATA is not configured');
+      return null;
+    }
+    const result = await dataPool.query('SELECT id FROM users WHERE email = $1 LIMIT 1', [email]);
+    return result.rows?.[0]?.id || null;
+  } catch (error) {
+    console.error('[Bulk Email] Error resolving user id by email:', error);
+    return null;
+  }
+}
+
 async function getUserFullName(email: string): Promise<string> {
   try {
-    const result = await pool.query(
-      'SELECT full_name FROM users WHERE email = $1',
-      [email]
-    );
+    const userId = await resolveUserIdByEmail(email);
+    if (!userId) {
+      return 'there';
+    }
+    const result = await pool.query('SELECT full_name FROM users WHERE id = $1', [userId]);
     if (result.rows.length > 0) {
       const { full_name } = result.rows[0];
       if (full_name) {
         return full_name;
       }
     }
-    return "there";
+    return 'there';
   } catch (error) {
-    console.error('[Bulk Email] Error fetching user name:', error);
-    return "there";
+    console.error('[Bulk Email] Error fetching user name by id:', error);
+    return 'there';
   }
 }
 

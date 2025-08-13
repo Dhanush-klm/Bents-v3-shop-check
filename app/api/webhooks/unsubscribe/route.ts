@@ -188,7 +188,13 @@ async function sendUnsubscribedAllEmail(email: string) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { email, out_from_marketing, out_from_updates } = body;
+    const { email, out_from_marketing } = body;
+    const out_from_updates =
+      typeof body.out_from_updates === "boolean"
+        ? body.out_from_updates
+        : typeof body.out_from_update === "boolean"
+          ? body.out_from_update
+          : undefined;
 
     console.log(`[Webhook] Received POST /unsubscribe with body:`, body);
 
