@@ -49,17 +49,20 @@ function getResend(): Resend {
 
 async function sendWelcomeEmail(toEmail: string, username: string | null) {
   const resend = getResend();
-  const from = getEnv("RESEND_FROM_EMAIL") || getEnv("RESEND_FROM") || "Loft <no-reply@loftit.ai>";
-  const subject = "Welcome to Loft";
+  const from = getEnv("RESEND_FROM_EMAIL") || getEnv("RESEND_FROM") || "Acme <onboarding@resend.dev>";
+  const subject = getEnv("RESEND_WELCOME_SUBJECT") || "Welcome to Loft";
   try {
-    await resend.emails.send({
+    const result = await resend.emails.send({
       from,
       to: [toEmail],
       subject,
       react: FreeUserWelcome({ username: username || undefined, userEmail: toEmail }),
     });
+    // Best-effort logging to aid debugging in development
+    try { console.log("Resend email sent", { toEmail, from, subject, result }); } catch {}
     return { ok: true };
   } catch (error) {
+    try { console.error("Resend email failed", { toEmail, error }); } catch {}
     return { ok: false, error };
   }
 }
