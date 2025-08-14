@@ -1,6 +1,7 @@
 import { Pool } from "pg";
 import { Resend } from "resend";
 import FreeUserWelcome from "@/app/emails/FreeUserWelcome";
+import DeleteEmail from "@/app/emails/Delete";
 
 type ClerkEmailAddress = {
   id: string;
@@ -176,10 +177,11 @@ export async function POST(request: Request) {
         `update public.users
          set account_deleted = now()
          where id = $1
-         returning email`,
+         returning email, full_name`,
         [clerkId]
       );
       const email: string | undefined = result.rows?.[0]?.email;
+      const fullName: string | undefined = result.rows?.[0]?.full_name || undefined;
 
       const resendApiKey = getEnv("RESEND_API_KEY");
       if (resendApiKey && email) {
@@ -199,6 +201,24 @@ export async function POST(request: Request) {
           if (delayMs > 0) {
             await sleep(delayMs);
           }
+        }
+
+        // Send account deletion email (ignore failures)
+        try {
+          if (delayMs > 0) {
+            await sleep(delayMs);
+          }
+          const sendResult = await resend.emails.send({
+            from: getResendFrom(),
+            to: email,
+            subject: "Your Loft account has been deleted",
+            react: DeleteEmail({ username: fullName || "there", userEmail: email }),
+          });
+          if (!sendResult?.data?.id) {
+            console.error("[Resend] delete email send returned no id", sendResult);
+          }
+        } catch (sendErr) {
+          console.error("[Resend] delete email send failed", sendErr);
         }
       } else if (!resendApiKey) {
         console.warn("[Resend] RESEND_API_KEY not set. Skipping audience removals");
