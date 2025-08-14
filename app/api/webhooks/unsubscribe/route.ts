@@ -41,10 +41,20 @@ function parseBooleanInput(value: unknown): boolean | undefined {
   if (value === false) return false;
   if (typeof value === "string") {
     const v = value.trim().toLowerCase();
-    if (v === "true" || v === "1" || v === "yes") return true;
-    if (v === "false" || v === "0" || v === "no") return false;
+    if (v === "true" || v === "1" || v === "yes" || v === "on" || v === "checked") return true;
+    if (v === "false" || v === "0" || v === "no" || v === "off" || v === "unchecked") return false;
   }
   return undefined;
+}
+
+function getDelayMs(): number {
+  const raw = getEnv("RESEND_RATE_DELAY_MS");
+  const parsed = raw ? Number(raw) : Number.NaN;
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : 600;
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 async function findUserIdByEmail(email: string): Promise<string | undefined> {
@@ -165,6 +175,8 @@ export async function POST(request: Request) {
         } catch (err) {
           console.error("[Resend] updates audience sync failed", err);
         }
+        const delayMs = getDelayMs();
+        if (delayMs > 0) await sleep(delayMs);
       }
 
       // Marketing audience sync
@@ -185,6 +197,8 @@ export async function POST(request: Request) {
         } catch (err) {
           console.error("[Resend] marketing audience sync failed", err);
         }
+        const delayMs = getDelayMs();
+        if (delayMs > 0) await sleep(delayMs);
       }
     } else {
       console.warn("[Resend] RESEND_API_KEY not set. Skipping audience sync");
@@ -196,12 +210,17 @@ export async function POST(request: Request) {
       if (resendApiKey) {
         const resend = new Resend(resendApiKey);
         try {
-          await resend.emails.send({
+          const delayMs = getDelayMs();
+          if (delayMs > 0) await sleep(delayMs);
+          const sendResult = await resend.emails.send({
             from: getResendFrom(),
             to: email,
             subject: "You've been unsubscribed from all Loft emails",
             react: UnsubscribedAll({ username: (row.full_name as string | undefined) || "there", userEmail: email }),
           });
+          if (!sendResult?.data?.id) {
+            console.error("[Resend] UnsubscribedAll email send returned no id", sendResult);
+          }
         } catch (err) {
           console.error("[Resend] UnsubscribedAll email send failed", err);
         }
