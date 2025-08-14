@@ -30,6 +30,16 @@ function getResendFrom(): string {
   return "Loft <noreply@loftit.ai>";
 }
 
+function getDelayMs(): number {
+  const raw = getEnv("RESEND_RATE_DELAY_MS");
+  const parsed = raw ? Number(raw) : Number.NaN;
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : 600;
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 let pool: Pool | undefined;
 function getPostgresPool(): Pool {
   if (pool) return pool;
@@ -102,25 +112,29 @@ export async function POST(request: Request) {
       }
 
       // Add contact to each audience (ignore failures)
-      const audienceResults = await Promise.allSettled(
-        audienceIds.map((audienceId) =>
-          resend.contacts.create({
+      const delayMs = getDelayMs();
+      for (const audienceId of audienceIds) {
+        try {
+          await resend.contacts.create({
             email,
             firstName,
             lastName,
             unsubscribed: false,
             audienceId,
-          })
-        )
-      );
-      audienceResults.forEach((result) => {
-        if (result.status === "rejected") {
-          console.error("[Resend] add to audience failed", result.reason);
+          });
+        } catch (err) {
+          console.error("[Resend] add to audience failed", err);
         }
-      });
+        if (delayMs > 0) {
+          await sleep(delayMs);
+        }
+      }
 
       // Send welcome email (ignore failures)
       try {
+        if (delayMs > 0) {
+          await sleep(delayMs);
+        }
         const sendResult = await resend.emails.send({
           from: getResendFrom(),
           to: email,
