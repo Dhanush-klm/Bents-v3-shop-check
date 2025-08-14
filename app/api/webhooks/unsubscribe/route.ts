@@ -1,6 +1,7 @@
 import { Pool } from "pg";
 import { Resend } from "resend";
 import UnsubscribedAll from "@/app/emails/UnsubscribedAll";
+import UnsubscribeActivePaid from "@/app/emails/UnsubscribeActivePaid";
 
 function getEnv(name: string): string | undefined {
   const value = process.env[name];
@@ -212,12 +213,37 @@ export async function POST(request: Request) {
         try {
           const delayMs = getDelayMs();
           if (delayMs > 0) await sleep(delayMs);
-          const sendResult = await resend.emails.send({
-            from: getResendFrom(),
-            to: email,
-            subject: "You've been unsubscribed from all Loft emails",
-            react: UnsubscribedAll({ username: (row.full_name as string | undefined) || "there", userEmail: email }),
-          });
+          // Check subscription status from DATA project
+          let subscriptionStatus: string | undefined;
+          try {
+            const dataDb = getDataDb();
+            const subRes = await dataDb.query(
+              `select subscription_status from public.users where id = $1 limit 1`,
+              [userId]
+            );
+            subscriptionStatus = subRes.rows?.[0]?.subscription_status as string | undefined;
+          } catch (subErr) {
+            console.error("[DB] Failed to fetch subscription_status from DATA project", subErr);
+          }
+
+          const isActivePaid = (subscriptionStatus || "").toLowerCase() === "active";
+          const username = (row.full_name as string | undefined) || "there";
+
+          const sendResult = await resend.emails.send(
+            isActivePaid
+              ? {
+                  from: getResendFrom(),
+                  to: email,
+                  subject: "You’ll no longer receive Loft updates — but your subscription is still active",
+                  react: UnsubscribeActivePaid({ username, userEmail: email }),
+                }
+              : {
+                  from: getResendFrom(),
+                  to: email,
+                  subject: "You've been unsubscribed from all Loft emails",
+                  react: UnsubscribedAll({ username, userEmail: email }),
+                }
+          );
           if (!sendResult?.data?.id) {
             console.error("[Resend] UnsubscribedAll email send returned no id", sendResult);
           }
