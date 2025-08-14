@@ -24,6 +24,12 @@ function getEnv(name: string): string | undefined {
   return value && value.length > 0 ? value : undefined;
 }
 
+function getResendFrom(): string {
+  const from = getEnv("RESEND_FROM");
+  if (from) return from;
+  return "Loft <onboarding@resend.dev>";
+}
+
 let pool: Pool | undefined;
 function getPostgresPool(): Pool {
   if (pool) return pool;
@@ -93,7 +99,7 @@ export async function POST(request: Request) {
       ].filter(Boolean) as string[];
 
       // Add contact to each audience (ignore failures)
-      await Promise.allSettled(
+      const audienceResults = await Promise.allSettled(
         audienceIds.map((audienceId) =>
           resend.contacts.create({
             email,
@@ -104,14 +110,26 @@ export async function POST(request: Request) {
           })
         )
       );
+      audienceResults.forEach((result) => {
+        if (result.status === "rejected") {
+          console.error("[Resend] add to audience failed", result.reason);
+        }
+      });
 
       // Send welcome email (ignore failures)
-      await resend.emails.send({
-        from: "Loft <noreply@loftit.ai>",
-        to: email,
-        subject: "Welcome to Loft!",
-        react: FreeUserWelcome({ username: firstName || "there", userEmail: email }),
-      }).catch(() => undefined);
+      try {
+        const sendResult = await resend.emails.send({
+          from: getResendFrom(),
+          to: email,
+          subject: "Welcome to Loft!",
+          react: FreeUserWelcome({ username: firstName || "there", userEmail: email }),
+        });
+        if (!sendResult?.data?.id) {
+          console.error("[Resend] email send returned no id", sendResult);
+        }
+      } catch (sendErr) {
+        console.error("[Resend] email send failed", sendErr);
+      }
     }
 
     return new Response(JSON.stringify({ success: true }), {
