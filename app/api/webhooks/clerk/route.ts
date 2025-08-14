@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { Pool } from "pg";
 
 type ClerkEmailAddress = {
   id: string;
@@ -22,15 +22,16 @@ function getEnv(name: string): string | undefined {
   return value && value.length > 0 ? value : undefined;
 }
 
-function getSupabaseClient() {
-  const supabaseUrl = getEnv("SUPABASE_URL");
-  const supabaseKey = getEnv("SUPABASE_SERVICE_ROLE_KEY") || getEnv("SUPABASE_ANON_KEY") || getEnv("SUPABASE_KEY");
-
-  if (!supabaseUrl || !supabaseKey) {
-    throw new Error("Missing Supabase configuration. Ensure SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY (or SUPABASE_ANON_KEY) are set.");
+let pool: Pool | undefined;
+function getPostgresPool(): Pool {
+  if (pool) return pool;
+  const connectionString = getEnv("SUPABASE_URL");
+  if (!connectionString) {
+    throw new Error("Missing SUPABASE_URL Postgres connection string");
   }
-
-  return createClient(supabaseUrl, supabaseKey);
+  // Supabase requires SSL in most environments
+  pool = new Pool({ connectionString, ssl: { rejectUnauthorized: false } });
+  return pool;
 }
 
 function extractEmail(user: ClerkUserCreated["data"]): string | undefined {
@@ -66,26 +67,16 @@ export async function POST(request: Request) {
       });
     }
 
-    const supabase = getSupabaseClient();
-
-    const { error } = await supabase
-      .from("users")
-      .upsert(
-        {
-          id: clerkId,
-          email,
-          created_at: createdAt.toISOString(),
-          full_name: fullName,
-        },
-        { onConflict: "id" }
-      );
-
-    if (error) {
-      return new Response(JSON.stringify({ error: error.message }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
+    const pg = getPostgresPool();
+    await pg.query(
+      `insert into public.users (id, email, created_at, full_name)
+       values ($1, $2, $3, $4)
+       on conflict (id) do update set
+         email = excluded.email,
+         created_at = excluded.created_at,
+         full_name = excluded.full_name`,
+      [clerkId, email, createdAt, fullName]
+    );
 
     return new Response(JSON.stringify({ success: true }), {
       status: 200,
