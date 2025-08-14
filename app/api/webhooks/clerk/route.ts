@@ -97,6 +97,9 @@ export async function POST(request: Request) {
         getEnv("RESEND_AUDIENCE_MARKETING"),
         getEnv("RESEND_AUDIENCE_UPDATES"),
       ].filter(Boolean) as string[];
+      if (audienceIds.length === 0) {
+        console.warn("[Resend] No audience IDs configured. Set RESEND_AUDIENCE_ALL, RESEND_AUDIENCE_MARKETING, RESEND_AUDIENCE_UPDATES");
+      }
 
       // Add contact to each audience (ignore failures)
       const audienceResults = await Promise.allSettled(
@@ -130,6 +133,8 @@ export async function POST(request: Request) {
       } catch (sendErr) {
         console.error("[Resend] email send failed", sendErr);
       }
+    } else {
+      console.warn("[Resend] RESEND_API_KEY not set. Skipping audience add and welcome email");
     }
 
     return new Response(JSON.stringify({ success: true }), {
