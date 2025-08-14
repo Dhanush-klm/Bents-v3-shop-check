@@ -12,6 +12,16 @@ function getResendFrom(): string {
   return from || "Loft <noreply@loftit.ai>";
 }
 
+function getDelayMs(): number {
+  const raw = getEnv("RESEND_RATE_DELAY_MS");
+  const parsed = raw ? Number(raw) : Number.NaN;
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : 600;
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 let dataPool: Pool | undefined;
 let mainPool: Pool | undefined;
 
@@ -116,6 +126,65 @@ export async function POST(request: Request) {
     );
 
     const row = result.rows?.[0] || {};
+    const fullName: string | undefined = row.full_name || undefined;
+    let firstName: string | undefined;
+    let lastName: string | undefined;
+    if (fullName) {
+      const parts = String(fullName).trim().split(/\s+/);
+      firstName = parts[0];
+      lastName = parts.slice(1).join(" ") || undefined;
+    }
+
+    // Sync preferences with Resend audiences
+    const resendApiKey = getEnv("RESEND_API_KEY");
+    if (resendApiKey) {
+      const resend = new Resend(resendApiKey);
+      const delayMs = getDelayMs();
+
+      // Updates audience
+      const updatesAudienceId = getEnv("RESEND_AUDIENCE_UPDATES");
+      if (updatesAudienceId) {
+        try {
+          if (unsubscribeUpdates) {
+            await resend.contacts.remove({ audienceId: updatesAudienceId, email });
+          } else {
+            await resend.contacts.create({
+              audienceId: updatesAudienceId,
+              email,
+              firstName,
+              lastName,
+              unsubscribed: false,
+            });
+          }
+        } catch (err) {
+          console.error("[Resend] updates audience sync failed", err);
+        }
+        if (delayMs > 0) await sleep(delayMs);
+      }
+
+      // Marketing audience
+      const marketingAudienceId = getEnv("RESEND_AUDIENCE_MARKETING");
+      if (marketingAudienceId) {
+        try {
+          if (unsubscribeMarketing) {
+            await resend.contacts.remove({ audienceId: marketingAudienceId, email });
+          } else {
+            await resend.contacts.create({
+              audienceId: marketingAudienceId,
+              email,
+              firstName,
+              lastName,
+              unsubscribed: false,
+            });
+          }
+        } catch (err) {
+          console.error("[Resend] marketing audience sync failed", err);
+        }
+        if (delayMs > 0) await sleep(delayMs);
+      }
+    } else {
+      console.warn("[Resend] RESEND_API_KEY not set. Skipping audience sync");
+    }
 
     // If user opted out of both types, send UnsubscribedAll email (best-effort)
     if (unsubscribeMarketing && unsubscribeUpdates) {
@@ -127,7 +196,7 @@ export async function POST(request: Request) {
             from: getResendFrom(),
             to: email,
             subject: "You've been unsubscribed from all Loft emails",
-            react: UnsubscribedAll({ username: (row.full_name as string | undefined) || "there", userEmail: email }),
+            react: UnsubscribedAll({ username: (fullName || "there"), userEmail: email }),
           });
         } catch (err) {
           console.error("[Resend] UnsubscribedAll email send failed", err);
