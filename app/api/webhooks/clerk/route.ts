@@ -143,7 +143,7 @@ export async function POST(request: Request) {
             from: getResendFrom(),
             to: email,
             subject: "Welcome to Loft!",
-            react: FreeUserWelcome({ username: firstName || "there", userEmail: email }),
+            react: FreeUserWelcome({ username: (fullName || firstName || "there"), userEmail: email }),
           });
           if (!sendResult?.data?.id) {
             console.error("[Resend] email send returned no id", sendResult);
