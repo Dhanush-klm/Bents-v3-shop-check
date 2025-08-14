@@ -12,16 +12,6 @@ function getResendFrom(): string {
   return from || "Loft <noreply@loftit.ai>";
 }
 
-function getDelayMs(): number {
-  const raw = getEnv("RESEND_RATE_DELAY_MS");
-  const parsed = raw ? Number(raw) : Number.NaN;
-  return Number.isFinite(parsed) && parsed >= 0 ? parsed : 600;
-}
-
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 let dataPool: Pool | undefined;
 let mainPool: Pool | undefined;
 
@@ -126,22 +116,21 @@ export async function POST(request: Request) {
     );
 
     const row = result.rows?.[0] || {};
-    const fullName: string | undefined = row.full_name || undefined;
-    let firstName: string | undefined;
-    let lastName: string | undefined;
-    if (fullName) {
-      const parts = String(fullName).trim().split(/\s+/);
-      firstName = parts[0];
-      lastName = parts.slice(1).join(" ") || undefined;
-    }
 
-    // Sync preferences with Resend audiences
+    // Sync preferences with Resend audiences (best-effort)
     const resendApiKey = getEnv("RESEND_API_KEY");
     if (resendApiKey) {
       const resend = new Resend(resendApiKey);
-      const delayMs = getDelayMs();
+      const fullName: string | undefined = row.full_name as string | undefined;
+      let firstName: string | undefined;
+      let lastName: string | undefined;
+      if (fullName) {
+        const parts = String(fullName).trim().split(/\s+/);
+        firstName = parts[0];
+        lastName = parts.slice(1).join(" ") || undefined;
+      }
 
-      // Updates audience
+      // Updates audience sync
       const updatesAudienceId = getEnv("RESEND_AUDIENCE_UPDATES");
       if (updatesAudienceId) {
         try {
@@ -159,10 +148,9 @@ export async function POST(request: Request) {
         } catch (err) {
           console.error("[Resend] updates audience sync failed", err);
         }
-        if (delayMs > 0) await sleep(delayMs);
       }
 
-      // Marketing audience
+      // Marketing audience sync
       const marketingAudienceId = getEnv("RESEND_AUDIENCE_MARKETING");
       if (marketingAudienceId) {
         try {
@@ -180,7 +168,6 @@ export async function POST(request: Request) {
         } catch (err) {
           console.error("[Resend] marketing audience sync failed", err);
         }
-        if (delayMs > 0) await sleep(delayMs);
       }
     } else {
       console.warn("[Resend] RESEND_API_KEY not set. Skipping audience sync");
@@ -196,7 +183,7 @@ export async function POST(request: Request) {
             from: getResendFrom(),
             to: email,
             subject: "You've been unsubscribed from all Loft emails",
-            react: UnsubscribedAll({ username: (fullName || "there"), userEmail: email }),
+            react: UnsubscribedAll({ username: (row.full_name as string | undefined) || "there", userEmail: email }),
           });
         } catch (err) {
           console.error("[Resend] UnsubscribedAll email send failed", err);
