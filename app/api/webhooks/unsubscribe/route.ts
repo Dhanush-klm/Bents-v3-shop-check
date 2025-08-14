@@ -1,8 +1,15 @@
 import { Pool } from "pg";
+import { Resend } from "resend";
+import UnsubscribedAll from "@/app/emails/UnsubscribedAll";
 
 function getEnv(name: string): string | undefined {
   const value = process.env[name];
   return value && value.length > 0 ? value : undefined;
+}
+
+function getResendFrom(): string {
+  const from = getEnv("RESEND_FROM");
+  return from || "Loft <noreply@loftit.ai>";
 }
 
 let dataPool: Pool | undefined;
@@ -104,11 +111,31 @@ export async function POST(request: Request) {
          set out_from_marketing = case when $2 then now() else null end,
              out_from_update    = case when $3 then now() else null end
        where id = $1
-       returning out_from_marketing, out_from_update`,
+       returning out_from_marketing, out_from_update, full_name`,
       [userId, unsubscribeMarketing, unsubscribeUpdates]
     );
 
     const row = result.rows?.[0] || {};
+
+    // If user opted out of both types, send UnsubscribedAll email (best-effort)
+    if (unsubscribeMarketing && unsubscribeUpdates) {
+      const resendApiKey = getEnv("RESEND_API_KEY");
+      if (resendApiKey) {
+        const resend = new Resend(resendApiKey);
+        try {
+          await resend.emails.send({
+            from: getResendFrom(),
+            to: email,
+            subject: "You've been unsubscribed from all Loft emails",
+            react: UnsubscribedAll({ username: (row.full_name as string | undefined) || "there", userEmail: email }),
+          });
+        } catch (err) {
+          console.error("[Resend] UnsubscribedAll email send failed", err);
+        }
+      } else {
+        console.warn("[Resend] RESEND_API_KEY not set. Skipping UnsubscribedAll email");
+      }
+    }
     return new Response(
       JSON.stringify({
         success: true,
