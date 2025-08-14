@@ -27,7 +27,7 @@ function getEnv(name: string): string | undefined {
 function getResendFrom(): string {
   const from = getEnv("RESEND_FROM");
   if (from) return from;
-  return "Loft <onboarding@resend.dev>";
+  return "Loft <noreply@loftit.ai>";
 }
 
 let pool: Pool | undefined;
