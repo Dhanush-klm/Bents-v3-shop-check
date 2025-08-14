@@ -65,96 +65,152 @@ function extractEmail(user: ClerkUserCreated["data"]): string | undefined {
 
 export async function POST(request: Request) {
   try {
-    const payload = (await request.json()) as ClerkUserCreated;
-
-    if (!payload || payload.type !== "user.created") {
+    const payload: unknown = await request.json();
+    const root = payload as { type?: string; data?: unknown } | undefined;
+    const type = root?.type;
+    if (!payload || !type) {
       return new Response(null, { status: 204 });
     }
 
-    const user = payload.data;
-    const clerkId = user.id;
-    const email = extractEmail(user);
-    const createdAtMs = typeof user.created_at === "string" ? Number(user.created_at) : user.created_at;
-    const createdAt = Number.isFinite(createdAtMs) ? new Date(createdAtMs as number) : new Date();
-    const firstName = user.first_name || "";
-    const lastName = user.last_name || "";
-    const fullName = [firstName, lastName].filter(Boolean).join(" ") || null;
+    // Handle user.created
+    if (type === "user.created") {
+      const user = (root as ClerkUserCreated).data;
+      const clerkId = user.id;
+      const email = extractEmail(user);
+      const createdAtMs = typeof user.created_at === "string" ? Number(user.created_at) : user.created_at;
+      const createdAt = Number.isFinite(createdAtMs) ? new Date(createdAtMs as number) : new Date();
+      const firstName = user.first_name || "";
+      const lastName = user.last_name || "";
+      const fullName = [firstName, lastName].filter(Boolean).join(" ") || null;
 
-    if (!clerkId || !email) {
-      return new Response(JSON.stringify({ error: "Missing required fields (id/email) from Clerk payload" }), {
-        status: 400,
+      if (!clerkId || !email) {
+        return new Response(JSON.stringify({ error: "Missing required fields (id/email) from Clerk payload" }), {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+
+      const pg = getPostgresPool();
+      await pg.query(
+        `insert into public.users (id, email, created_at, full_name)
+         values ($1, $2, $3, $4)
+         on conflict (id) do update set
+           email = excluded.email,
+           created_at = excluded.created_at,
+           full_name = excluded.full_name`,
+        [clerkId, email, createdAt, fullName]
+      );
+
+      // Fire-and-forget: add contact to audiences and send welcome email
+      const resendApiKey = getEnv("RESEND_API_KEY");
+      if (resendApiKey) {
+        const resend = new Resend(resendApiKey);
+        const audienceIds = [
+          getEnv("RESEND_AUDIENCE_ALL"),
+          getEnv("RESEND_AUDIENCE_MARKETING"),
+          getEnv("RESEND_AUDIENCE_UPDATES"),
+        ].filter(Boolean) as string[];
+        if (audienceIds.length === 0) {
+          console.warn("[Resend] No audience IDs configured. Set RESEND_AUDIENCE_ALL, RESEND_AUDIENCE_MARKETING, RESEND_AUDIENCE_UPDATES");
+        }
+
+        // Add contact to each audience (ignore failures)
+        const delayMs = getDelayMs();
+        for (const audienceId of audienceIds) {
+          try {
+            await resend.contacts.create({
+              email,
+              firstName,
+              lastName,
+              unsubscribed: false,
+              audienceId,
+            });
+          } catch (err) {
+            console.error("[Resend] add to audience failed", err);
+          }
+          if (delayMs > 0) {
+            await sleep(delayMs);
+          }
+        }
+
+        // Send welcome email (ignore failures)
+        try {
+          if (delayMs > 0) {
+            await sleep(delayMs);
+          }
+          const sendResult = await resend.emails.send({
+            from: getResendFrom(),
+            to: email,
+            subject: "Welcome to Loft!",
+            react: FreeUserWelcome({ username: firstName || "there", userEmail: email }),
+          });
+          if (!sendResult?.data?.id) {
+            console.error("[Resend] email send returned no id", sendResult);
+          }
+        } catch (sendErr) {
+          console.error("[Resend] email send failed", sendErr);
+        }
+      } else {
+        console.warn("[Resend] RESEND_API_KEY not set. Skipping audience add and welcome email");
+      }
+
+      return new Response(JSON.stringify({ success: true }), {
+        status: 200,
         headers: { "Content-Type": "application/json" },
       });
     }
 
-    const pg = getPostgresPool();
-    await pg.query(
-      `insert into public.users (id, email, created_at, full_name)
-       values ($1, $2, $3, $4)
-       on conflict (id) do update set
-         email = excluded.email,
-         created_at = excluded.created_at,
-         full_name = excluded.full_name`,
-      [clerkId, email, createdAt, fullName]
-    );
-
-    // Fire-and-forget: add contact to audiences and send welcome email
-    const resendApiKey = getEnv("RESEND_API_KEY");
-    if (resendApiKey) {
-      const resend = new Resend(resendApiKey);
-      const audienceIds = [
-        getEnv("RESEND_AUDIENCE_ALL"),
-        getEnv("RESEND_AUDIENCE_MARKETING"),
-        getEnv("RESEND_AUDIENCE_UPDATES"),
-      ].filter(Boolean) as string[];
-      if (audienceIds.length === 0) {
-        console.warn("[Resend] No audience IDs configured. Set RESEND_AUDIENCE_ALL, RESEND_AUDIENCE_MARKETING, RESEND_AUDIENCE_UPDATES");
-      }
-
-      // Add contact to each audience (ignore failures)
-      const delayMs = getDelayMs();
-      for (const audienceId of audienceIds) {
-        try {
-          await resend.contacts.create({
-            email,
-            firstName,
-            lastName,
-            unsubscribed: false,
-            audienceId,
-          });
-        } catch (err) {
-          console.error("[Resend] add to audience failed", err);
-        }
-        if (delayMs > 0) {
-          await sleep(delayMs);
-        }
-      }
-
-      // Send welcome email (ignore failures)
-      try {
-        if (delayMs > 0) {
-          await sleep(delayMs);
-        }
-        const sendResult = await resend.emails.send({
-          from: getResendFrom(),
-          to: email,
-          subject: "Welcome to Loft!",
-          react: FreeUserWelcome({ username: firstName || "there", userEmail: email }),
+    // Handle user.deleted
+    if (type === "user.deleted") {
+      const clerkId = (root?.data as { id?: string } | undefined)?.id;
+      if (!clerkId) {
+        return new Response(JSON.stringify({ error: "Missing user id in user.deleted payload" }), {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
         });
-        if (!sendResult?.data?.id) {
-          console.error("[Resend] email send returned no id", sendResult);
-        }
-      } catch (sendErr) {
-        console.error("[Resend] email send failed", sendErr);
       }
-    } else {
-      console.warn("[Resend] RESEND_API_KEY not set. Skipping audience add and welcome email");
+
+      const pg = getPostgresPool();
+      // Mark account_deleted and get email
+      const result = await pg.query(
+        `update public.users
+         set account_deleted = now()
+         where id = $1
+         returning email`,
+        [clerkId]
+      );
+      const email: string | undefined = result.rows?.[0]?.email;
+
+      const resendApiKey = getEnv("RESEND_API_KEY");
+      if (resendApiKey && email) {
+        const resend = new Resend(resendApiKey);
+        const audienceIds = [
+          getEnv("RESEND_AUDIENCE_ALL"),
+          getEnv("RESEND_AUDIENCE_MARKETING"),
+          getEnv("RESEND_AUDIENCE_UPDATES"),
+        ].filter(Boolean) as string[];
+        const delayMs = getDelayMs();
+        for (const audienceId of audienceIds) {
+          try {
+            await resend.contacts.remove({ audienceId, email });
+          } catch (err) {
+            console.error("[Resend] remove from audience failed", err);
+          }
+          if (delayMs > 0) {
+            await sleep(delayMs);
+          }
+        }
+      } else if (!resendApiKey) {
+        console.warn("[Resend] RESEND_API_KEY not set. Skipping audience removals");
+      }
+
+      return new Response(JSON.stringify({ success: true }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
-    return new Response(JSON.stringify({ success: true }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    return new Response(null, { status: 204 });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
     return new Response(JSON.stringify({ error: message }), {
