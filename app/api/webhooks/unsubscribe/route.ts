@@ -36,6 +36,17 @@ function isValidEmail(email: string): boolean {
   return emailRegex.test(email);
 }
 
+function parseBooleanInput(value: unknown): boolean | undefined {
+  if (value === true) return true;
+  if (value === false) return false;
+  if (typeof value === "string") {
+    const v = value.trim().toLowerCase();
+    if (v === "true" || v === "1" || v === "yes") return true;
+    if (v === "false" || v === "0" || v === "no") return false;
+  }
+  return undefined;
+}
+
 async function findUserIdByEmail(email: string): Promise<string | undefined> {
   const db = getDataDb();
   const result = await db.query(
@@ -85,13 +96,11 @@ export async function POST(request: Request) {
   try {
     const body = await request.json().catch(() => ({}));
     const email: string | undefined = body?.email;
-    // Accept either unsubscribe_* or out_from_* booleans
-    const unsubscribeMarketing: boolean = Boolean(
-      body?.unsubscribe_marketing ?? body?.out_from_marketing
-    );
-    const unsubscribeUpdates: boolean = Boolean(
-      body?.unsubscribe_updates ?? body?.out_from_updates
-    );
+    // Accept either unsubscribe_* or out_from_* booleans; also accept string values like "true"/"false"
+    const unsubscribeMarketingRaw = body?.unsubscribe_marketing ?? body?.out_from_marketing;
+    const unsubscribeUpdatesRaw = body?.unsubscribe_updates ?? body?.out_from_updates;
+    const unsubscribeMarketing: boolean = parseBooleanInput(unsubscribeMarketingRaw) === true;
+    const unsubscribeUpdates: boolean = parseBooleanInput(unsubscribeUpdatesRaw) === true;
 
     if (!email) {
       return new Response(JSON.stringify({ error: "Email parameter is required" }), { status: 400 });
@@ -116,6 +125,14 @@ export async function POST(request: Request) {
     );
 
     const row = result.rows?.[0] || {};
+
+    // Log decision for debugging
+    console.log("[Unsubscribe] prefs updated", {
+      email,
+      userId,
+      unsubscribeMarketing,
+      unsubscribeUpdates,
+    });
 
     // Sync preferences with Resend audiences (best-effort)
     const resendApiKey = getEnv("RESEND_API_KEY");
