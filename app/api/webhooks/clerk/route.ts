@@ -1,6 +1,6 @@
 import { Pool } from "pg";
 import { Resend } from "resend";
-import FreeUserWelcome from "../../../emails/FreeUserWelcome";
+import FreeUserWelcome from "@/app/emails/FreeUserWelcome";
 
 type ClerkEmailAddress = {
   id: string;
@@ -36,67 +36,6 @@ function getPostgresPool(): Pool {
   return pool;
 }
 
-let resendClient: Resend | undefined;
-function getResend(): Resend {
-  if (resendClient) return resendClient;
-  const apiKey = getEnv("RESEND_API_KEY");
-  if (!apiKey) {
-    throw new Error("Missing RESEND_API_KEY");
-  }
-  resendClient = new Resend(apiKey);
-  return resendClient;
-}
-
-async function sendWelcomeEmail(toEmail: string, username: string | null) {
-  const resend = getResend();
-  const from = getEnv("RESEND_FROM_EMAIL") || getEnv("RESEND_FROM") || "Acme <onboarding@resend.dev>";
-  const subject = getEnv("RESEND_WELCOME_SUBJECT") || "Welcome to Loft";
-  try {
-    const result = await resend.emails.send({
-      from,
-      to: [toEmail],
-      subject,
-      react: FreeUserWelcome({ username: username || undefined, userEmail: toEmail }),
-    });
-    // Best-effort logging to aid debugging in development
-    try { console.log("Resend email sent", { toEmail, from, subject, result }); } catch {}
-    return { ok: true };
-  } catch (error) {
-    try { console.error("Resend email failed", { toEmail, error }); } catch {}
-    return { ok: false, error };
-  }
-}
-
-async function addToAudiences(email: string, firstName?: string | null, lastName?: string | null) {
-  const resend = getResend();
-  const audienceIds = [
-    getEnv("RESEND_AUDIENCE_ALL"),
-    getEnv("RESEND_AUDIENCE_MARKETING"),
-    getEnv("RESEND_AUDIENCE_UPDATES"),
-  ].filter(Boolean) as string[];
-
-  if (audienceIds.length === 0) return { ok: true };
-
-  const tasks = audienceIds.map(async (audienceId) => {
-    try {
-      // Best-effort: ignore conflicts or API errors
-      await resend.contacts.create({
-        audienceId,
-        email,
-        firstName: firstName || undefined,
-        lastName: lastName || undefined,
-      });
-      return { ok: true };
-    } catch (error) {
-      return { ok: false, error };
-    }
-  });
-
-  const results = await Promise.allSettled(tasks);
-  const anyFailed = results.some(r => r.status === "fulfilled" ? !r.value.ok : true);
-  return { ok: !anyFailed };
-}
-
 function extractEmail(user: ClerkUserCreated["data"]): string | undefined {
   const emails = user.email_addresses || [];
   if (!emails.length) return undefined;
@@ -121,7 +60,9 @@ export async function POST(request: Request) {
     const email = extractEmail(user);
     const createdAtMs = typeof user.created_at === "string" ? Number(user.created_at) : user.created_at;
     const createdAt = Number.isFinite(createdAtMs) ? new Date(createdAtMs as number) : new Date();
-    const fullName = [user.first_name, user.last_name].filter(Boolean).join(" ") || null;
+    const firstName = user.first_name || "";
+    const lastName = user.last_name || "";
+    const fullName = [firstName, lastName].filter(Boolean).join(" ") || null;
 
     if (!clerkId || !email) {
       return new Response(JSON.stringify({ error: "Missing required fields (id/email) from Clerk payload" }), {
@@ -141,13 +82,37 @@ export async function POST(request: Request) {
       [clerkId, email, createdAt, fullName]
     );
 
-    // Fire-and-wait: send welcome email and add to audiences concurrently, but don't fail the request if those fail
-    const firstName = (payload.data.first_name || null);
-    const lastName = (payload.data.last_name || null);
-    await Promise.allSettled([
-      sendWelcomeEmail(email, fullName),
-      addToAudiences(email, firstName, lastName),
-    ]);
+    // Fire-and-forget: add contact to audiences and send welcome email
+    const resendApiKey = getEnv("RESEND_API_KEY");
+    if (resendApiKey) {
+      const resend = new Resend(resendApiKey);
+      const audienceIds = [
+        getEnv("RESEND_AUDIENCE_ALL"),
+        getEnv("RESEND_AUDIENCE_MARKETING"),
+        getEnv("RESEND_AUDIENCE_UPDATES"),
+      ].filter(Boolean) as string[];
+
+      // Add contact to each audience (ignore failures)
+      await Promise.allSettled(
+        audienceIds.map((audienceId) =>
+          resend.contacts.create({
+            email,
+            firstName,
+            lastName,
+            unsubscribed: false,
+            audienceId,
+          })
+        )
+      );
+
+      // Send welcome email (ignore failures)
+      await resend.emails.send({
+        from: "Loft <noreply@loftit.ai>",
+        to: email,
+        subject: "Welcome to Loft!",
+        react: FreeUserWelcome({ username: firstName || "there", userEmail: email }),
+      }).catch(() => undefined);
+    }
 
     return new Response(JSON.stringify({ success: true }), {
       status: 200,
