@@ -4,6 +4,10 @@ import Day3TrialReminder from "@/app/emails/Day3TrialReminder";
 import Day5TrialEnding from "@/app/emails/Day5TrialEnding";
 import Day6TrialEndsTomorrow from "@/app/emails/Day6TrialEndsTomorrow";
 import Day7TrialEndsToday from "@/app/emails/Day7TrialEndsToday";
+import Week1PostCreation from "@/app/emails/Week1PostCreation";
+import Week2PostCreation from "@/app/emails/Week2PostCreation";
+import Week3PostCreation from "@/app/emails/Week3PostCreation";
+import Week4PostCreation from "@/app/emails/Week4PostCreation";
 
 function getEnv(name: string): string | undefined {
   const value = process.env[name];
@@ -92,7 +96,7 @@ export async function GET() {
       if (delayMs > 0) await sleep(delayMs);
     }
 
-    // Day 5: users created exactly 5 days ago (UTC day), regardless of links
+    // Day 5: users created exactly 5 days ago (UTC day) with no links
     const result5 = await db.query(
       `with target_day as (
          select date_trunc('day', now() at time zone 'utc' - interval '5 days') as start_utc,
@@ -101,7 +105,10 @@ export async function GET() {
        select u.id, u.email, u.full_name
        from public.users u, target_day t
        where u.created_at >= t.start_utc and u.created_at < t.end_utc
-         and lower(coalesce(u.subscription_status, '')) = 'trial'`
+         and lower(coalesce(u.subscription_status, '')) = 'trial'
+         and not exists (
+           select 1 from public.links l where l.user_id = u.id
+         )`
     );
     const users5: Array<{ id: string; email: string; full_name?: string | null }> = result5.rows || [];
     let sent5 = 0;
@@ -122,7 +129,7 @@ export async function GET() {
       if (delayMs > 0) await sleep(delayMs);
     }
 
-    // Day 6: users created exactly 6 days ago (UTC day)
+    // Day 6: users created exactly 6 days ago (UTC day) with no links
     const result6 = await db.query(
       `with target_day as (
          select date_trunc('day', now() at time zone 'utc' - interval '6 days') as start_utc,
@@ -131,7 +138,10 @@ export async function GET() {
        select u.id, u.email, u.full_name
        from public.users u, target_day t
        where u.created_at >= t.start_utc and u.created_at < t.end_utc
-         and lower(coalesce(u.subscription_status, '')) = 'trial'`
+         and lower(coalesce(u.subscription_status, '')) = 'trial'
+         and not exists (
+           select 1 from public.links l where l.user_id = u.id
+         )`
     );
     const users6: Array<{ id: string; email: string; full_name?: string | null }> = result6.rows || [];
     let sent6 = 0;
@@ -152,7 +162,7 @@ export async function GET() {
       if (delayMs > 0) await sleep(delayMs);
     }
 
-    // Day 7: users created exactly 7 days ago (UTC day)
+    // Day 7: users created exactly 7 days ago (UTC day) with no links
     const result7 = await db.query(
       `with target_day as (
          select date_trunc('day', now() at time zone 'utc' - interval '7 days') as start_utc,
@@ -161,7 +171,10 @@ export async function GET() {
        select u.id, u.email, u.full_name
        from public.users u, target_day t
        where u.created_at >= t.start_utc and u.created_at < t.end_utc
-         and lower(coalesce(u.subscription_status, '')) = 'trial'`
+         and lower(coalesce(u.subscription_status, '')) = 'trial'
+         and not exists (
+           select 1 from public.links l where l.user_id = u.id
+         )`
     );
     const users7: Array<{ id: string; email: string; full_name?: string | null }> = result7.rows || [];
     let sent7 = 0;
@@ -182,7 +195,123 @@ export async function GET() {
       if (delayMs > 0) await sleep(delayMs);
     }
 
-    return new Response(JSON.stringify({ success: true, processed3: users.length, sent3, processed5: users5.length, sent5, processed6: users6.length, sent6, processed7: users7.length, sent7 }), {
+    // Week 1 (7 days ago)
+    const resultW1 = await db.query(
+      `with target_day as (
+         select date_trunc('day', now() at time zone 'utc' - interval '7 days') as start_utc,
+                date_trunc('day', now() at time zone 'utc' - interval '6 days') as end_utc
+       )
+       select u.id, u.email, u.full_name
+       from public.users u, target_day t
+       where u.created_at >= t.start_utc and u.created_at < t.end_utc`
+    );
+    const usersW1: Array<{ id: string; email: string; full_name?: string | null }> = resultW1.rows || [];
+    let sentW1 = 0;
+    for (const user of usersW1) {
+      try {
+        if (!user.email) continue;
+        const name = (user.full_name || "there").toString();
+        const res = await resend.emails.send({
+          from: getResendFrom(),
+          to: user.email,
+          subject: "Getting started with Loft — your first week",
+          react: Week1PostCreation({ username: name, userEmail: user.email }),
+        });
+        if (res?.data?.id) sentW1 += 1;
+      } catch (err) {
+        console.error("[Cron] week1 send failed", user.email, err);
+      }
+      if (delayMs > 0) await sleep(delayMs);
+    }
+
+    // Week 2 (14 days ago)
+    const resultW2 = await db.query(
+      `with target_day as (
+         select date_trunc('day', now() at time zone 'utc' - interval '14 days') as start_utc,
+                date_trunc('day', now() at time zone 'utc' - interval '13 days') as end_utc
+       )
+       select u.id, u.email, u.full_name
+       from public.users u, target_day t
+       where u.created_at >= t.start_utc and u.created_at < t.end_utc`
+    );
+    const usersW2: Array<{ id: string; email: string; full_name?: string | null }> = resultW2.rows || [];
+    let sentW2 = 0;
+    for (const user of usersW2) {
+      try {
+        if (!user.email) continue;
+        const name = (user.full_name || "there").toString();
+        const res = await resend.emails.send({
+          from: getResendFrom(),
+          to: user.email,
+          subject: "Loft tips — week 2",
+          react: Week2PostCreation({ username: name, userEmail: user.email }),
+        });
+        if (res?.data?.id) sentW2 += 1;
+      } catch (err) {
+        console.error("[Cron] week2 send failed", user.email, err);
+      }
+      if (delayMs > 0) await sleep(delayMs);
+    }
+
+    // Week 3 (21 days ago)
+    const resultW3 = await db.query(
+      `with target_day as (
+         select date_trunc('day', now() at time zone 'utc' - interval '21 days') as start_utc,
+                date_trunc('day', now() at time zone 'utc' - interval '20 days') as end_utc
+       )
+       select u.id, u.email, u.full_name
+       from public.users u, target_day t
+       where u.created_at >= t.start_utc and u.created_at < t.end_utc`
+    );
+    const usersW3: Array<{ id: string; email: string; full_name?: string | null }> = resultW3.rows || [];
+    let sentW3 = 0;
+    for (const user of usersW3) {
+      try {
+        if (!user.email) continue;
+        const name = (user.full_name || "there").toString();
+        const res = await resend.emails.send({
+          from: getResendFrom(),
+          to: user.email,
+          subject: "Keep your Loft flow going — week 3",
+          react: Week3PostCreation({ username: name, userEmail: user.email }),
+        });
+        if (res?.data?.id) sentW3 += 1;
+      } catch (err) {
+        console.error("[Cron] week3 send failed", user.email, err);
+      }
+      if (delayMs > 0) await sleep(delayMs);
+    }
+
+    // Week 4 (28 days ago)
+    const resultW4 = await db.query(
+      `with target_day as (
+         select date_trunc('day', now() at time zone 'utc' - interval '28 days') as start_utc,
+                date_trunc('day', now() at time zone 'utc' - interval '27 days') as end_utc
+       )
+       select u.id, u.email, u.full_name
+       from public.users u, target_day t
+       where u.created_at >= t.start_utc and u.created_at < t.end_utc`
+    );
+    const usersW4: Array<{ id: string; email: string; full_name?: string | null }> = resultW4.rows || [];
+    let sentW4 = 0;
+    for (const user of usersW4) {
+      try {
+        if (!user.email) continue;
+        const name = (user.full_name || "there").toString();
+        const res = await resend.emails.send({
+          from: getResendFrom(),
+          to: user.email,
+          subject: "Level up with Loft — week 4",
+          react: Week4PostCreation({ username: name, userEmail: user.email }),
+        });
+        if (res?.data?.id) sentW4 += 1;
+      } catch (err) {
+        console.error("[Cron] week4 send failed", user.email, err);
+      }
+      if (delayMs > 0) await sleep(delayMs);
+    }
+
+    return new Response(JSON.stringify({ success: true, processed3: users.length, sent3, processed5: users5.length, sent5, processed6: users6.length, sent6, processed7: users7.length, sent7, processedW1: usersW1.length, sentW1, processedW2: usersW2.length, sentW2, processedW3: usersW3.length, sentW3, processedW4: usersW4.length, sentW4 }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
