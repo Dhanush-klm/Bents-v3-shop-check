@@ -48,6 +48,7 @@ export async function GET() {
        select u.id, u.email, u.full_name
        from public.users u, target_day t
        where u.created_at >= t.start_utc and u.created_at < t.end_utc
+         and lower(coalesce(u.subscription_status, '')) = 'trial'
          and not exists (
            select 1 from public.links l where l.user_id = u.id
          )`
@@ -99,7 +100,8 @@ export async function GET() {
        )
        select u.id, u.email, u.full_name
        from public.users u, target_day t
-       where u.created_at >= t.start_utc and u.created_at < t.end_utc`
+       where u.created_at >= t.start_utc and u.created_at < t.end_utc
+         and lower(coalesce(u.subscription_status, '')) = 'trial'`
     );
     const users5: Array<{ id: string; email: string; full_name?: string | null }> = result5.rows || [];
     let sent5 = 0;
@@ -128,7 +130,8 @@ export async function GET() {
        )
        select u.id, u.email, u.full_name
        from public.users u, target_day t
-       where u.created_at >= t.start_utc and u.created_at < t.end_utc`
+       where u.created_at >= t.start_utc and u.created_at < t.end_utc
+         and lower(coalesce(u.subscription_status, '')) = 'trial'`
     );
     const users6: Array<{ id: string; email: string; full_name?: string | null }> = result6.rows || [];
     let sent6 = 0;
@@ -157,7 +160,8 @@ export async function GET() {
        )
        select u.id, u.email, u.full_name
        from public.users u, target_day t
-       where u.created_at >= t.start_utc and u.created_at < t.end_utc`
+       where u.created_at >= t.start_utc and u.created_at < t.end_utc
+         and lower(coalesce(u.subscription_status, '')) = 'trial'`
     );
     const users7: Array<{ id: string; email: string; full_name?: string | null }> = result7.rows || [];
     let sent7 = 0;
