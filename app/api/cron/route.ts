@@ -59,13 +59,7 @@ export async function GET() {
     );
 
     const users: Array<{ id: string; email: string; full_name?: string | null }> = result.rows || [];
-
-    if (!users.length) {
-      return new Response(JSON.stringify({ success: true, processed: 0 }), {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
+    const processed3Count = users.length;
 
     const resendKey = getEnv("RESEND_API_KEY");
     if (!resendKey) {
@@ -311,7 +305,7 @@ export async function GET() {
       if (delayMs > 0) await sleep(delayMs);
     }
 
-    return new Response(JSON.stringify({ success: true, processed3: users.length, sent3, processed5: users5.length, sent5, processed6: users6.length, sent6, processed7: users7.length, sent7, processedW1: usersW1.length, sentW1, processedW2: usersW2.length, sentW2, processedW3: usersW3.length, sentW3, processedW4: usersW4.length, sentW4 }), {
+    return new Response(JSON.stringify({ success: true, processed3: processed3Count, sent3, processed5: users5.length, sent5, processed6: users6.length, sent6, processed7: users7.length, sent7, processedW1: usersW1.length, sentW1, processedW2: usersW2.length, sentW2, processedW3: usersW3.length, sentW3, processedW4: usersW4.length, sentW4 }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
