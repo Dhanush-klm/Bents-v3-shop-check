@@ -377,23 +377,23 @@ export async function GET() {
     }
 
     // Subscription renewal reminders based on subscription_events
+    const now = Date.now();
+    
+    // First: Get all subscription events and do calculations in SQL
     const renewalEventsResult = await db.query(
-      `select se.payload, u.id as user_id, u.email, u.full_name
+      `select se.user_id, se.payload,
+              (se.payload::jsonb->'event'->>'expiration_at_ms')::bigint as expiration_ms,
+              extract(day from (to_timestamp((se.payload::jsonb->'event'->>'expiration_at_ms')::bigint / 1000) - now())) as days_until_expiration
        from public.subscription_events se
-       join public.users u on (
-         u.id = (se.payload::jsonb->'event'->>'app_user_id')::text
-         or u.clerk_user_id = (se.payload::jsonb->'event'->>'app_user_id')::text
-         or u.external_id = (se.payload::jsonb->'event'->>'app_user_id')::text
-       )
-       where se.payload::jsonb->'event'->>'type' = 'RENEWAL'
-         and se.payload::jsonb->'event'->>'expiration_at_ms' is not null`
-    );
+       where se.payload::jsonb->'event'->>'expiration_at_ms' is not null
+         and (se.payload::jsonb->'event'->>'expiration_at_ms')::bigint > $1`
+    , [now]);
 
-    const renewalEvents: Array<{
-      payload: any;
-      user_id: string;
-      email: string;
-      full_name?: string | null;
+    const renewalEvents: Array<{ 
+      user_id: string; 
+      payload: any; 
+      expiration_ms: number; 
+      days_until_expiration: number 
     }> = renewalEventsResult.rows || [];
 
     let sentRenewalWeek = 0;
@@ -401,85 +401,104 @@ export async function GET() {
     let sentRenewal30Day = 0;
     let processedRenewalEvents = 0;
 
-    const now = Date.now();
+    // Second: Filter only the rows that match our criteria
+    const matchedEvents = renewalEvents.filter(event => {
+      const days = Math.round(event.days_until_expiration);
+      return (days >= 6 && days <= 8) ||    // 7 days before
+             (days >= 0 && days <= 2) ||    // 1 day before  
+             (days >= 28 && days <= 32);    // 30 days before
+    });
 
-    for (const event of renewalEvents) {
-      try {
-        const payload = typeof event.payload === 'string' ? JSON.parse(event.payload) : event.payload;
-        const expirationMs = parseInt(payload.event?.expiration_at_ms);
-        
-        if (!expirationMs || !event.email) continue;
+    // Third: Get user details for matched events
+    if (matchedEvents.length > 0) {
+      const userIds = matchedEvents.map(e => e.user_id);
+      const usersResult = await db.query(
+        `select id, email, full_name 
+         from public.users 
+         where id = any($1)`,
+        [userIds]
+      );
 
-        const daysUntilExpiration = Math.ceil((expirationMs - now) / (1000 * 60 * 60 * 24));
-        
-        // Format expiration date for email
-        const expirationDate = new Date(expirationMs).toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-        });
+      const usersMap = new Map();
+      usersResult.rows.forEach(user => {
+        usersMap.set(user.id, user);
+      });
 
-        const name = (event.full_name || "there").toString();
-        let emailSent = false;
+      // Send emails for matched events
+      for (const event of matchedEvents) {
+        try {
+          const user = usersMap.get(event.user_id);
+          if (!user || !user.email) continue;
 
-        // Send appropriate renewal reminder based on days until expiration
-        if (daysUntilExpiration >= 6 && daysUntilExpiration <= 8) {
-          // ~7 days before expiration
-          const res = await resend.emails.send({
-            from: getResendFrom(),
-            to: event.email,
-            subject: "Your Loft subscription renews next week",
-            react: SubscriptionRenewalWeek({ 
-              username: name, 
-              userEmail: event.email,
-              renewalDate: expirationDate
-            }),
+          const expirationDate = new Date(event.expiration_ms).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
           });
-          if (res?.data?.id) {
-            sentRenewalWeek += 1;
-            emailSent = true;
+
+          const name = (user.full_name || "there").toString();
+          const days = Math.round(event.days_until_expiration);
+          let emailSent = false;
+
+          // Send appropriate renewal reminder based on days until expiration
+          if (days >= 6 && days <= 8) {
+            // ~7 days before expiration
+            const res = await resend.emails.send({
+              from: getResendFrom(),
+              to: user.email,
+              subject: "Your Loft subscription renews next week",
+              react: SubscriptionRenewalWeek({ 
+                username: name, 
+                userEmail: user.email,
+                renewalDate: expirationDate
+              }),
+            });
+            if (res?.data?.id) {
+              sentRenewalWeek += 1;
+              emailSent = true;
+            }
+          } else if (days >= 0 && days <= 2) {
+            // ~1 day before expiration (0-2 days range)
+            const res = await resend.emails.send({
+              from: getResendFrom(),
+              to: user.email,
+              subject: "Your Loft subscription renews tomorrow",
+              react: SubscriptionRenewalDay({ 
+                username: name, 
+                userEmail: user.email,
+                renewalDate: expirationDate
+              }),
+            });
+            if (res?.data?.id) {
+              sentRenewalDay += 1;
+              emailSent = true;
+            }
+          } else if (days >= 28 && days <= 32) {
+            // ~30 days before expiration
+            const res = await resend.emails.send({
+              from: getResendFrom(),
+              to: user.email,
+              subject: "Your Loft subscription renews in 30 days",
+              react: SubscriptionRenewal({ 
+                username: name, 
+                userEmail: user.email,
+                renewalDate: expirationDate
+              }),
+            });
+            if (res?.data?.id) {
+              sentRenewal30Day += 1;
+              emailSent = true;
+            }
           }
-        } else if (daysUntilExpiration >= 0 && daysUntilExpiration <= 2) {
-          // ~1 day before expiration (0-2 days range)
-          const res = await resend.emails.send({
-            from: getResendFrom(),
-            to: event.email,
-            subject: "Your Loft subscription renews tomorrow",
-            react: SubscriptionRenewalDay({ 
-              username: name, 
-              userEmail: event.email,
-              renewalDate: expirationDate
-            }),
-          });
-          if (res?.data?.id) {
-            sentRenewalDay += 1;
-            emailSent = true;
+
+          if (emailSent) {
+            processedRenewalEvents += 1;
+            if (delayMs > 0) await sleep(delayMs);
           }
-        } else if (daysUntilExpiration >= 28 && daysUntilExpiration <= 32) {
-          // ~30 days before expiration
-          const res = await resend.emails.send({
-            from: getResendFrom(),
-            to: event.email,
-            subject: "Your Loft subscription renews in 30 days",
-            react: SubscriptionRenewal({ 
-              username: name, 
-              userEmail: event.email,
-              renewalDate: expirationDate
-            }),
-          });
-          if (res?.data?.id) {
-            sentRenewal30Day += 1;
-            emailSent = true;
-          }
+
+        } catch (err) {
+          console.error("[Cron] renewal reminder send failed", err);
         }
-
-        if (emailSent) {
-          processedRenewalEvents += 1;
-          if (delayMs > 0) await sleep(delayMs);
-        }
-
-      } catch (err) {
-        console.error("[Cron] renewal reminder send failed", event.email, err);
       }
     }
 
