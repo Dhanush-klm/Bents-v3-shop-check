@@ -8,6 +8,7 @@ import Week1PostCreation from "@/app/emails/Week1PostCreation";
 import Week2PostCreation from "@/app/emails/Week2PostCreation";
 import Week3PostCreation from "@/app/emails/Week3PostCreation";
 import Week4PostCreation from "@/app/emails/Week4PostCreation";
+import FeedbackSurvey30Days from "@/app/emails/FeedbackSurvey30Days";
 
 function getEnv(name: string): string | undefined {
   const value = process.env[name];
@@ -305,7 +306,40 @@ export async function GET() {
       if (delayMs > 0) await sleep(delayMs);
     }
 
-    return new Response(JSON.stringify({ success: true, processed3: processed3Count, sent3, processed5: users5.length, sent5, processed6: users6.length, sent6, processed7: users7.length, sent7, processedW1: usersW1.length, sentW1, processedW2: usersW2.length, sentW2, processedW3: usersW3.length, sentW3, processedW4: usersW4.length, sentW4 }), {
+    // 30 days feedback survey (30 days ago)
+    const result30Days = await db.query(
+      `with target_day as (
+         select date_trunc('day', now() at time zone 'utc' - interval '30 days') as start_utc,
+                date_trunc('day', now() at time zone 'utc' - interval '29 days') as end_utc
+       )
+       select u.id, u.email, u.full_name
+       from public.users u, target_day t
+       where u.created_at >= t.start_utc and u.created_at < t.end_utc`
+    );
+    const users30Days: Array<{ id: string; email: string; full_name?: string | null }> = result30Days.rows || [];
+    let sent30Days = 0;
+    for (const user of users30Days) {
+      try {
+        if (!user.email) continue;
+        const name = (user.full_name || "there").toString();
+        const res = await resend.emails.send({
+          from: getResendFrom(),
+          to: user.email,
+          subject: "We'd love your feedback — 30 days with Loft",
+          react: FeedbackSurvey30Days({ 
+            username: name, 
+            userEmail: user.email,
+            surveyUrl: "https://forms.gle/YourSurveyLinkHere" 
+          }),
+        });
+        if (res?.data?.id) sent30Days += 1;
+      } catch (err) {
+        console.error("[Cron] 30days feedback send failed", user.email, err);
+      }
+      if (delayMs > 0) await sleep(delayMs);
+    }
+
+    return new Response(JSON.stringify({ success: true, processed3: processed3Count, sent3, processed5: users5.length, sent5, processed6: users6.length, sent6, processed7: users7.length, sent7, processedW1: usersW1.length, sentW1, processedW2: usersW2.length, sentW2, processedW3: usersW3.length, sentW3, processedW4: usersW4.length, sentW4, processed30Days: users30Days.length, sent30Days }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
