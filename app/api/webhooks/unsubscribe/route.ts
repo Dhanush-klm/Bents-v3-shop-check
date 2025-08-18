@@ -58,6 +58,44 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+// CORS helpers
+const defaultAllowedOrigins: string[] = (() => {
+  const env = getEnv("CORS_ALLOW_ORIGINS");
+  if (env) {
+    return env
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+  }
+  return [
+    "https://loftit.ai",
+    "https://www.loftit.ai",
+    "https://loft.ai",
+    "https://www.loft.ai",
+    "https://preview--loft-ai.lovable.app",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+  ];
+})();
+
+function buildCorsHeaders(request: Request): Record<string, string> {
+  const origin = request.headers.get("origin");
+  const headers: Record<string, string> = {
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    "Access-Control-Max-Age": "86400",
+    Vary: "Origin",
+  };
+  if (origin && defaultAllowedOrigins.includes(origin)) {
+    headers["Access-Control-Allow-Origin"] = origin;
+  }
+  return headers;
+}
+
+export async function OPTIONS(request: Request) {
+  return new Response(null, { status: 204, headers: buildCorsHeaders(request) });
+}
+
 async function findUserIdByEmail(email: string): Promise<string | undefined> {
   const db = getDataDb();
   const result = await db.query(
@@ -72,15 +110,24 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const email = searchParams.get("email") || undefined;
     if (!email) {
-      return new Response(JSON.stringify({ error: "Email parameter is required" }), { status: 400 });
+      return new Response(JSON.stringify({ error: "Email parameter is required" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json", ...buildCorsHeaders(request) },
+      });
     }
     if (!isValidEmail(email)) {
-      return new Response(JSON.stringify({ error: "Invalid email format" }), { status: 400 });
+      return new Response(JSON.stringify({ error: "Invalid email format" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json", ...buildCorsHeaders(request) },
+      });
     }
 
     const userId = await findUserIdByEmail(email);
     if (!userId) {
-      return new Response(JSON.stringify({ error: "User not found for given email" }), { status: 404 });
+      return new Response(JSON.stringify({ error: "User not found for given email" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json", ...buildCorsHeaders(request) },
+      });
     }
 
     const mainDb = getMainDb();
@@ -90,16 +137,19 @@ export async function GET(request: Request) {
     );
     const row = res.rows?.[0] || {};
 
-    return new Response(
-      JSON.stringify({
-        out_from_marketing: row.out_from_marketing || null,
-        out_from_update: row.out_from_update || null,
-      }),
-      { status: 200, headers: { "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({
+      out_from_marketing: row.out_from_marketing || null,
+      out_from_update: row.out_from_update || null,
+    }), {
+      status: 200,
+      headers: { "Content-Type": "application/json", ...buildCorsHeaders(request) },
+    });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
-    return new Response(JSON.stringify({ error: message }), { status: 500 });
+    return new Response(JSON.stringify({ error: message }), {
+      status: 500,
+      headers: { "Content-Type": "application/json", ...buildCorsHeaders(request) },
+    });
   }
 }
 
@@ -114,15 +164,24 @@ export async function POST(request: Request) {
     const unsubscribeUpdates: boolean = parseBooleanInput(unsubscribeUpdatesRaw) === true;
 
     if (!email) {
-      return new Response(JSON.stringify({ error: "Email parameter is required" }), { status: 400 });
+      return new Response(JSON.stringify({ error: "Email parameter is required" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json", ...buildCorsHeaders(request) },
+      });
     }
     if (!isValidEmail(email)) {
-      return new Response(JSON.stringify({ error: "Invalid email format" }), { status: 400 });
+      return new Response(JSON.stringify({ error: "Invalid email format" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json", ...buildCorsHeaders(request) },
+      });
     }
 
     const userId = await findUserIdByEmail(email);
     if (!userId) {
-      return new Response(JSON.stringify({ error: "User not found for given email" }), { status: 404 });
+      return new Response(JSON.stringify({ error: "User not found for given email" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json", ...buildCorsHeaders(request) },
+      });
     }
 
     const mainDb = getMainDb();
@@ -254,18 +313,21 @@ export async function POST(request: Request) {
         console.warn("[Resend] RESEND_API_KEY not set. Skipping UnsubscribedAll email");
       }
     }
-    return new Response(
-      JSON.stringify({
-        success: true,
-        email,
-        out_from_marketing: row.out_from_marketing || null,
-        out_from_update: row.out_from_update || null,
-      }),
-      { status: 200, headers: { "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({
+      success: true,
+      email,
+      out_from_marketing: row.out_from_marketing || null,
+      out_from_update: row.out_from_update || null,
+    }), {
+      status: 200,
+      headers: { "Content-Type": "application/json", ...buildCorsHeaders(request) },
+    });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
-    return new Response(JSON.stringify({ error: message }), { status: 500 });
+    return new Response(JSON.stringify({ error: message }), {
+      status: 500,
+      headers: { "Content-Type": "application/json", ...buildCorsHeaders(request) },
+    });
   }
 }
 
