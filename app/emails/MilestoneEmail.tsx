@@ -176,7 +176,7 @@ export default function MilestoneEmail({
                         whiteSpace: 'nowrap',
                       }}
                     >
-                      You've saved 100 links
+                      You&apos;ve saved 100 links
                     </Text>
                     <span 
                       style={{
@@ -240,7 +240,7 @@ export default function MilestoneEmail({
                             margin: '0 0 24px 0',
                             lineHeight: '1.6',
                           }}>
-                            That's what we call progress.
+                            That&apos;s what we call progress.
                           </Text>
                           
                           {/* Celebration Message */}
@@ -257,7 +257,7 @@ export default function MilestoneEmail({
                               margin: '0 0 8px 0',
                               lineHeight: '1.6',
                             }}>
-                              We're so glad Loft is part of your flow{' '}
+                              We&apos;re so glad Loft is part of your flow{' '}
                               <span style={{
                                 fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji',
                                 fontSize: '16px'

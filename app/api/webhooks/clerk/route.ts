@@ -45,7 +45,7 @@ type ClerkUserUpdated = {
       milestones?: {
         hundredth_link_at?: string; // ISOString
       };
-      [key: string]: any;
+      [key: string]: unknown;
     };
   };
 };
