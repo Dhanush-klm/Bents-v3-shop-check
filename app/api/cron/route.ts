@@ -9,6 +9,7 @@ import Week2PostCreation from "@/app/emails/Week2PostCreation";
 import Week3PostCreation from "@/app/emails/Week3PostCreation";
 import Week4PostCreation from "@/app/emails/Week4PostCreation";
 import FeedbackSurvey30Days from "@/app/emails/FeedbackSurvey30Days";
+import Month1PaidUser from "@/app/emails/Month1PaidUser";
 
 function getEnv(name: string): string | undefined {
   const value = process.env[name];
@@ -339,7 +340,40 @@ export async function GET() {
       if (delayMs > 0) await sleep(delayMs);
     }
 
-    return new Response(JSON.stringify({ success: true, processed3: processed3Count, sent3, processed5: users5.length, sent5, processed6: users6.length, sent6, processed7: users7.length, sent7, processedW1: usersW1.length, sentW1, processedW2: usersW2.length, sentW2, processedW3: usersW3.length, sentW3, processedW4: usersW4.length, sentW4, processed30Days: users30Days.length, sent30Days }), {
+    // 1 month paid users (30 days ago with paid subscription)
+    const result1MonthPaid = await db.query(
+      `with target_day as (
+         select date_trunc('day', now() at time zone 'utc' - interval '30 days') as start_utc,
+                date_trunc('day', now() at time zone 'utc' - interval '29 days') as end_utc
+       )
+       select u.id, u.email, u.full_name
+       from public.users u, target_day t
+       where u.created_at >= t.start_utc and u.created_at < t.end_utc
+         and lower(coalesce(u.subscription_status, '')) = 'paid'`
+    );
+    const users1MonthPaid: Array<{ id: string; email: string; full_name?: string | null }> = result1MonthPaid.rows || [];
+    let sent1MonthPaid = 0;
+    for (const user of users1MonthPaid) {
+      try {
+        if (!user.email) continue;
+        const name = (user.full_name || "there").toString();
+        const res = await resend.emails.send({
+          from: getResendFrom(),
+          to: user.email,
+          subject: "A month with Loft — here's what's next",
+          react: Month1PaidUser({ 
+            username: name, 
+            userEmail: user.email
+          }),
+        });
+        if (res?.data?.id) sent1MonthPaid += 1;
+      } catch (err) {
+        console.error("[Cron] 1month paid user send failed", user.email, err);
+      }
+      if (delayMs > 0) await sleep(delayMs);
+    }
+
+    return new Response(JSON.stringify({ success: true, processed3: processed3Count, sent3, processed5: users5.length, sent5, processed6: users6.length, sent6, processed7: users7.length, sent7, processedW1: usersW1.length, sentW1, processedW2: usersW2.length, sentW2, processedW3: usersW3.length, sentW3, processedW4: usersW4.length, sentW4, processed30Days: users30Days.length, sent30Days, processed1MonthPaid: users1MonthPaid.length, sent1MonthPaid }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
