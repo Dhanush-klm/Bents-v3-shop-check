@@ -2,6 +2,8 @@ import { Pool } from "pg";
 import { Resend } from "resend";
 import FreeUserWelcome from "@/app/emails/FreeUserWelcome";
 import DeleteEmail from "@/app/emails/Delete";
+import ProUserWelcome from "@/app/emails/ProUserWelcome";
+import MilestoneEmail from "@/app/emails/MilestoneEmail";
 
 type ClerkEmailAddress = {
   id: string;
@@ -17,6 +19,34 @@ type ClerkUserCreated = {
     last_name?: string | null;
     primary_email_address_id?: string | null;
     email_addresses?: ClerkEmailAddress[];
+  };
+};
+
+type ClerkUserUpdated = {
+  type: string;
+  data: {
+    id: string;
+    first_name?: string | null;
+    last_name?: string | null;
+    primary_email_address_id?: string | null;
+    email_addresses?: ClerkEmailAddress[];
+    unsafe_metadata?: {
+      subscription?: {
+        status?: 'pro' | 'trial' | 'paid' | string;
+        upgraded_at?: string; // ISOString
+        plan?: 'monthly' | 'yearly';
+        platform?: 'ios' | 'android';
+        source?: 'revenuecat' | string;
+      };
+      events?: {
+        last_pro_upgrade_at?: string; // ISOString
+        last_hundredth_link_at?: string; // ISOString
+      };
+      milestones?: {
+        hundredth_link_at?: string; // ISOString
+      };
+      [key: string]: any;
+    };
   };
 };
 
@@ -51,6 +81,18 @@ function getPostgresPool(): Pool {
   // Supabase requires SSL in most environments
   pool = new Pool({ connectionString, ssl: { rejectUnauthorized: false } });
   return pool;
+}
+
+let dataPool: Pool | undefined;
+function getDataDb(): Pool {
+  if (dataPool) return dataPool;
+  const connectionString = getEnv("SUPABASE_URL_DATA");
+  if (!connectionString) {
+    throw new Error("Missing SUPABASE_URL_DATA Postgres connection string");
+  }
+  // Supabase requires SSL in most environments
+  dataPool = new Pool({ connectionString, ssl: { rejectUnauthorized: false } });
+  return dataPool;
 }
 
 function extractEmail(user: ClerkUserCreated["data"]): string | undefined {
@@ -225,6 +267,145 @@ export async function POST(request: Request) {
       }
 
       return new Response(JSON.stringify({ success: true }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    // Handle user.updated for Pro upgrades
+    if (type === "user.updated") {
+      const userData = (root as ClerkUserUpdated).data;
+      const clerkId = userData.id;
+      const unsafeMetadata = userData.unsafe_metadata;
+
+      if (!clerkId) {
+        return new Response(JSON.stringify({ error: "Missing user id in user.updated payload" }), {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+
+      // Check for trigger events
+      const subscription = unsafeMetadata?.subscription;
+      const events = unsafeMetadata?.events;
+      const milestones = unsafeMetadata?.milestones;
+
+      // Pro upgrade detection
+      const isProUpgrade = (subscription?.status === 'pro') || 
+                          (events?.last_pro_upgrade_at !== undefined);
+
+      // 100th link milestone detection  
+      const isHundredthLink = (milestones?.hundredth_link_at !== undefined);
+
+      if (!isProUpgrade && !isHundredthLink) {
+        // No relevant triggers detected
+        return new Response(JSON.stringify({ success: true, action: "no_triggers" }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+
+      const dataDb = getDataDb();
+      
+      // Get user details from the data database (no database updates)
+      const result = await dataDb.query(
+        `select email, full_name 
+         from public.users
+         where id = $1`,
+        [clerkId]
+      );
+      
+      const userRecord = result.rows?.[0];
+      const email = userRecord?.email;
+      const fullName = userRecord?.full_name;
+
+      if (!email) {
+        // User not found in database or no email
+        return new Response(JSON.stringify({ error: "User not found or no email available" }), {
+          status: 404,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+
+      // Extract name from Clerk data or database
+      const firstName = userData.first_name || "";
+      const lastName = userData.last_name || "";
+      const clerkFullName = [firstName, lastName].filter(Boolean).join(" ");
+      const displayName = clerkFullName || fullName || "there";
+
+      // Send appropriate emails based on triggers
+      const resendApiKey = getEnv("RESEND_API_KEY");
+      const actions: string[] = [];
+      
+      if (resendApiKey) {
+        const resend = new Resend(resendApiKey);
+        const delayMs = getDelayMs();
+        
+        // Handle Pro upgrade email
+        if (isProUpgrade) {
+          try {
+            if (delayMs > 0) {
+              await sleep(delayMs);
+            }
+            
+            const sendResult = await resend.emails.send({
+              from: getResendFrom(),
+              to: email,
+              subject: "Welcome to Loft Pro! 🎉",
+              react: ProUserWelcome({ username: displayName, userEmail: email }),
+            });
+            
+            if (!sendResult?.data?.id) {
+              console.error("[Resend] Pro welcome email send returned no id", sendResult);
+            } else {
+              console.log(`[Resend] Pro welcome email sent to ${email} with id ${sendResult.data.id}`);
+              actions.push("pro_welcome_sent");
+            }
+          } catch (sendErr) {
+            console.error("[Resend] Pro welcome email send failed", sendErr);
+            actions.push("pro_welcome_failed");
+          }
+        }
+        
+        // Handle 100th link milestone email
+        if (isHundredthLink) {
+          try {
+            if (delayMs > 0 && actions.length > 0) {
+              await sleep(delayMs);
+            }
+            
+            const sendResult = await resend.emails.send({
+              from: getResendFrom(),
+              to: email,
+              subject: "🎉 You've saved 100 links with Loft!",
+              react: MilestoneEmail({ username: displayName, userEmail: email }),
+            });
+            
+            if (!sendResult?.data?.id) {
+              console.error("[Resend] 100th link milestone email send returned no id", sendResult);
+              actions.push("hundredth_link_email_failed");
+            } else {
+              console.log(`[Resend] 100th link milestone email sent to ${email} with id ${sendResult.data.id}`);
+              actions.push("hundredth_link_email_sent");
+            }
+          } catch (sendErr) {
+            console.error("[Resend] 100th link milestone email send failed", sendErr);
+            actions.push("hundredth_link_email_failed");
+          }
+        }
+      } else {
+        console.warn("[Resend] RESEND_API_KEY not set. Skipping emails");
+        actions.push("resend_api_key_missing");
+      }
+
+      return new Response(JSON.stringify({ 
+        success: true, 
+        actions,
+        triggers: {
+          pro_upgrade: isProUpgrade,
+          hundredth_link: isHundredthLink
+        }
+      }), {
         status: 200,
         headers: { "Content-Type": "application/json" },
       });
