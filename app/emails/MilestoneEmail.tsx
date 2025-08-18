@@ -393,7 +393,7 @@ export default function MilestoneEmail({
                         }}>
                           Want to stop getting emails from Loft?{' '}
                           <a
-                            href={`https://loft-ai-002.vercel.app/unsubscribe?email=${userEmail}`}
+                            href={`https://loftit.ai/unsubscribe?email=${userEmail}`}
                             style={{
                               color: '#ffffff',
                               textDecoration: 'underline',

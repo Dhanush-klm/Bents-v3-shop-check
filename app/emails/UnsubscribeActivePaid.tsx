@@ -19,7 +19,7 @@ interface UnsubscribeActivePaidProps {
 export default function UnsubscribeActivePaid({
   username = "there",
   userEmail = "user@example.com",
-  resubscribeUrl = "https://loft-ai-002.vercel.app/unsubscribe?email=" + "user@example.com",
+  resubscribeUrl = "https://loftit.ai/unsubscribe?email=" + "user@example.com",
 }: UnsubscribeActivePaidProps) {
   return (
     <Html lang="en">
@@ -325,7 +325,7 @@ export default function UnsubscribeActivePaid({
                         }}>
                           Want to stop getting emails from Loft?{' '}
                           <a
-                            href={`https://loft-ai-002.vercel.app/unsubscribe?email=${userEmail}`}
+                            href={`https://loftit.ai/unsubscribe?email=${userEmail}`}
                             style={{
                               color: '#ffffff',
                               textDecoration: 'underline',
