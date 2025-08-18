@@ -195,7 +195,7 @@ export default function MilestoneEmail({
                     margin: '0',
                     lineHeight: '1.4',
                   }}>
-                    That's what we call progress
+                    That&apos;s what we call progress
                   </Text>
                 </Section>
                 {/* Main Content */}
@@ -231,7 +231,7 @@ export default function MilestoneEmail({
                             margin: '0 0 8px 0',
                             lineHeight: '1.6',
                           }}>
-                            You just hit <strong>100 links saved with Loft</strong> — that's 100 ideas, inspirations, insights, and rabbit holes all organized, searchable, and always within reach.
+                            You just hit <strong>100 links saved with Loft</strong> — that&apos;s 100 ideas, inspirations, insights, and rabbit holes all organized, searchable, and always within reach.
                           </Text>
                           
                           <Text style={{
