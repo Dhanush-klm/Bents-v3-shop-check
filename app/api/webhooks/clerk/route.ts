@@ -58,7 +58,7 @@ function getEnv(name: string): string | undefined {
 function getResendFrom(): string {
   const from = getEnv("RESEND_FROM");
   if (from) return from;
-  return "Loft <noreply@loftit.ai>";
+      return "Loft <info@loftit.ai>";
 }
 
 function getDelayMs(): number {

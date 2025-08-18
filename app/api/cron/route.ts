@@ -30,7 +30,7 @@ function getDataDb(): Pool {
 
 function getResendFrom(): string {
   const from = getEnv("RESEND_FROM");
-  return from || "Loft <noreply@loftit.ai>";
+      return from || "Loft <info@loftit.ai>";
 }
 
 function getDelayMs(): number {
