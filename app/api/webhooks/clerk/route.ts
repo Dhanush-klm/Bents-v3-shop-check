@@ -109,9 +109,14 @@ function extractEmail(user: ClerkUserCreated["data"]): string | undefined {
 export async function POST(request: Request) {
   try {
     const payload: unknown = await request.json();
+    console.log("[Webhook] Received payload:", JSON.stringify(payload, null, 2));
+    
     const root = payload as { type?: string; data?: unknown } | undefined;
     const type = root?.type;
+    console.log("[Webhook] Event type:", type);
+    
     if (!payload || !type) {
+      console.log("[Webhook] No payload or type, returning 204");
       return new Response(null, { status: 204 });
     }
 
@@ -274,11 +279,17 @@ export async function POST(request: Request) {
 
     // Handle user.updated for Pro upgrades
     if (type === "user.updated") {
+      console.log("[Webhook] Processing user.updated event");
+      
       const userData = (root as ClerkUserUpdated).data;
       const clerkId = userData.id;
       const unsafeMetadata = userData.unsafe_metadata;
 
+      console.log("[Webhook] Clerk ID:", clerkId);
+      console.log("[Webhook] Unsafe metadata:", JSON.stringify(unsafeMetadata, null, 2));
+
       if (!clerkId) {
+        console.error("[Webhook] Missing user id in user.updated payload");
         return new Response(JSON.stringify({ error: "Missing user id in user.updated payload" }), {
           status: 400,
           headers: { "Content-Type": "application/json" },
@@ -297,8 +308,10 @@ export async function POST(request: Request) {
       // 100th link milestone detection  
       const isHundredthLink = (milestones?.hundredth_link_at !== undefined);
 
+      console.log("[Webhook] Triggers detected - Pro upgrade:", isProUpgrade, "100th link:", isHundredthLink);
+
       if (!isProUpgrade && !isHundredthLink) {
-        // No relevant triggers detected
+        console.log("[Webhook] No relevant triggers detected, returning success");
         return new Response(JSON.stringify({ success: true, action: "no_triggers" }), {
           status: 200,
           headers: { "Content-Type": "application/json" },
@@ -306,6 +319,8 @@ export async function POST(request: Request) {
       }
 
       const dataDb = getDataDb();
+      
+      console.log("[Webhook] Querying SUPABASE_URL_DATA for user:", clerkId);
       
       // Get user details from the data database (no database updates)
       const result = await dataDb.query(
@@ -315,12 +330,16 @@ export async function POST(request: Request) {
         [clerkId]
       );
       
+      console.log("[Webhook] Database query result:", result.rows);
+      
       const userRecord = result.rows?.[0];
       const email = userRecord?.email;
       const fullName = userRecord?.full_name;
 
+      console.log("[Webhook] Extracted email:", email, "fullName:", fullName);
+
       if (!email) {
-        // User not found in database or no email
+        console.error("[Webhook] User not found in database or no email available");
         return new Response(JSON.stringify({ error: "User not found or no email available" }), {
           status: 404,
           headers: { "Content-Type": "application/json" },
@@ -337,26 +356,44 @@ export async function POST(request: Request) {
       const resendApiKey = getEnv("RESEND_API_KEY");
       const actions: string[] = [];
       
+      console.log("[Webhook] RESEND_API_KEY exists:", !!resendApiKey);
+      console.log("[Webhook] Display name:", displayName);
+      console.log("[Webhook] Target email:", email);
+      
       if (resendApiKey) {
         const resend = new Resend(resendApiKey);
         const delayMs = getDelayMs();
         
         // Handle Pro upgrade email
         if (isProUpgrade) {
+          console.log("[Webhook] Attempting to send Pro welcome email");
           try {
             if (delayMs > 0) {
               await sleep(delayMs);
             }
             
-            const sendResult = await resend.emails.send({
+            const emailPayload = {
               from: getResendFrom(),
               to: email,
               subject: "Welcome to Loft Pro! 🎉",
               react: ProUserWelcome({ username: displayName, userEmail: email }),
+            };
+            
+            console.log("[Webhook] Email payload:", {
+              from: emailPayload.from,
+              to: emailPayload.to,
+              subject: emailPayload.subject,
+              username: displayName,
+              userEmail: email
             });
+            
+            const sendResult = await resend.emails.send(emailPayload);
+            
+            console.log("[Webhook] Resend API response:", sendResult);
             
             if (!sendResult?.data?.id) {
               console.error("[Resend] Pro welcome email send returned no id", sendResult);
+              actions.push("pro_welcome_failed");
             } else {
               console.log(`[Resend] Pro welcome email sent to ${email} with id ${sendResult.data.id}`);
               actions.push("pro_welcome_sent");
