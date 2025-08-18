@@ -2,7 +2,7 @@ import { Pool } from "pg";
 import { Resend } from "resend";
 import FreeUserWelcome from "@/app/emails/FreeUserWelcome";
 import DeleteEmail from "@/app/emails/Delete";
-import ProUserWelcome from "@/app/emails/ProUserWelcome";
+import UpgradeConfirmation from "@/app/emails/UpgradeConfirmation";
 import MilestoneEmail from "@/app/emails/MilestoneEmail";
 
 type ClerkEmailAddress = {
@@ -366,7 +366,7 @@ export async function POST(request: Request) {
         
         // Handle Pro upgrade email
         if (isProUpgrade) {
-          console.log("[Webhook] Attempting to send Pro welcome email");
+          console.log("[Webhook] Attempting to send upgrade confirmation email");
           try {
             if (delayMs > 0) {
               await sleep(delayMs);
@@ -376,7 +376,7 @@ export async function POST(request: Request) {
               from: getResendFrom(),
               to: email,
               subject: "Welcome to Loft Pro! 🎉",
-              react: ProUserWelcome({ username: displayName, userEmail: email }),
+              react: UpgradeConfirmation({ username: displayName, userEmail: email }),
             };
             
             console.log("[Webhook] Email payload:", {
@@ -392,15 +392,15 @@ export async function POST(request: Request) {
             console.log("[Webhook] Resend API response:", sendResult);
             
             if (!sendResult?.data?.id) {
-              console.error("[Resend] Pro welcome email send returned no id", sendResult);
-              actions.push("pro_welcome_failed");
+              console.error("[Resend] Upgrade confirmation email send returned no id", sendResult);
+              actions.push("upgrade_confirmation_failed");
             } else {
-              console.log(`[Resend] Pro welcome email sent to ${email} with id ${sendResult.data.id}`);
-              actions.push("pro_welcome_sent");
+              console.log(`[Resend] Upgrade confirmation email sent to ${email} with id ${sendResult.data.id}`);
+              actions.push("upgrade_confirmation_sent");
             }
           } catch (sendErr) {
-            console.error("[Resend] Pro welcome email send failed", sendErr);
-            actions.push("pro_welcome_failed");
+            console.error("[Resend] Upgrade confirmation email send failed", sendErr);
+            actions.push("upgrade_confirmation_failed");
           }
         }
         
