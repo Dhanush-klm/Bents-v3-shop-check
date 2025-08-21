@@ -1,381 +1,182 @@
-import {
-  Body,
-  Container,
-  Head,
-  Html,
-  Section,
-  Text,
-  Img,
-} from "@react-email/components";
+import { Section, Text, Link } from "@react-email/components";
 import * as React from "react";
+import EmailLayout from "../../components/email/EmailLayout";
+import EmailButton from "../../components/email/EmailButton";
+import { LoftColors } from "../../components/email/EmailStyles";
 
 interface Day7TrialEndsTodayProps {
   username?: string;
   userEmail?: string;
+  upgradeUrl?: string;
 }
 
 export default function Day7TrialEndsToday({
   username = "there",
   userEmail = "user@example.com",
+  upgradeUrl = "loft://upgrade",
 }: Day7TrialEndsTodayProps) {
   return (
-    <Html lang="en">
-      <Head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
-        <style>
-          {`
-            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-            * {
-              -ms-text-size-adjust: 100%;
-              -webkit-text-size-adjust: 100%;
-              font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            }
-            body, table, td {
-              -webkit-font-smoothing: antialiased;
-              -moz-osx-font-smoothing: grayscale;
-              font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            }
-            img {
-              -ms-interpolation-mode: bicubic;
-              display: block;
-              max-width: 100%;
-              height: auto;
-            }
-            .emoji {
-              font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-            }
-            @media only screen and (max-width: 600px) {
-              .container {
-                width: 100% !important;
-                max-width: 100% !important;
-              }
-              .content {
-                padding: 16px !important;
-              }
-              .logo-container {
-                flex-direction: column !important;
-                text-align: center !important;
-              }
-              .logo-text {
-                margin-top: 12px !important;
-                text-align: center !important;
-              }
-              .title {
-                font-size: 20px !important;
-              }
-              .paragraph {
-                font-size: 14px !important;
-                line-height: 1.6 !important;
-              }
-            }
-          `}
-        </style>
-      </Head>
-      <table
-        width="100%"
-        cellPadding="0"
-        cellSpacing="0"
-        bgcolor="#ffffff"
-        style={{ backgroundColor: '#ffffff', width: '100%', minWidth: '100%' }}
-      >
-        <tr>
-          <td style={{ backgroundColor: '#ffffff' }}>
-            <Body
-              style={{
-                backgroundColor: '#ffffff',
-                fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-                margin: 0,
-                padding: 0,
-                width: '100%',
-              }}
-            >
-              <Container
-                bgcolor="#ffffff"
-                style={{
-                  width: '100%',
-                  maxWidth: '600px',
-                  margin: '0 auto',
-                  backgroundColor: '#ffffff',
-                  border: '1px solid #e5e7eb',
+    <EmailLayout 
+      userEmail={userEmail}
+      headerTitle="Your trial ends today"
+      headerSubtitle="Don't lose access to your saved content"
+      headerEmoji="⏰"
+    >
+      {/* Main Content */}
+      <Section style={{ padding: '0 24px 32px 24px' }}>
+        <div
+          style={{
+            background: '#fff2',
+            borderRadius: '8px',
+            padding: '24px',
+            margin: '0 0 32px 0',
+            display: 'block',
+          }}
+        >
+          <table width="100%" cellPadding="0" cellSpacing="0" style={{ borderSpacing: '0' }}>
+            <tr>
+              <td>
+                {/* Greeting */}
+                <Text style={{
+                  fontSize: '18px',
+                  color: LoftColors.text,
+                  margin: '0 0 24px 0',
+                  lineHeight: '1.5',
+                }}>
+                  Hi {username},
+                </Text>
+                
+                <Text style={{
+                  fontSize: '16px',
+                  color: LoftColors.textSecondary,
+                  margin: '0 0 24px 0',
+                  lineHeight: '1.6',
+                }}>
+                  Your <strong>Loft Pro</strong> trial ends today. Don't lose access to unlimited saves, AI-powered summaries, and smart collections!
+                </Text>
+                
+                {/* Urgency Message */}
+                <div style={{
+                  backgroundColor: '#fef3cd',
+                  border: '1px solid #fde047',
+                  padding: '16px',
                   borderRadius: '8px',
-                  overflow: 'hidden',
-                }}
-              >
-                {/* Header */}
-                <Section style={{
-                  backgroundColor: '#ffffff',
-                  padding: '32px 24px 24px 24px',
-                  textAlign: 'center' as const,
+                  margin: '0 0 24px 0',
                 }}>
-                  <Img
-                    src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/icon-NYLEum0BjNr1QNxE1HCgTvaqV84l0b.png"
-                    width="100"
-                    height="80"
-                    alt="Loft AI Logo"
-                    style={{
-                      display: 'block',
-                      maxWidth: '100px',
-                      width: '100px',
-                      height: '80px',
-                      borderRadius: '8px',
-                      margin: '0 auto 16px auto',
-                    }}
-                  />
-                  <Text
-                    style={{
-                      fontSize: '24px',
-                      fontWeight: '700',
-                      color: '#111827',
-                      margin: '0 0 8px 0',
-                      lineHeight: '1.2',
-                    }}
-                  >
-                    Today&apos;s the last day of your Loft Pro trial
+                  <Text style={{
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    color: '#92400e',
+                    margin: '0 0 8px 0',
+                  }}>
+                    ⚠️ Trial expires in less than 24 hours
                   </Text>
-                </Section>
-                {/* Main Content */}
-                <Section style={{ padding: '0 24px 32px 24px', backgroundColor: '#ffffff' }}>
-                  <Text style={{ fontSize: '16px', color: '#111827', margin: '0 0 24px 0', fontWeight: 600 }}>
-                    Hi {username},
+                  <Text style={{
+                    fontSize: '14px',
+                    color: '#92400e',
+                    margin: '0',
+                  }}>
+                    After your trial ends, you'll be moved to Loft Free with limited features
                   </Text>
-                  <Text style={{ fontSize: '16px', color: '#374151', margin: '0 0 24px 0' }}>
-                    Today is the{' '}
-                    <span style={{ fontWeight: 600, color: '#dc2626' }}>final day of your Loft Pro free trial.</span>
-                  </Text>
-                  
-                  <Text style={{ fontSize: '16px', color: '#374151', margin: '0 0 24px 0' }}>
-                    Your subscription will begin automatically after today, so you can keep enjoying Loft without limits:
-                  </Text>
-                  
-                  {/* Features list with green checkmarks */}
+                </div>
+                
+                {/* What You'll Keep */}
+                <Text style={{
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  color: LoftColors.textSecondary,
+                  margin: '0 0 16px 0',
+                  lineHeight: '1.6',
+                }}>
+                  Continue enjoying:
+                </Text>
+                <div style={{
+                  backgroundColor: LoftColors.backgroundGray,
+                  padding: '20px',
+                  borderRadius: '8px',
+                  margin: '0 0 32px 0',
+                }}>
                   <div style={{
-                    backgroundColor: '#f0fdf4',
-                    border: '1px solid #bbf7d0',
-                    borderRadius: '8px',
-                    padding: '24px',
-                    margin: '24px 0',
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    marginBottom: '12px',
                   }}>
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      marginBottom: '12px',
+                    <span style={{ fontSize: '18px', marginRight: '12px' }}>✅</span>
+                    <Text style={{
+                      fontSize: '15px',
+                      color: LoftColors.text,
+                      margin: '0',
                     }}>
-                      <span style={{
-                        fontSize: '18px',
-                        marginRight: '12px',
-                        lineHeight: 1,
-                        display: 'inline-block',
-                        color: '#10b981',
-                      }}>✅</span>
-                      <Text style={{
-                        fontSize: '16px',
-                        color: '#374151',
-                        margin: '0',
-                        lineHeight: '1.5',
-                        fontWeight: 500,
-                      }}>
-                        Unlimited saves
-                      </Text>
-                    </div>
-                    
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      marginBottom: '12px',
-                    }}>
-                      <span style={{
-                        fontSize: '18px',
-                        marginRight: '12px',
-                        lineHeight: 1,
-                        display: 'inline-block',
-                        color: '#10b981',
-                      }}>✅</span>
-                      <Text style={{
-                        fontSize: '16px',
-                        color: '#374151',
-                        margin: '0',
-                        lineHeight: '1.5',
-                        fontWeight: 500,
-                      }}>
-                        AI-powered summaries and tags
-                      </Text>
-                    </div>
-                    
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                    }}>
-                      <span style={{
-                        fontSize: '18px',
-                        marginRight: '12px',
-                        lineHeight: 1,
-                        display: 'inline-block',
-                        color: '#10b981',
-                      }}>✅</span>
-                      <Text style={{
-                        fontSize: '16px',
-                        color: '#374151',
-                        margin: '0',
-                        lineHeight: '1.5',
-                        fontWeight: 500,
-                      }}>
-                        Smart resurfacing and collections
-                      </Text>
-                    </div>
+                      <strong>Unlimited saves</strong> — No limits on what you can collect
+                    </Text>
                   </div>
-                  
-                  <Text style={{ 
-                    fontSize: '16px', 
-                    color: '#374151', 
-                    margin: '24px 0', 
-                    textAlign: 'center' as const,
-                    padding: '16px',
-                    backgroundColor: '#fef3c7',
-                    border: '1px solid #fcd34d',
-                    borderRadius: '8px',
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    marginBottom: '12px',
                   }}>
-                    We can&apos;t wait to continue helping you{' '}
-                    <span style={{ fontWeight: 600, color: '#d97706' }}>
-                      save smarter and find faster!
-                    </span>
-                  </Text>
-                  
-                  <div
-                    style={{
-                      background: '#fff2',
-                      borderRadius: '6px',
-                      padding: '8px 16px',
-                      display: 'inline-block',
-                      margin: '24px 0 8px 0',
-                      color: '#6b7280',
-                      fontSize: '16px',
-                      lineHeight: '1.6',
-                      fontFamily: 'inherit',
-                    }}
-                  >
-                    — The Loft Team
+                    <span style={{ fontSize: '18px', marginRight: '12px' }}>✅</span>
+                    <Text style={{
+                      fontSize: '15px',
+                      color: LoftColors.text,
+                      margin: '0',
+                    }}>
+                      <strong>AI-powered summaries</strong> — Understand your content instantly
+                    </Text>
                   </div>
-                  <Text style={{ fontSize: '15px', color: '#9ca3af', fontStyle: 'italic', margin: '16px 0 0 0' }}>
-                    Link it. Love it. Loft it.
-                  </Text>
-                </Section>
-                {/* Loft Footer Section */}
-                <Section style={{
-                  backgroundColor: '#FF5A5F',
-                  padding: '24px 0',
-                  color: '#ffffff',
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                  }}>
+                    <span style={{ fontSize: '18px', marginRight: '12px' }}>✅</span>
+                    <Text style={{
+                      fontSize: '15px',
+                      color: LoftColors.text,
+                      margin: '0',
+                    }}>
+                      <strong>Smart collections</strong> — Intelligently organized content
+                    </Text>
+                  </div>
+                </div>
+                
+                <EmailButton
+                  href={upgradeUrl}
+                  emoji="🚀"
+                  className="email-button"
+                >
+                  Continue with Loft Pro
+                </EmailButton>
+                
+                <Text style={{
+                  fontSize: '14px',
+                  color: LoftColors.textMuted,
+                  margin: '16px 0 0 0',
+                  textAlign: 'center' as const,
+                  lineHeight: '1.5',
                 }}>
-                  <table width="100%" cellPadding="0" cellSpacing="0" style={{ borderSpacing: '0' }}>
-                    <tr>
-                      <td align="center" style={{ padding: '0 24px' }}>
-                        <Text style={{
-                          fontSize: '14px',
-                          textAlign: 'center' as const,
-                          margin: '0 0 16px 0',
-                        }}>
-                          This email was sent to{' '}
-                          <a
-                            href={`mailto:${userEmail}`}
-                            style={{
-                              color: '#ffffff',
-                              textDecoration: 'underline',
-                            }}
-                          >
-                            {userEmail}
-                          </a>
-                        </Text>
-                        <Text style={{
-                          fontSize: '14px',
-                          textAlign: 'center' as const,
-                          margin: '16px 0',
-                          lineHeight: '1.5',
-                        }}>
-                          You&apos;re receiving this email because you signed up for <a href="https://loftit.ai/" style={{ color: '#ffffff', textDecoration: 'underline' }}>Loft</a>
-                        </Text>
-                        <table cellPadding="0" cellSpacing="0" style={{ borderSpacing: '0', margin: '16px 0' }}>
-                          <tr>
-                            {[
-                              {
-                                href: 'https://www.youtube.com/@justloftit',
-                                icon: 'https://cdn-icons-png.flaticon.com/512/1384/1384060.png',
-                                alt: 'YouTube',
-                                size: 24,
-                              },
-                              {
-                                href: 'https://www.instagram.com/justloftit?igsh=NThtYXdsMHB2MDAw',
-                                icon: 'https://cdn-icons-png.flaticon.com/512/2111/2111463.png',
-                                alt: 'Instagram',
-                                size: 24,
-                              },
-                              {
-                                href: 'https://x.com/justloftit?s=21&t=--zBBLxgAAblM7-dOrEx8A',
-                                icon: 'https://cdn-icons-png.flaticon.com/512/5968/5968958.png',
-                                alt: 'Twitter',
-                                size: 20,
-                              },
-                              {
-                                href: 'https://loftit.ai/',
-                                icon: 'https://cdn-icons-png.flaticon.com/512/1006/1006771.png',
-                                alt: 'Website',
-                                size: 20,
-                              },
-                            ].map((social) => (
-                              <td key={social.alt} style={{ padding: '0 8px' }}>
-                                <a
-                                  href={social.href}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  style={{
-                                    color: '#ffffff',
-                                    textDecoration: 'none',
-                                    display: 'block',
-                                  }}
-                                >
-                                  <Img
-                                    src={social.icon}
-                                    width={social.size}
-                                    height={social.size}
-                                    alt={social.alt}
-                                    style={{
-                                      display: 'block',
-                                      maxWidth: `${social.size}px`,
-                                      width: `${social.size}px`,
-                                      height: `${social.size}px`,
-                                    }}
-                                  />
-                                </a>
-                              </td>
-                            ))}
-                          </tr>
-                        </table>
-                        <Text style={{
-                          fontSize: '14px',
-                          textAlign: 'center' as const,
-                          margin: '16px 0',
-                          lineHeight: '1.5',
-                        }}>
-                          Want to stop getting emails from Loft?{' '}
-                          <a
-                            href={`https://loftit.ai/unsubscribe?email=${userEmail}`}
-                            style={{
-                              color: '#ffffff',
-                              textDecoration: 'underline',
-                            }}
-                          >
-                            Unsubscribe
-                          </a>
-                        </Text>
-                      </td>
-                    </tr>
-                  </table>
-                </Section>
-              </Container>
-            </Body>
-          </td>
-        </tr>
-      </table>
-    </Html>
+                  Questions? Just reply to this email — we're here to help!
+                </Text>
+                
+                <div
+                  style={{
+                    background: '#fff2',
+                    borderRadius: '6px',
+                    padding: '8px 16px',
+                    display: 'inline-block',
+                    margin: '24px 0 8px 0',
+                    color: LoftColors.textMuted,
+                    fontSize: '16px',
+                    lineHeight: '1.6',
+                    fontFamily: 'inherit',
+                  }}
+                >
+                  — The Loft Team
+                </div>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </Section>
+    </EmailLayout>
   );
-} 
+}
