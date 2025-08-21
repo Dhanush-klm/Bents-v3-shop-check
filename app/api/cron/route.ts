@@ -213,7 +213,7 @@ export async function GET() {
         const res = await resend.emails.send({
           from: getResendFrom(),
           to: user.email,
-          subject: "Getting started with Loft — your first week",
+          subject: "Getting started with Loft: 3 ways to make it work for you",
           react: Week1PostCreation({ username: name, userEmail: user.email }),
         });
         if (res?.data?.id) sentW1 += 1;
@@ -242,7 +242,7 @@ export async function GET() {
         const res = await resend.emails.send({
           from: getResendFrom(),
           to: user.email,
-          subject: "Loft tips — week 2",
+          subject: "Loft tip: Let AI do the heavy lifting",
           react: Week2PostCreation({ username: name, userEmail: user.email }),
         });
         if (res?.data?.id) sentW2 += 1;
@@ -271,7 +271,7 @@ export async function GET() {
         const res = await resend.emails.send({
           from: getResendFrom(),
           to: user.email,
-          subject: "Keep your Loft flow going — week 3",
+          subject: "From chaos to clarity: How others use Loft",
           react: Week3PostCreation({ username: name, userEmail: user.email }),
         });
         if (res?.data?.id) sentW3 += 1;
@@ -300,7 +300,7 @@ export async function GET() {
         const res = await resend.emails.send({
           from: getResendFrom(),
           to: user.email,
-          subject: "Level up with Loft — week 4",
+          subject: "Save smarter. Search faster. Stay organized",
           react: Week4PostCreation({ username: name, userEmail: user.email }),
         });
         if (res?.data?.id) sentW4 += 1;

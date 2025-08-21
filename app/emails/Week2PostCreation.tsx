@@ -140,7 +140,7 @@ export default function Week2PostCreation({
                   <Text style={{ fontSize: '16px', color: '#111827', margin: '0 0 24px 0', fontWeight: 600 }}>
                     Hi {username},
                   </Text>
-                  <Text style={{ fontSize: '16px', color: '#374151', margin: '0 0 16px 0', fontWeight: '600' }}>
+                  <Text style={{ fontSize: '16px', color: '#374151', margin: '0 0 16px 0'}}>
                     Did you know Loft automatically summarizes and categorizes your saved links?
                   </Text>
                   <Text style={{ fontSize: '16px', color: '#374151', margin: '0 0 16px 0' }}>

@@ -132,7 +132,7 @@ export default function Week4PostCreation({
                       lineHeight: '1.2',
                     }}
                   >
-                    Save smarter. Search faster. Stay organized.
+                    Save smarter. Search faster. Stay organized
                   </Text>
                 </Section>
                 {/* Main Content */}
@@ -164,7 +164,7 @@ export default function Week4PostCreation({
                           color: '#111827',
                           margin: '0',
                         }}>
-                          Use folders + tags to build your personal system
+                          Use Collections + tags to build your personal system
                         </Text>
                       </div>
                     </div>

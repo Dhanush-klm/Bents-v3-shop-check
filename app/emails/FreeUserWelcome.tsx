@@ -297,7 +297,7 @@ export default function FreeUserWelcome({
                                   color: '#6b7280',
                                   margin: '0',
                                 }}>
-                                  Using our Loft extension or your phone&apos;s share sheet
+                                  Use Loft&apos;s in-app &quot;Link URL&quot; feature or your phone&apos;s share sheet to quickly save content
                                 </Text>
                               </div>
                             </div>
@@ -321,7 +321,7 @@ export default function FreeUserWelcome({
                                   color: '#6b7280',
                                   margin: '0',
                                 }}>
-                                  You create
+                                  Loft creates smart ones for you, and you can add your own anytime.
                                 </Text>
                               </div>
                             </div>

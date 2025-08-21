@@ -79,7 +79,7 @@ const EMAIL_TEMPLATES: EmailTemplate[] = [
   {
     id: 'Week4PostCreation',
     name: 'Week 4 Post Creation',
-    subject: 'Save smarter. Search faster. Stay organized.',
+    subject: 'Save smarter. Search faster. Stay organized',
     description: 'Week 4 power features overview',
     category: 'Weekly Sequence',
     component: 'Week4PostCreation'

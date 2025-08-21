@@ -136,7 +136,7 @@ export default function Week1PostCreation({
                   </Text>
                   <Text style={{
                     fontSize: '16px',
-                    color: '#2563eb',
+                    color: '#111827',
                     margin: '0',
                     lineHeight: '1.4',
                     fontWeight: '500',
@@ -204,7 +204,7 @@ export default function Week1PostCreation({
                           color: '#6b7280',
                           margin: '0',
                         }}>
-                          Add folders and tags to sort content your way
+                          Add Collections and tags to sort content your way
                         </Text>
                       </div>
                     </div>
