@@ -392,7 +392,7 @@ export async function GET() {
 
     const renewalEvents: Array<{ 
       user_id: string; 
-      payload: any; 
+      payload: Record<string, unknown>; 
       expiration_ms: number; 
       days_until_expiration: number 
     }> = renewalEventsResult.rows || [];

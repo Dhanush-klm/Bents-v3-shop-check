@@ -1,7 +1,7 @@
 import { Section, Text } from "@react-email/components";
 import * as React from "react";
 import EmailLayout from "../../components/email/EmailLayout";
-import EmailButton from "../../components/email/EmailButton";
+
 import TitleSection from "../../components/email/TitleSection";
 import { LoftColors } from "../../components/email/EmailStyles";
 
@@ -10,13 +10,11 @@ export const subject = "Your Loft Pro trial ends in 2 days";
 interface Day5TrialEndingProps {
   username?: string;
   userEmail?: string;
-  upgradeUrl?: string;
 }
 
 export default function Day5TrialEnding({
   username = "there",
   userEmail = "user@example.com",
-  upgradeUrl = "loft://upgrade",
 }: Day5TrialEndingProps) {
   return (
     <EmailLayout userEmail={userEmail}>
@@ -64,7 +62,7 @@ export default function Day5TrialEnding({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  After that, your subscription will begin automatically, and you'll continue to enjoy:
+                  After that, your subscription will begin automatically, and you&apos;ll continue to enjoy:
                   </Text>
                   <div style={{
                     backgroundColor: '#f9fafb',

@@ -20,7 +20,7 @@ export default function NoActivityReengagement({
     <EmailLayout userEmail={userEmail}>
       <TitleSection 
         title="We miss you!"
-        subtitle="Let's get you back to saving"
+        subtitle="Let&apos;s get you back to saving"
         emoji="👋"
       />
       {/* Main Content */}
@@ -53,7 +53,7 @@ export default function NoActivityReengagement({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  We noticed you haven't been active on <strong>Loft</strong> lately. Is everything okay? We'd love to help you get back to saving and organizing your content!
+                  We noticed you haven&apos;t been active on <strong>Loft</strong> lately. Is everything okay? We&apos;d love to help you get back to saving and organizing your content!
                 </Text>
                 
                 {/* Gentle nudge */}
@@ -87,7 +87,7 @@ export default function NoActivityReengagement({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  Maybe you've been busy, or perhaps you just need a little reminder of how Loft can fit into your routine. Here are some quick ways to get back into the flow:
+                  Maybe you&apos;ve been busy, or perhaps you just need a little reminder of how Loft can fit into your routine. Here are some quick ways to get back into the flow:
                   </Text>
                   
                 {/* Re-engagement suggestions */}
@@ -173,7 +173,7 @@ export default function NoActivityReengagement({
                         color: LoftColors.textMuted,
                         margin: '0',
                       }}>
-                        Ask questions about your saved content — it's like having a conversation with your library
+                        Ask questions about your saved content — it&apos;s like having a conversation with your library
                       </Text>
                     </div>
                   </div>
@@ -185,7 +185,7 @@ export default function NoActivityReengagement({
                   margin: '0 0 16px 0',
                   lineHeight: '1.6',
                 }}>
-                  Ready to dive back in? Let's start saving again:
+                  Ready to dive back in? Let&apos;s start saving again:
                 </Text>
                 
                 <EmailButton
@@ -203,7 +203,7 @@ export default function NoActivityReengagement({
                   textAlign: 'center' as const,
                   lineHeight: '1.5',
                 }}>
-                  If you're having any issues or need help, just reply to this email. We're here for you! 💙
+                  If you&apos;re having any issues or need help, just reply to this email. We&apos;re here for you! 💙
                   </Text>
                 
                   <div

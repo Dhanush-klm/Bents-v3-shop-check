@@ -52,7 +52,7 @@ export default function FreeUserWelcome({
                             margin: '0 0 24px 0',
                             lineHeight: '1.6',
                           }}>
-                  Thanks for joining <strong>Loft</strong> — we're so excited to have you here!
+                  Thanks for joining <strong>Loft</strong> — we&apos;re so excited to have you here!
                           </Text>
                           
                           {/* Free Features */}
@@ -91,7 +91,7 @@ export default function FreeUserWelcome({
                                   color: '#6b7280',
                                   margin: '0',
                                 }}>
-                                  using our Loft extension or your phone's share sheet
+                                  using our Loft extension or your phone&apos;s share sheet
                                 </Text>
                               </div>
                             </div>
@@ -139,7 +139,7 @@ export default function FreeUserWelcome({
                                   color: '#6b7280',
                                   margin: '0',
                                 }}>
-                                  to find what you've saved
+                                  to find what you&apos;ve saved
                                 </Text>
                               </div>
                             </div>

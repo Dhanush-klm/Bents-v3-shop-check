@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import * as React from "react";
 
 function getEnv(name: string): string | undefined {
   const value = process.env[name];
@@ -51,10 +52,10 @@ export async function POST(request: Request) {
     }
 
     // Dynamically import the email component from app/emails
-    let EmailModule: any;
+    let EmailModule: { default?: (props: Record<string, unknown>) => React.ReactElement; subject?: string };
     try {
       EmailModule = await import(`@/app/emails/${template}`);
-    } catch (err) {
+    } catch {
       return new Response(JSON.stringify({ error: `Template not found: ${template}` }), {
         status: 404,
         headers: { "Content-Type": "application/json" },

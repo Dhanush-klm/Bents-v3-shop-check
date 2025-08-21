@@ -18,7 +18,6 @@ export default function SubscriptionRenewed({
   username = "there",
   userEmail = "user@example.com",
   amount = "$9.99",
-  nextRenewalDate = "February 15, 2025",
 }: SubscriptionRenewedProps) {
   return (
     <EmailLayout userEmail={userEmail}>
@@ -66,7 +65,7 @@ export default function SubscriptionRenewed({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  You've been charged {amount} and will continue enjoying full access to everything Loft offers.
+                  You&apos;ve been charged {amount} and will continue enjoying full access to everything Loft offers.
                   </Text>
                   
                 <Text style={{

@@ -1,7 +1,7 @@
 import { Section, Text } from "@react-email/components";
 import * as React from "react";
 import EmailLayout from "../../components/email/EmailLayout";
-import EmailButton from "../../components/email/EmailButton";
+
 import TitleSection from "../../components/email/TitleSection";
 import { LoftColors } from "../../components/email/EmailStyles";
 
@@ -10,13 +10,11 @@ export const subject = "Your Loft Pro trial ends tomorrow";
 interface Day6TrialEndsTomorrowProps {
   username?: string;
   userEmail?: string;
-  upgradeUrl?: string;
 }
 
 export default function Day6TrialEndsTomorrow({
   username = "there",
   userEmail = "user@example.com",
-  upgradeUrl = "loft://upgrade",
 }: Day6TrialEndsTomorrowProps) {
   return (
     <EmailLayout userEmail={userEmail}>
@@ -64,7 +62,7 @@ export default function Day6TrialEndsTomorrow({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  You'll continue enjoying all of Loft's Pro features without interruption:
+                  You&apos;ll continue enjoying all of Loft&apos;s Pro features without interruption:
                   </Text>
                 <div style={{
                   backgroundColor: '#f9fafb',
@@ -124,7 +122,7 @@ export default function Day6TrialEndsTomorrow({
                   margin: '0 0 32px 0',
                   lineHeight: '1.6',
                 }}>
-                  We're thrilled to have you with us — here's to smarter saving!
+                  We&apos;re thrilled to have you with us — here&apos;s to smarter saving!
                   </Text>
                   
                 {/* Signature */}

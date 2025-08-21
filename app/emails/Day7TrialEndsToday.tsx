@@ -1,27 +1,25 @@
-import { Section, Text, Link } from "@react-email/components";
+import { Section, Text } from "@react-email/components";
 import * as React from "react";
 import EmailLayout from "../../components/email/EmailLayout";
-import EmailButton from "../../components/email/EmailButton";
+
 import TitleSection from "../../components/email/TitleSection";
 import { LoftColors } from "../../components/email/EmailStyles";
 
-export const subject = "Today's the last day of your Loft Pro trial";
+export const subject = "Today&apos;s the last day of your Loft Pro trial";
 
 interface Day7TrialEndsTodayProps {
   username?: string;
   userEmail?: string;
-  upgradeUrl?: string;
 }
 
 export default function Day7TrialEndsToday({
   username = "there",
   userEmail = "user@example.com",
-  upgradeUrl = "loft://upgrade",
 }: Day7TrialEndsTodayProps) {
   return (
     <EmailLayout userEmail={userEmail}>
       <TitleSection 
-        title="Today's the last day of your Loft Pro trial"
+        title="Today&apos;s the last day of your Loft Pro trial"
         subtitle="Final day before Pro begins"
         emoji="⏰"
       />
@@ -124,7 +122,7 @@ export default function Day7TrialEndsToday({
                   margin: '0 0 32px 0',
                   lineHeight: '1.6',
                 }}>
-                  We can't wait to continue helping you save smarter and find faster!
+                  We can&apos;t wait to continue helping you save smarter and find faster!
                   </Text>
                   
                 {/* Signature */}

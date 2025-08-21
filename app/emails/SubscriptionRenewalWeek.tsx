@@ -18,7 +18,6 @@ export default function SubscriptionRenewalWeek({
   username = "there",
   userEmail = "user@example.com",
   renewalDate = "January 15, 2025",
-  amount = "$9.99",
 }: SubscriptionRenewalWeekProps) {
   return (
     <EmailLayout userEmail={userEmail}>
@@ -66,7 +65,7 @@ export default function SubscriptionRenewalWeek({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  You'll continue to enjoy full access to AI-enhanced summaries, smart search, and seamless link organization — no interruptions.
+                  You&apos;ll continue to enjoy full access to AI-enhanced summaries, smart search, and seamless link organization — no interruptions.
                   </Text>
                   
                 <Text style={{

@@ -5,7 +5,7 @@ import EmailButton from "../../components/email/EmailButton";
 import TitleSection from "../../components/email/TitleSection";
 import { LoftColors } from "../../components/email/EmailStyles";
 
-export const subject = "You've unlocked Loft Pro ✨ Smarter saving starts now";
+export const subject = "You&apos;ve unlocked Loft Pro ✨ Smarter saving starts now";
 
 interface UpgradeConfirmationProps {
   username?: string;
@@ -21,7 +21,7 @@ export default function UpgradeConfirmation({
   return (
     <EmailLayout userEmail={userEmail}>
       <TitleSection 
-        title="You've unlocked Loft Pro"
+        title="You&apos;ve unlocked Loft Pro"
         subtitle="Smarter saving starts now"
         emoji="✨"
       />
@@ -55,7 +55,7 @@ export default function UpgradeConfirmation({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  Great news — you've just upgraded to <strong>Loft Pro</strong>! 🎉
+                  Great news — you&apos;ve just upgraded to <strong>Loft Pro</strong>! 🎉
                   </Text>
 
                 <Text style={{
@@ -64,7 +64,7 @@ export default function UpgradeConfirmation({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  We're so excited for you to experience everything Loft can do at its best.
+                  We&apos;re so excited for you to experience everything Loft can do at its best.
                   </Text>
 
                 <Text style={{

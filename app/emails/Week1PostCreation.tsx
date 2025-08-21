@@ -1,7 +1,7 @@
-import { Section, Text, Link } from "@react-email/components";
+import { Section, Text } from "@react-email/components";
 import * as React from "react";
 import EmailLayout from "../../components/email/EmailLayout";
-import EmailButton from "../../components/email/EmailButton";
+
 import TitleSection from "../../components/email/TitleSection";
 import { LoftColors } from "../../components/email/EmailStyles";
 
@@ -53,7 +53,7 @@ export default function Week1PostCreation({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  You've signed up — now it's time to make Loft work for you. Here are 3 ways to get the most out of your first week:
+                  You&apos;ve signed up — now it&apos;s time to make Loft work for you. Here are 3 ways to get the most out of your first week:
                   </Text>
                 {/* 3 Ways to Use Loft */}
                   <div style={{
@@ -82,7 +82,7 @@ export default function Week1PostCreation({
                         color: LoftColors.textMuted,
                           margin: '0',
                         }}>
-                        Use Loft through your phone's share sheet
+                        Use Loft through your phone&apos;s share sheet
                         </Text>
                       </div>
                     </div>

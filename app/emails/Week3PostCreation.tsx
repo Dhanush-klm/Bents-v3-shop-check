@@ -1,7 +1,7 @@
 import { Section, Text } from "@react-email/components";
 import * as React from "react";
 import EmailLayout from "../../components/email/EmailLayout";
-import EmailButton from "../../components/email/EmailButton";
+
 import TitleSection from "../../components/email/TitleSection";
 import { LoftColors } from "../../components/email/EmailStyles";
 
@@ -53,7 +53,7 @@ export default function Week3PostCreation({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  You're not alone in having dozens of tabs and saved links scattered across apps. Here's how users are turning Loft into their digital second brain:
+                  You&apos;re not alone in having dozens of tabs and saved links scattered across apps. Here&apos;s how users are turning Loft into their digital second brain:
                   </Text>
                   
                 {/* How Others Use Loft */}

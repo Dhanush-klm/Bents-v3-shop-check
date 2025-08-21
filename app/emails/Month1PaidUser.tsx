@@ -1,11 +1,11 @@
 import { Section, Text } from "@react-email/components";
 import * as React from "react";
 import EmailLayout from "../../components/email/EmailLayout";
-import EmailButton from "../../components/email/EmailButton";
+
 import TitleSection from "../../components/email/TitleSection";
 import { LoftColors } from "../../components/email/EmailStyles";
 
-export const subject = "A month with Loft — here's what's next";
+export const subject = "A month with Loft — here&apos;s what&apos;s next";
 
 interface Month1PaidUserProps {
   username?: string;
@@ -19,7 +19,7 @@ export default function Month1PaidUser({
   return (
     <EmailLayout userEmail={userEmail}>
       <TitleSection 
-        title="A month with Loft — here's what's next"
+        title="A month with Loft — here&apos;s what&apos;s next"
         subtitle="Your second brain in the making"
         emoji="✨"
       />
@@ -53,7 +53,7 @@ export default function Month1PaidUser({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  You've had Loft for a month — and we hope it's made saving and finding your favorite content easier ✨
+                  You&apos;ve had Loft for a month — and we hope it&apos;s made saving and finding your favorite content easier ✨
                 </Text>
                 
                 <Text style={{
@@ -62,7 +62,7 @@ export default function Month1PaidUser({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  Don't forget:
+                  Don&apos;t forget:
                 </Text>
                 
                 <Text style={{

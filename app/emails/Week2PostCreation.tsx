@@ -1,7 +1,7 @@
 import { Section, Text } from "@react-email/components";
 import * as React from "react";
 import EmailLayout from "../../components/email/EmailLayout";
-import EmailButton from "../../components/email/EmailButton";
+
 import TitleSection from "../../components/email/TitleSection";
 import { LoftColors } from "../../components/email/EmailStyles";
 
@@ -71,7 +71,7 @@ export default function Week2PostCreation({
                     margin: '0 0 24px 0',
                   lineHeight: '1.6',
                   }}>
-                  Try saving a long article, TikTok, or Twitter thread, we'll make sense of it for you.
+                  Try saving a long article, TikTok, or Twitter thread, we&apos;ll make sense of it for you.
                 </Text>
                 
                     <Text style={{

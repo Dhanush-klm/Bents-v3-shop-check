@@ -18,7 +18,6 @@ export default function SubscriptionRenewal({
   username = "there",
   userEmail = "user@example.com",
   renewalDate = "January 15, 2025",
-  amount = "$9.99",
 }: SubscriptionRenewalProps) {
   return (
     <EmailLayout userEmail={userEmail}>
@@ -83,7 +82,7 @@ export default function SubscriptionRenewal({
                   margin: '32px 0 0 0',
                   lineHeight: '1.6',
                 }}>
-                  We're so glad to have you with us — here's to more magic at your fingertips! 🫰
+                  We&apos;re so glad to have you with us — here&apos;s to more magic at your fingertips! 🫰
                 </Text>
                 
                 {/* Signature */}

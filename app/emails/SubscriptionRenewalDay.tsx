@@ -17,8 +17,6 @@ interface SubscriptionRenewalDayProps {
 export default function SubscriptionRenewalDay({
   username = "there",
   userEmail = "user@example.com",
-  renewalDate = "January 15, 2025",
-  amount = "$9.99",
 }: SubscriptionRenewalDayProps) {
   return (
     <EmailLayout userEmail={userEmail}>
@@ -66,7 +64,7 @@ export default function SubscriptionRenewalDay({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  We'll charge the card on file and your access will continue uninterrupted.
+                  We&apos;ll charge the card on file and your access will continue uninterrupted.
                   </Text>
                   
                 <Text style={{

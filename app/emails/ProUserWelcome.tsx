@@ -61,7 +61,7 @@ export default function ProUserWelcome({
                   margin: '0 0 16px 0',
                   lineHeight: '1.6',
                 }}>
-                  Here's what you can do now:
+                  Here&apos;s what you can do now:
                 </Text>
                           <div style={{
                   backgroundColor: LoftColors.backgroundGray,

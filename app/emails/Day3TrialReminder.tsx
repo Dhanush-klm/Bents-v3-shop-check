@@ -1,11 +1,11 @@
-import { Section, Text, Link } from "@react-email/components";
+import { Section, Text } from "@react-email/components";
 import * as React from "react";
 import EmailLayout from "../../components/email/EmailLayout";
 import EmailButton from "../../components/email/EmailButton";
 import TitleSection from "../../components/email/TitleSection";
 import { LoftColors } from "../../components/email/EmailStyles";
 
-export const subject = "Still haven't tried Loft? Let's get you started";
+export const subject = "Still haven&apos;t tried Loft? Let&apos;s get you started";
 
 interface Day3TrialReminderProps {
   username?: string;
@@ -21,8 +21,8 @@ export default function Day3TrialReminder({
   return (
     <EmailLayout userEmail={userEmail}>
       <TitleSection 
-        title="Still haven't tried Loft?"
-        subtitle="Let's get you started"
+        title="Still haven&apos;t tried Loft?"
+        subtitle="Let&apos;s get you started"
         emoji="🚀"
       />
       {/* Main Content */}
@@ -55,7 +55,7 @@ export default function Day3TrialReminder({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  You signed up for a smarter way to save, but it looks like you haven't saved your first link yet. Don't worry — getting started is easy:
+                  You signed up for a smarter way to save, but it looks like you haven&apos;t saved your first link yet. Don&apos;t worry — getting started is easy:
                   </Text>
                   
                 {/* Getting Started Steps */}
@@ -78,7 +78,7 @@ export default function Day3TrialReminder({
                         color: LoftColors.text,
                         margin: '0 0 4px 0',
                       }}>
-                        Save from any app using your phone's share sheet
+                        Save from any app using your phone&apos;s share sheet
                       </Text>
                     </div>
                   </div>
