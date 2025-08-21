@@ -60,7 +60,7 @@ export default function SubscriptionRenewal({
                 {/* Renewal Details */}
                 <div style={{
                   backgroundColor: '#ecfdf5',
-                  border: '1px solid '#10b981',
+                  border: '1px solid #10b981',
                   padding: '16px',
                   borderRadius: '8px',
                   margin: '0 0 24px 0',

@@ -56,7 +56,7 @@ export default function Reactivation({
                 {/* Welcome back message */}
                 <div style={{
                   backgroundColor: '#dbeafe',
-                  border: '1px solid '#3b82f6',
+                  border: '1px solid #3b82f6',
                   padding: '16px',
                   borderRadius: '8px',
                   margin: '0 0 24px 0',

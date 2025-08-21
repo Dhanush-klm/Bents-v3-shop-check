@@ -56,7 +56,7 @@ export default function Month1PaidUser({
                 {/* Celebration */}
                 <div style={{
                   backgroundColor: '#ede9fe',
-                  border: '1px solid '#8b5cf6',
+                  border: '1px solid #8b5cf6',
                   padding: '16px',
                   borderRadius: '8px',
                   margin: '0 0 24px 0',

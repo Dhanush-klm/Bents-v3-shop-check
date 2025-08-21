@@ -69,7 +69,7 @@ export default function UnsubscribedMarketing({
                 {/* Unsubscribe Details */}
                 <div style={{
                   backgroundColor: '#f0f9ff',
-                  border: '1px solid '#0ea5e9',
+                  border: '1px solid #0ea5e9',
                   padding: '16px',
                   borderRadius: '8px',
                   margin: '24px 0',

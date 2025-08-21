@@ -58,7 +58,7 @@ export default function SubscriptionCancelled({
                 {/* Cancellation Details */}
                 <div style={{
                   backgroundColor: '#fff7ed',
-                  border: '1px solid '#f59e0b',
+                  border: '1px solid #f59e0b',
                   padding: '16px',
                   borderRadius: '8px',
                   margin: '0 0 24px 0',

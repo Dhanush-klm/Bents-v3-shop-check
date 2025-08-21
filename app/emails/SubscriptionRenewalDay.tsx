@@ -60,7 +60,7 @@ export default function SubscriptionRenewalDay({
                 {/* Final reminder */}
                 <div style={{
                   backgroundColor: '#fef3c7',
-                  border: '1px solid '#f59e0b',
+                  border: '1px solid #f59e0b',
                   padding: '16px',
                   borderRadius: '8px',
                   margin: '0 0 24px 0',
