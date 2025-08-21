@@ -2,6 +2,7 @@ import { Pool } from "pg";
 import { Resend } from "resend";
 import UnsubscribedAll from "@/app/emails/UnsubscribedAll";
 import UnsubscribeActivePaid from "@/app/emails/UnsubscribeActivePaid";
+import { getTemplateSubjectWithFallback } from "@/lib/email-subjects";
 
 function getEnv(name: string): string | undefined {
   const value = process.env[name];
@@ -293,13 +294,13 @@ export async function POST(request: Request) {
               ? {
                   from: getResendFrom(),
                   to: email,
-                  subject: "You’ll no longer receive Loft updates — but your subscription is still active",
+                  subject: await getTemplateSubjectWithFallback("UnsubscribeActivePaid"),
                   react: UnsubscribeActivePaid({ username, userEmail: email }),
                 }
               : {
                   from: getResendFrom(),
                   to: email,
-                  subject: "You've been unsubscribed from all Loft emails",
+                  subject: await getTemplateSubjectWithFallback("UnsubscribedAll"),
                   react: UnsubscribedAll({ username, userEmail: email }),
                 }
           );

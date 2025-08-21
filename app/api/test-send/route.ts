@@ -90,10 +90,9 @@ export async function POST(request: Request) {
 
     const mergedProps = { ...autoProps, ...inboundProps };
 
-    // Default subjects for common templates
+    // Default subjects for common templates (fallback if template doesn't export subject)
     const defaultSubjects: Record<string, string> = {
       FreeUserWelcome: "Welcome to Loft!",
-      UpgradeConfirmation: "Welcome to Loft Pro! 🎉",
       Delete: "Your Loft account has been deleted",
       SubscriptionRenewalWeek: "Your Loft subscription renews next week",
       SubscriptionRenewalDay: "Your Loft subscription renews tomorrow",
@@ -104,11 +103,11 @@ export async function POST(request: Request) {
       Day5TrialEnding: "Your trial is ending soon — keep your Loft flow going",
       Day6TrialEndsTomorrow: "Your Loft trial ends tomorrow",
       Day7TrialEndsToday: "Your Loft trial ends today",
-      Week1PostCreation: "Getting started with Loft: 3 ways to make it work for you",
+      Week1PostCreation: "3 ways to make it work for you",
       Week2PostCreation: "Loft tip: Let AI do the heavy lifting",
       Week3PostCreation: "From chaos to clarity: How others use Loft",
       Week4PostCreation: "Save smarter. Search faster. Stay organized",
-      FeedbackSurvey30Days: "We'd love your feedback — 30 days with Loft",
+      FeedbackSurvey30Days: "hi",
       Month1PaidUser: "A month with Loft — here's what's next",
       SubscriptionRenewed: "Your Loft subscription has renewed",
       SubscriptionCancelled: "Your Loft subscription has been cancelled",
@@ -119,7 +118,9 @@ export async function POST(request: Request) {
       Reactivation: "Welcome back to Loft!",
     };
 
-    const subject = providedSubject || defaultSubjects[template] || `Test: ${template}`;
+    // Try to get subject from template module first, then fallback to defaults
+    const templateSubject = EmailModule?.subject;
+    const subject = providedSubject || templateSubject || defaultSubjects[template] || `Test: ${template}`;
     const reactElement = EmailComponent(mergedProps);
 
     const resend = new Resend(resendKey);

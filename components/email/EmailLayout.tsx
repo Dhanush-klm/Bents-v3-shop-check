@@ -12,20 +12,12 @@ import EmailFooter from "./EmailFooter";
 interface EmailLayoutProps {
   children: React.ReactNode;
   userEmail: string;
-  headerTitle?: string;
-  headerSubtitle?: string;
-  showHeaderEmoji?: boolean;
-  headerEmoji?: string;
   additionalStyles?: string;
 }
 
 export default function EmailLayout({
   children,
   userEmail,
-  headerTitle,
-  headerSubtitle,
-  showHeaderEmoji = true,
-  headerEmoji,
   additionalStyles,
 }: EmailLayoutProps) {
   return (
@@ -67,12 +59,7 @@ export default function EmailLayout({
                 }}
                 className="container"
               >
-                <EmailHeader
-                  title={headerTitle}
-                  subtitle={headerSubtitle}
-                  showEmoji={showHeaderEmoji}
-                  emoji={headerEmoji}
-                />
+                <EmailHeader />
                 {children}
                 <EmailFooter userEmail={userEmail} />
               </Container>

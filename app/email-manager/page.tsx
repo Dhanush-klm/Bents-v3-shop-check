@@ -31,7 +31,7 @@ const EMAIL_TEMPLATES: EmailTemplate[] = [
   {
     id: 'FreeUserWelcome',
     name: 'Free User Welcome',
-    subject: 'Welcome to Loft! Start saving smarter today',
+    subject: 'Welcome to Loft 👋 Your smarter way to save links',
     description: 'Welcome email for new free users',
     category: 'Onboarding',
     component: 'FreeUserWelcome'
@@ -143,7 +143,7 @@ const EMAIL_TEMPLATES: EmailTemplate[] = [
   {
     id: 'UnsubscribedAll',
     name: 'Unsubscribed All',
-    subject: 'You\'ve been unsubscribed from all Loft emails',
+    subject: 'You\'ve unsubscribed — we\'ll miss you in our inbox',
     description: 'Complete unsubscribe confirmation',
     category: 'Unsubscribe',
     component: 'UnsubscribedAll'
@@ -151,7 +151,7 @@ const EMAIL_TEMPLATES: EmailTemplate[] = [
   {
     id: 'Delete',
     name: 'Delete Account',
-    subject: 'Your Loft account has been deleted',
+    subject: 'You\'ve left Loft — but we hope it\'s not goodbye 💙',
     description: 'Account deletion confirmation',
     category: 'Account Management',
     component: 'Delete'

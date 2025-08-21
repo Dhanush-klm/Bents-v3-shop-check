@@ -4,6 +4,7 @@ import FreeUserWelcome from "@/app/emails/FreeUserWelcome";
 import DeleteEmail from "@/app/emails/Delete";
 import UpgradeConfirmation from "@/app/emails/UpgradeConfirmation";
 import MilestoneEmail from "@/app/emails/MilestoneEmail";
+import { getTemplateSubjectWithFallback } from "@/lib/email-subjects";
 
 type ClerkEmailAddress = {
   id: string;
@@ -189,7 +190,7 @@ export async function POST(request: Request) {
           const sendResult = await resend.emails.send({
             from: getResendFrom(),
             to: email,
-            subject: "Welcome to Loft!",
+            subject: await getTemplateSubjectWithFallback("FreeUserWelcome"),
             react: FreeUserWelcome({ username: (fullName || firstName || "there"), userEmail: email }),
           });
           if (!sendResult?.data?.id) {
@@ -258,7 +259,7 @@ export async function POST(request: Request) {
           const sendResult = await resend.emails.send({
             from: getResendFrom(),
             to: email,
-            subject: "Your Loft account has been deleted",
+            subject: await getTemplateSubjectWithFallback("Delete"),
             react: DeleteEmail({ username: fullName || "there", userEmail: email }),
           });
           if (!sendResult?.data?.id) {
@@ -375,7 +376,7 @@ export async function POST(request: Request) {
             const emailPayload = {
               from: getResendFrom(),
               to: email,
-              subject: "Welcome to Loft Pro! 🎉",
+              subject: await getTemplateSubjectWithFallback("UpgradeConfirmation"),
               react: UpgradeConfirmation({ username: displayName, userEmail: email }),
             };
             
@@ -414,7 +415,7 @@ export async function POST(request: Request) {
             const sendResult = await resend.emails.send({
               from: getResendFrom(),
               to: email,
-              subject: "🎉 You've saved 100 links with Loft!",
+              subject: await getTemplateSubjectWithFallback("MilestoneEmail"),
               react: MilestoneEmail({ username: displayName, userEmail: email }),
             });
             

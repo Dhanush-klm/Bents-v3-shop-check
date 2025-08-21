@@ -2,6 +2,7 @@ import { Section, Text } from "@react-email/components";
 import * as React from "react";
 import EmailLayout from "../../components/email/EmailLayout";
 import EmailButton from "../../components/email/EmailButton";
+import TitleSection from "../../components/email/TitleSection";
 import { LoftColors } from "../../components/email/EmailStyles";
 
 interface UnsubscribedMarketingProps {
@@ -16,12 +17,12 @@ export default function UnsubscribedMarketing({
   resubscribeUrl = "https://loftit.ai/resubscribe",
 }: UnsubscribedMarketingProps) {
   return (
-    <EmailLayout 
-      userEmail={userEmail}
-      headerTitle="Unsubscribed from marketing"
-      headerSubtitle="You'll still get important updates"
-      headerEmoji="📧"
-    >
+    <EmailLayout userEmail={userEmail}>
+      <TitleSection 
+        title="Unsubscribed from marketing"
+        subtitle="You'll still get important updates"
+        emoji="📧"
+      />
       {/* Main Content */}
       <Section style={{ padding: '0 24px 32px 24px' }}>
         <div

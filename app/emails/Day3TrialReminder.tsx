@@ -2,7 +2,10 @@ import { Section, Text, Link } from "@react-email/components";
 import * as React from "react";
 import EmailLayout from "../../components/email/EmailLayout";
 import EmailButton from "../../components/email/EmailButton";
+import TitleSection from "../../components/email/TitleSection";
 import { LoftColors } from "../../components/email/EmailStyles";
+
+export const subject = "Still haven't tried Loft? Let's get you started";
 
 interface Day3TrialReminderProps {
   username?: string;
@@ -16,18 +19,18 @@ export default function Day3TrialReminder({
   helpUrl = "https://loftit.ai/ios-share-extension",
 }: Day3TrialReminderProps) {
   return (
-    <EmailLayout 
-      userEmail={userEmail}
-      headerTitle="Getting the most from Loft"
-      headerSubtitle="Your trial is going great!"
-      headerEmoji="🚀"
-    >
+    <EmailLayout userEmail={userEmail}>
+      <TitleSection 
+        title="Still haven't tried Loft?"
+        subtitle="Let's get you started"
+        emoji="🚀"
+      />
       {/* Main Content */}
       <Section style={{ padding: '0 24px 32px 24px' }}>
         <div
-          style={{
+              style={{
             background: '#fff2',
-            borderRadius: '8px',
+                  borderRadius: '8px',
             padding: '24px',
             margin: '0 0 32px 0',
             display: 'block',
@@ -43,8 +46,8 @@ export default function Day3TrialReminder({
                   margin: '0 0 24px 0',
                   lineHeight: '1.5',
                 }}>
-                  Hi {username},
-                </Text>
+                    Hi {username},
+                  </Text>
                 
                 <Text style={{
                   fontSize: '16px',
@@ -52,57 +55,22 @@ export default function Day3TrialReminder({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  You're 3 days into your <strong>Loft Pro</strong> trial! How has it been going? We want to make sure you're getting the most out of all the features.
-                </Text>
-                
-                {/* Tips Section */}
-                <div style={{
-                  backgroundColor: '#e0f2fe',
-                  border: '1px solid #0891b2',
-                  padding: '20px',
-                  borderRadius: '8px',
-                  margin: '0 0 24px 0',
-                }}>
-                  <Text style={{
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    color: '#0e7490',
-                    margin: '0 0 12px 0',
-                  }}>
-                    💡 Pro tip: Try Ask Loft
+                  You signed up for a smarter way to save, but it looks like you haven't saved your first link yet. Don't worry — getting started is easy:
                   </Text>
-                  <Text style={{
-                    fontSize: '14px',
-                    color: '#0e7490',
-                    margin: '0',
-                    lineHeight: '1.5',
-                  }}>
-                    You can chat with your saved content! Try asking "What articles did I save about productivity?" or "Show me my saved videos from this week."
-                  </Text>
-                </div>
-                
-                {/* Feature Highlights */}
-                <Text style={{
-                  fontSize: '16px',
-                  fontWeight: '600',
-                  color: LoftColors.textSecondary,
-                  margin: '0 0 16px 0',
-                  lineHeight: '1.6',
-                }}>
-                  Making the most of your trial:
-                </Text>
-                <div style={{
-                  backgroundColor: LoftColors.backgroundGray,
+                  
+                {/* Getting Started Steps */}
+                  <div style={{
+                    backgroundColor: '#f9fafb',
                   padding: '20px',
-                  borderRadius: '8px',
+                    borderRadius: '8px',
                   margin: '0 0 32px 0',
-                }}>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    marginBottom: '16px',
                   }}>
-                    <span style={{ fontSize: '20px', marginRight: '12px' }}>📱</span>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      marginBottom: '16px',
+                    }}>
+                    <span style={{ fontSize: '20px', marginRight: '12px' }}>🔗</span>
                     <div>
                       <Text style={{
                         fontSize: '16px',
@@ -110,23 +78,16 @@ export default function Day3TrialReminder({
                         color: LoftColors.text,
                         margin: '0 0 4px 0',
                       }}>
-                        Set up the share extension
-                      </Text>
-                      <Text style={{
-                        fontSize: '14px',
-                        color: LoftColors.textMuted,
-                        margin: '0',
-                      }}>
-                        Save directly from any app with one tap
+                        Save from any app using your phone's share sheet
                       </Text>
                     </div>
                   </div>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    marginBottom: '16px',
-                  }}>
-                    <span style={{ fontSize: '20px', marginRight: '12px' }}>🏷️</span>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      marginBottom: '16px',
+                    }}>
+                    <span style={{ fontSize: '20px', marginRight: '12px' }}>🧠</span>
                     <div>
                       <Text style={{
                         fontSize: '16px',
@@ -134,22 +95,15 @@ export default function Day3TrialReminder({
                         color: LoftColors.text,
                         margin: '0 0 4px 0',
                       }}>
-                        Let AI organize for you
-                      </Text>
-                      <Text style={{
-                        fontSize: '14px',
-                        color: LoftColors.textMuted,
-                        margin: '0',
-                      }}>
-                        Smart tags and collections are created automatically
+                        Let Loft auto-summarize and categorize it
                       </Text>
                     </div>
                   </div>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                  }}>
-                    <span style={{ fontSize: '20px', marginRight: '12px' }}>💬</span>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                    }}>
+                    <span style={{ fontSize: '20px', marginRight: '12px' }}>🔍</span>
                     <div>
                       <Text style={{
                         fontSize: '16px',
@@ -157,66 +111,53 @@ export default function Day3TrialReminder({
                         color: LoftColors.text,
                         margin: '0 0 4px 0',
                       }}>
-                        Chat with your content
-                      </Text>
-                      <Text style={{
-                        fontSize: '14px',
-                        color: LoftColors.textMuted,
-                        margin: '0',
-                      }}>
-                        Ask Loft questions about what you've saved
+                        Search and resurface content anytime
                       </Text>
                     </div>
+                    </div>
                   </div>
-                </div>
-                
-                <Text style={{
-                  fontSize: '16px',
+                  
+                  <Text style={{ 
+                    fontSize: '16px', 
                   color: LoftColors.textSecondary,
-                  margin: '0 0 16px 0',
+                  margin: '0 0 32px 0',
                   lineHeight: '1.6',
-                }}>
-                  Need help getting started?
-                </Text>
-                
+                  }}>
+                    Your free trial is ticking — make the most of it before it ends!
+                  </Text>
+                  
                 <EmailButton
-                  href={helpUrl}
-                  emoji="📖"
+                      href={helpUrl}
+                  emoji="👉"
                   className="email-button"
                 >
-                  View Setup Guide
+                  Get Help Getting Started
                 </EmailButton>
                 
+                {/* Signature */}
                 <Text style={{
-                  fontSize: '14px',
-                  color: LoftColors.textMuted,
-                  margin: '16px 0 0 0',
-                  textAlign: 'center' as const,
-                  lineHeight: '1.5',
+                      fontSize: '16px',
+                  color: LoftColors.textSecondary,
+                  margin: '32px 0 8px 0',
+                      lineHeight: '1.6',
                 }}>
-                  Questions? Just reply to this email — we're here to help!
-                </Text>
-                
-                <div
-                  style={{
-                    background: '#fff2',
-                    borderRadius: '6px',
-                    padding: '8px 16px',
-                    display: 'inline-block',
-                    margin: '24px 0 8px 0',
-                    color: LoftColors.textMuted,
-                    fontSize: '16px',
-                    lineHeight: '1.6',
-                    fontFamily: 'inherit',
-                  }}
-                >
                   — The Loft Team
-                </div>
-              </td>
-            </tr>
-          </table>
+                        </Text>
+
+                        <Text style={{
+                          fontSize: '14px',
+                  color: LoftColors.textMuted,
+                  margin: '32px 0 0 0',
+                          textAlign: 'center' as const,
+                  fontStyle: 'italic',
+                }}>
+                  <em>Link it. Love it. Loft it.</em>
+                        </Text>
+                      </td>
+                    </tr>
+                  </table>
         </div>
-      </Section>
+                </Section>
     </EmailLayout>
   );
-}
+} 

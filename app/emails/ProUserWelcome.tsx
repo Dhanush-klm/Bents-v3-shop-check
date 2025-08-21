@@ -2,6 +2,7 @@ import { Section, Text, Link } from "@react-email/components";
 import * as React from "react";
 import EmailLayout from "../../components/email/EmailLayout";
 import EmailButton from "../../components/email/EmailButton";
+import TitleSection from "../../components/email/TitleSection";
 import { LoftColors } from "../../components/email/EmailStyles";
 
 interface ProUserWelcomeProps {
@@ -14,12 +15,12 @@ export default function ProUserWelcome({
   userEmail = "user@example.com",
 }: ProUserWelcomeProps) {
   return (
-    <EmailLayout 
-      userEmail={userEmail}
-      headerTitle="Welcome to Loft Pro"
-      headerSubtitle="Your smarter way to save links"
-      headerEmoji="🚀"
-    >
+    <EmailLayout userEmail={userEmail}>
+      <TitleSection 
+        title="Welcome to Loft Pro"
+        subtitle="Your smarter way to save links"
+        emoji="🚀"
+      />
                 {/* Main Content */}
       <Section style={{ padding: '0 24px 32px 24px' }}>
                   <div

@@ -2,7 +2,10 @@ import { Section, Text } from "@react-email/components";
 import * as React from "react";
 import EmailLayout from "../../components/email/EmailLayout";
 import EmailButton from "../../components/email/EmailButton";
+import TitleSection from "../../components/email/TitleSection";
 import { LoftColors } from "../../components/email/EmailStyles";
+
+export const subject = "Your Loft Pro subscription has been canceled";
 
 interface SubscriptionCancelledProps {
   username?: string;
@@ -16,16 +19,16 @@ export default function SubscriptionCancelled({
   endDate = "January 15, 2025",
 }: SubscriptionCancelledProps) {
   return (
-    <EmailLayout 
-      userEmail={userEmail}
-      headerTitle="Subscription cancelled"
-      headerSubtitle="You still have access until your billing period ends"
-      headerEmoji="📅"
-    >
+    <EmailLayout userEmail={userEmail}>
+      <TitleSection 
+        title="Your Loft Pro subscription has been canceled"
+        subtitle="No hard feelings — you still have access"
+        emoji="📅"
+      />
       {/* Main Content */}
       <Section style={{ padding: '0 24px 32px 24px' }}>
         <div
-          style={{
+              style={{
             background: '#fff2',
             borderRadius: '8px',
             padding: '24px',
@@ -52,152 +55,26 @@ export default function SubscriptionCancelled({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  We've processed your <strong>Loft Pro</strong> cancellation request. While we're sorry to see you go, we want to make sure you know exactly what happens next.
+                  We've confirmed your Loft Pro subscription has been canceled.
                 </Text>
                 
-                {/* Cancellation Details */}
-                <div style={{
-                  backgroundColor: '#fff7ed',
-                  border: '1px solid #f59e0b',
-                  padding: '16px',
-                  borderRadius: '8px',
+                <Text style={{
+                  fontSize: '16px',
+                  color: LoftColors.textSecondary,
                   margin: '0 0 24px 0',
-                }}>
-                  <Text style={{
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    color: '#d97706',
-                    margin: '0 0 8px 0',
-                  }}>
-                    📅 Subscription ends: {endDate}
-                  </Text>
-                  <Text style={{
-                    fontSize: '14px',
-                    color: '#d97706',
-                    margin: '0',
-                  }}>
-                    You'll continue to have full Pro access until your current billing period ends
-                  </Text>
-                </div>
-                
-                {/* What happens next */}
-                <Text style={{
-                  fontSize: '16px',
-                  fontWeight: '600',
-                  color: LoftColors.textSecondary,
-                  margin: '0 0 16px 0',
                   lineHeight: '1.6',
                 }}>
-                  What happens now:
+                  Your account is still active, and you'll continue to have access to all your saved links — but premium features like AI summaries, smart resurfacing, and unlimited saves will be paused once your current billing cycle ends on <strong>{endDate}</strong>.
                 </Text>
-                <div style={{
-                  backgroundColor: LoftColors.backgroundGray,
-                  padding: '20px',
-                  borderRadius: '8px',
+                
+                <Text style={{
+                  fontSize: '16px',
+                  color: LoftColors.textSecondary,
                   margin: '0 0 24px 0',
-                }}>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    marginBottom: '12px',
-                  }}>
-                    <span style={{ fontSize: '18px', marginRight: '12px', color: '#10b981' }}>✅</span>
-                    <Text style={{
-                      fontSize: '15px',
-                      color: LoftColors.text,
-                      margin: '0',
-                    }}>
-                      Keep all Pro features until {endDate}
-                    </Text>
-                  </div>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    marginBottom: '12px',
-                  }}>
-                    <span style={{ fontSize: '18px', marginRight: '12px', color: '#10b981' }}>✅</span>
-                    <Text style={{
-                      fontSize: '15px',
-                      color: LoftColors.text,
-                      margin: '0',
-                    }}>
-                      No more charges will be made to your account
-                    </Text>
-                  </div>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                  }}>
-                    <span style={{ fontSize: '18px', marginRight: '12px', color: '#10b981' }}>✅</span>
-                    <Text style={{
-                      fontSize: '15px',
-                      color: LoftColors.text,
-                      margin: '0',
-                    }}>
-                      Your saved content will remain safe and accessible
-                    </Text>
-                  </div>
-                </div>
-                
-                {/* After expiration */}
-                <Text style={{
-                  fontSize: '16px',
-                  fontWeight: '600',
-                  color: LoftColors.textSecondary,
-                  margin: '0 0 16px 0',
                   lineHeight: '1.6',
                 }}>
-                  After {endDate}:
+                  No hard feelings — we're grateful you gave Loft Pro a try.
                 </Text>
-                <div style={{
-                  backgroundColor: '#fef3f2',
-                  padding: '20px',
-                  borderRadius: '8px',
-                  margin: '0 0 32px 0',
-                  border: '1px solid #fecaca',
-                }}>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    marginBottom: '12px',
-                  }}>
-                    <span style={{ fontSize: '18px', marginRight: '12px' }}>📉</span>
-                    <Text style={{
-                      fontSize: '15px',
-                      color: LoftColors.text,
-                      margin: '0',
-                    }}>
-                      Account moves to Loft Free plan
-                    </Text>
-                  </div>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    marginBottom: '12px',
-                  }}>
-                    <span style={{ fontSize: '18px', marginRight: '12px' }}>📉</span>
-                    <Text style={{
-                      fontSize: '15px',
-                      color: LoftColors.text,
-                      margin: '0',
-                    }}>
-                      Limited to basic features and storage
-                    </Text>
-                  </div>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                  }}>
-                    <span style={{ fontSize: '18px', marginRight: '12px' }}>📉</span>
-                    <Text style={{
-                      fontSize: '15px',
-                      color: LoftColors.text,
-                      margin: '0',
-                    }}>
-                      Ask Loft sessions limited to 1 per day
-                    </Text>
-                  </div>
-                </div>
                 
                 <Text style={{
                   fontSize: '16px',
@@ -205,47 +82,51 @@ export default function SubscriptionCancelled({
                   margin: '0 0 16px 0',
                   lineHeight: '1.6',
                 }}>
-                  Changed your mind? You can reactivate your subscription anytime before {endDate}:
+                  If your needs change or you want to come back, upgrading is just a click away:
                 </Text>
                 
                 <EmailButton
                   href="https://loftit.ai/upgrade"
-                  emoji="🔄"
+                  emoji="👉"
                   className="email-button"
                 >
-                  Reactivate Subscription
+                  Re-Upgrade to Loft Pro
                 </EmailButton>
                 
+                <Text style={{
+                  fontSize: '16px',
+                  color: LoftColors.textSecondary,
+                  margin: '32px 0 0 0',
+                  lineHeight: '1.6',
+                }}>
+                  In the meantime, we're here if you need anything.
+                </Text>
+                
+                {/* Signature */}
+                <Text style={{
+                  fontSize: '16px',
+                  color: LoftColors.textSecondary,
+                  margin: '16px 0 0 0',
+                  lineHeight: '1.6',
+                }}>
+                  — The Loft Team
+                </Text>
+                
+                {/* Tagline */}
                 <Text style={{
                   fontSize: '14px',
                   color: LoftColors.textMuted,
                   margin: '16px 0 0 0',
                   textAlign: 'center' as const,
-                  lineHeight: '1.5',
+                  fontStyle: 'italic',
                 }}>
-                  Thank you for your time with Loft Pro. We hope to see you again! 🙏
+                  <em>Link it. Love it. Loft it.</em>
                 </Text>
-                
-                <div
-                  style={{
-                    background: '#fff2',
-                    borderRadius: '6px',
-                    padding: '8px 16px',
-                    display: 'inline-block',
-                    margin: '24px 0 8px 0',
-                    color: LoftColors.textMuted,
-                    fontSize: '16px',
-                    lineHeight: '1.6',
-                    fontFamily: 'inherit',
-                  }}
-                >
-                  — The Loft Team
-                </div>
-              </td>
-            </tr>
-          </table>
+                      </td>
+                    </tr>
+                  </table>
         </div>
-      </Section>
+                </Section>
     </EmailLayout>
   );
-}
+} 

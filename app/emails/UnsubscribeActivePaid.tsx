@@ -2,7 +2,10 @@ import { Section, Text } from "@react-email/components";
 import * as React from "react";
 import EmailLayout from "../../components/email/EmailLayout";
 import EmailButton from "../../components/email/EmailButton";
+import TitleSection from "../../components/email/TitleSection";
 import { LoftColors } from "../../components/email/EmailStyles";
+
+export const subject = "You'll no longer receive Loft updates — but your subscription is still active";
 
 interface UnsubscribeActivePaidProps {
   username?: string;
@@ -13,21 +16,21 @@ interface UnsubscribeActivePaidProps {
 export default function UnsubscribeActivePaid({
   username = "there",
   userEmail = "user@example.com",
-  resubscribeUrl = "https://loftit.ai/resubscribe",
+  resubscribeUrl = "https://loftit.ai/unsubscribe?email=${userEmail}",
 }: UnsubscribeActivePaidProps) {
   return (
-    <EmailLayout 
-      userEmail={userEmail}
-      headerTitle="Email preferences updated"
-      headerSubtitle="Your subscription is still active"
-      headerEmoji="✉️"
-    >
+    <EmailLayout userEmail={userEmail}>
+      <TitleSection 
+        title="You'll no longer receive Loft updates"
+        subtitle="But your subscription is still active"
+        emoji="✉️"
+      />
       {/* Main Content */}
       <Section style={{ padding: '0 24px 32px 24px' }}>
         <div
-          style={{
+              style={{
             background: '#fff2',
-            borderRadius: '8px',
+                  borderRadius: '8px',
             padding: '24px',
             margin: '0 0 32px 0',
             display: 'block',
@@ -43,53 +46,8 @@ export default function UnsubscribeActivePaid({
                   margin: '0 0 24px 0',
                   lineHeight: '1.5',
                 }}>
-                  Hi {username},
-                </Text>
-                
-                <Text style={{
-                  fontSize: '24px',
-                  fontWeight: '600',
-                  color: LoftColors.text,
-                  margin: '0 0 8px 0',
-                  lineHeight: '1.2',
-                  textAlign: 'center' as const,
-                }}>
-                  You'll no longer receive Loft updates
-                </Text>
-                <Text style={{ 
-                  fontSize: '16px', 
-                  color: LoftColors.primary, 
-                  margin: '0 0 8px 0', 
-                  fontWeight: 500,
-                  textAlign: 'center' as const,
-                }}>
-                  But your subscription is still active
-                </Text>
-                
-                {/* Status Clarification */}
-                <div style={{
-                  backgroundColor: '#ecfdf5',
-                  border: '1px solid #10b981',
-                  padding: '16px',
-                  borderRadius: '8px',
-                  margin: '24px 0',
-                }}>
-                  <Text style={{
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    color: '#059669',
-                    margin: '0 0 8px 0',
-                  }}>
-                    ✅ Your Loft Pro subscription continues
+                    Hi {username},
                   </Text>
-                  <Text style={{
-                    fontSize: '14px',
-                    color: '#059669',
-                    margin: '0',
-                  }}>
-                    You'll still have full access to all Pro features — just no more marketing emails
-                  </Text>
-                </div>
                 
                 <Text style={{
                   fontSize: '16px',
@@ -97,161 +55,76 @@ export default function UnsubscribeActivePaid({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  Perfect! You've unsubscribed from our marketing emails while keeping your active Loft Pro subscription. Here's what this means:
-                </Text>
+                  You've successfully unsubscribed from Loft's marketing emails.
+                  </Text>
                 
-                {/* What continues */}
                 <Text style={{
                   fontSize: '16px',
-                  fontWeight: '600',
                   color: LoftColors.textSecondary,
-                  margin: '0 0 16px 0',
-                  lineHeight: '1.6',
-                }}>
-                  What continues:
-                </Text>
-                <div style={{
-                  backgroundColor: LoftColors.backgroundGray,
-                  padding: '20px',
-                  borderRadius: '8px',
                   margin: '0 0 24px 0',
-                }}>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    marginBottom: '12px',
-                  }}>
-                    <span style={{ fontSize: '18px', marginRight: '12px', color: '#10b981' }}>✅</span>
-                    <Text style={{
-                      fontSize: '15px',
-                      color: LoftColors.text,
-                      margin: '0',
-                    }}>
-                      Full access to all Loft Pro features
-                    </Text>
-                  </div>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    marginBottom: '12px',
-                  }}>
-                    <span style={{ fontSize: '18px', marginRight: '12px', color: '#10b981' }}>✅</span>
-                    <Text style={{
-                      fontSize: '15px',
-                      color: LoftColors.text,
-                      margin: '0',
-                    }}>
-                      Important billing and account notifications
-                    </Text>
-                  </div>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                  }}>
-                    <span style={{ fontSize: '18px', marginRight: '12px', color: '#10b981' }}>✅</span>
-                    <Text style={{
-                      fontSize: '15px',
-                      color: LoftColors.text,
-                      margin: '0',
-                    }}>
-                      Critical security and service updates
-                    </Text>
-                  </div>
-                </div>
-                
-                {/* What stops */}
-                <Text style={{
-                  fontSize: '16px',
-                  fontWeight: '600',
-                  color: LoftColors.textSecondary,
-                  margin: '0 0 16px 0',
                   lineHeight: '1.6',
                 }}>
-                  What stops:
+                    We totally get it — inboxes get crowded.
+                  </Text>
+                
+                <Text style={{
+                        fontSize: '16px',
+                  color: LoftColors.textSecondary,
+                  margin: '0 0 24px 0',
+                  lineHeight: '1.6',
+                }}>
+                  Don't worry — your <strong>Loft subscription is still active</strong>, and you'll continue to have full access to all your saved content, summaries, and smart search features.
+                  </Text>
+                
+                <Text style={{
+                      fontSize: '16px',
+                  color: LoftColors.textSecondary,
+                  margin: '0 0 24px 0',
+                      lineHeight: '1.6',
+                }}>
+                  You'll still receive important service-related emails (like billing or account updates), but we'll stay out of your inbox for everything else.
                 </Text>
-                <div style={{
-                  backgroundColor: '#fef3f2',
-                  padding: '20px',
-                  borderRadius: '8px',
-                  margin: '0 0 32px 0',
-                  border: '1px solid #fecaca',
-                }}>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    marginBottom: '12px',
-                  }}>
-                    <span style={{ fontSize: '18px', marginRight: '12px' }}>📧</span>
-                    <Text style={{
-                      fontSize: '15px',
-                      color: LoftColors.text,
-                      margin: '0',
-                    }}>
-                      Feature announcements and tips
-                    </Text>
-                  </div>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                  }}>
-                    <span style={{ fontSize: '18px', marginRight: '12px' }}>🎯</span>
-                    <Text style={{
-                      fontSize: '15px',
-                      color: LoftColors.text,
-                      margin: '0',
-                    }}>
-                      Marketing and engagement emails
-                    </Text>
-                  </div>
-                </div>
                 
-                <Text style={{
+                        <Text style={{
                   fontSize: '16px',
                   color: LoftColors.textSecondary,
-                  margin: '0 0 16px 0',
+                          margin: '0 0 16px 0',
                   lineHeight: '1.6',
                 }}>
-                  Want to get updates again? You can resubscribe anytime:
+                  Changed your mind? You can resubscribe anytime here:
                 </Text>
                 
                 <EmailButton
                   href={resubscribeUrl}
-                  emoji="📬"
+                  emoji="👉"
                   className="email-button"
                 >
-                  Resubscribe to Updates
+                  Resubscribe to Loft Updates
                 </EmailButton>
                 
-                <Text style={{
-                  fontSize: '14px',
-                  color: LoftColors.textMuted,
-                  margin: '16px 0 0 0',
-                  textAlign: 'center' as const,
-                  lineHeight: '1.5',
+                        <Text style={{
+                  fontSize: '16px',
+                  color: LoftColors.textSecondary,
+                  margin: '32px 0 0 0',
+                  lineHeight: '1.6',
                 }}>
-                  Thank you for being a valued Loft Pro member! 🌟
-                </Text>
+                  Thanks for being part of Loft — we're glad you're here.
+                        </Text>
                 
-                <div
-                  style={{
-                    background: '#fff2',
-                    borderRadius: '6px',
-                    padding: '8px 16px',
-                    display: 'inline-block',
-                    margin: '24px 0 8px 0',
-                    color: LoftColors.textMuted,
-                    fontSize: '16px',
-                    lineHeight: '1.6',
-                    fontFamily: 'inherit',
-                  }}
-                >
+                {/* Signature */}
+                        <Text style={{
+                  fontSize: '16px',
+                  color: LoftColors.textSecondary,
+                  margin: '16px 0 0 0',
+                  lineHeight: '1.6',
+                }}>
                   — The Loft Team
-                </div>
-              </td>
-            </tr>
-          </table>
+                        </Text>
+                      </td>
+                    </tr>
+                  </table>
         </div>
-      </Section>
+                </Section>
     </EmailLayout>
   );
 }

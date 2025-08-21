@@ -2,7 +2,10 @@ import { Section, Text, Link } from "@react-email/components";
 import * as React from "react";
 import EmailLayout from "../../components/email/EmailLayout";
 import EmailButton from "../../components/email/EmailButton";
+import TitleSection from "../../components/email/TitleSection";
 import { LoftColors } from "../../components/email/EmailStyles";
+
+export const subject = "Welcome to Loft 👋 Your smarter way to save links";
 
 interface FreeUserWelcomeProps {
   username?: string;
@@ -14,12 +17,12 @@ export default function FreeUserWelcome({
   userEmail = "user@example.com",
 }: FreeUserWelcomeProps) {
   return (
-    <EmailLayout 
-      userEmail={userEmail}
-      headerTitle="Welcome to Loft"
-      headerSubtitle="Your smarter way to save links"
-      headerEmoji="👋"
-    >
+    <EmailLayout userEmail={userEmail}>
+      <TitleSection 
+        title="Welcome to Loft"
+        subtitle="Your smarter way to save links"
+        emoji="👋"
+      />
                 {/* Main Content */}
       <Section style={{ padding: '0 24px 32px 24px' }}>
                   <div
@@ -49,7 +52,7 @@ export default function FreeUserWelcome({
                             margin: '0 0 24px 0',
                             lineHeight: '1.6',
                           }}>
-                            Thanks for joining <strong>Loft</strong> — we&apos;re so excited to have you here!
+                  Thanks for joining <strong>Loft</strong> — we're so excited to have you here!
                           </Text>
                           
                           {/* Free Features */}
@@ -88,7 +91,7 @@ export default function FreeUserWelcome({
                                   color: '#6b7280',
                                   margin: '0',
                                 }}>
-                                  Use Loft&apos;s in-app &quot;Link URL&quot; feature or your phone&apos;s share sheet to quickly save content
+                                  using our Loft extension or your phone's share sheet
                                 </Text>
                               </div>
                             </div>
@@ -112,7 +115,7 @@ export default function FreeUserWelcome({
                                   color: '#6b7280',
                                   margin: '0',
                                 }}>
-                                  Loft creates smart ones for you, and you can add your own anytime.
+                                  you create
                                 </Text>
                               </div>
                             </div>
@@ -136,7 +139,7 @@ export default function FreeUserWelcome({
                                   color: '#6b7280',
                                   margin: '0',
                                 }}>
-                                  To find what you&apos;ve saved
+                                  to find what you've saved
                                 </Text>
                               </div>
                             </div>
@@ -175,49 +178,54 @@ export default function FreeUserWelcome({
                             Want unlimited Ask Loft sessions, AI-powered tagging, and intelligent collections curated for you?
                           </Text>
                           
-                <EmailButton
+                          <EmailButton
                               href="loft://upgrade"
-                  emoji="👉"
-                  className="email-button"
-                >
-                  Upgrade to Loft Pro
-                </EmailButton>
+                            emoji="👉"
+                            className="email-button"
+                          >
+                            Upgrade to Loft Pro
+                          </EmailButton>
+                          
+                          <Text style={{
+                            fontSize: '14px',
+                            color: '#6b7280',
+                            margin: '16px 0 24px 0',
+                            lineHeight: '1.6',
+                            textAlign: 'center' as const,
+                          }}>
+                            to unlock the full experience.
+                          </Text>
                           
                           <Text style={{
                             fontSize: '16px',
                             color: '#374151',
-                            margin: '0 0 16px 0',
+                            margin: '0 0 32px 0',
                             lineHeight: '1.6',
                           }}>
                             Start by saving your first link today:{' '}
-                  <Link href="https://www.youtube.com/shorts/IoQXaCfgXKA" style={{ color: LoftColors.link, textDecoration: 'underline' }}>
-                              Watch our help video
+                            <Link href="https://www.youtube.com/shorts/IoQXaCfgXKA" style={{ color: LoftColors.link, textDecoration: 'underline' }}>
+                              link to YouTube help video
                             </Link>
                           </Text>
                           
-                          <div
-                            style={{
-                              background: '#fff2',
-                              borderRadius: '6px',
-                              padding: '8px 16px',
-                              display: 'inline-block',
-                              margin: '24px 0 8px 0',
-                              color: '#6b7280',
+                          {/* Signature */}
+                          <Text style={{
                               fontSize: '16px',
+                            color: '#374151',
+                            margin: '0 0 8px 0',
                               lineHeight: '1.6',
-                              fontFamily: 'inherit',
-                            }}
-                          >
+                          }}>
                             — The Loft Team
-                          </div>
+                          </Text>
+
                           <Text style={{
                             fontSize: '14px',
-                            color: '#9ca3af',
-                            margin: '16px 0 0 0',
+                            color: '#6b7280',
+                            margin: '32px 0 0 0',
                             textAlign: 'center' as const,
                             fontStyle: 'italic',
                           }}>
-                            Link it. Love it. Loft it.
+                            <em>Link it. Love it. Loft it.</em>
                           </Text>
                         </td>
                       </tr>

@@ -2,7 +2,10 @@ import { Section, Text } from "@react-email/components";
 import * as React from "react";
 import EmailLayout from "../../components/email/EmailLayout";
 import EmailButton from "../../components/email/EmailButton";
+import TitleSection from "../../components/email/TitleSection";
 import { LoftColors } from "../../components/email/EmailStyles";
+
+export const subject = "Your Loft subscription renews in 30 days";
 
 interface SubscriptionRenewalProps {
   username?: string;
@@ -18,16 +21,16 @@ export default function SubscriptionRenewal({
   amount = "$9.99",
 }: SubscriptionRenewalProps) {
   return (
-    <EmailLayout 
-      userEmail={userEmail}
-      headerTitle="Subscription renewing soon"
-      headerSubtitle="Your Loft Pro continues"
-      headerEmoji="🔄"
-    >
+    <EmailLayout userEmail={userEmail}>
+      <TitleSection 
+        title="Your Loft subscription renews in 30 days"
+        subtitle="No action needed"
+        emoji="🔄"
+      />
       {/* Main Content */}
       <Section style={{ padding: '0 24px 32px 24px' }}>
         <div
-          style={{
+              style={{
             background: '#fff2',
             borderRadius: '8px',
             padding: '24px',
@@ -54,115 +57,8 @@ export default function SubscriptionRenewal({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  Your <strong>Loft Pro</strong> subscription will automatically renew on <strong>{renewalDate}</strong>. We'll charge {amount} to your payment method on file.
+                  Just a heads-up — your Loft Pro subscription will renew on {renewalDate}.
                 </Text>
-                
-                {/* Renewal Details */}
-                <div style={{
-                  backgroundColor: '#ecfdf5',
-                  border: '1px solid #10b981',
-                  padding: '16px',
-                  borderRadius: '8px',
-                  margin: '0 0 24px 0',
-                }}>
-                  <Text style={{
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    color: '#059669',
-                    margin: '0 0 8px 0',
-                  }}>
-                    🔄 Auto-renewal: {renewalDate}
-                  </Text>
-                  <Text style={{
-                    fontSize: '14px',
-                    color: '#059669',
-                    margin: '0',
-                  }}>
-                    Amount: {amount} • No action needed unless you want to make changes
-                  </Text>
-                </div>
-                
-                <Text style={{
-                  fontSize: '16px',
-                  color: LoftColors.textSecondary,
-                  margin: '0 0 24px 0',
-                  lineHeight: '1.6',
-                }}>
-                  Thanks for being a valued Loft Pro member! Your continued support helps us keep improving and adding new features.
-                </Text>
-                
-                {/* What continues */}
-                <Text style={{
-                  fontSize: '16px',
-                  fontWeight: '600',
-                  color: LoftColors.textSecondary,
-                  margin: '0 0 16px 0',
-                  lineHeight: '1.6',
-                }}>
-                  Your Pro benefits continue:
-                </Text>
-                <div style={{
-                  backgroundColor: LoftColors.backgroundGray,
-                  padding: '20px',
-                  borderRadius: '8px',
-                  margin: '0 0 32px 0',
-                }}>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    marginBottom: '12px',
-                  }}>
-                    <span style={{ fontSize: '18px', marginRight: '12px', color: '#10b981' }}>✅</span>
-                    <Text style={{
-                      fontSize: '15px',
-                      color: LoftColors.text,
-                      margin: '0',
-                    }}>
-                      Unlimited saves and collections
-                    </Text>
-                  </div>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    marginBottom: '12px',
-                  }}>
-                    <span style={{ fontSize: '18px', marginRight: '12px', color: '#10b981' }}>✅</span>
-                    <Text style={{
-                      fontSize: '15px',
-                      color: LoftColors.text,
-                      margin: '0',
-                    }}>
-                      AI-powered summaries and insights
-                    </Text>
-                  </div>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    marginBottom: '12px',
-                  }}>
-                    <span style={{ fontSize: '18px', marginRight: '12px', color: '#10b981' }}>✅</span>
-                    <Text style={{
-                      fontSize: '15px',
-                      color: LoftColors.text,
-                      margin: '0',
-                    }}>
-                      Unlimited Ask Loft sessions
-                    </Text>
-                  </div>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                  }}>
-                    <span style={{ fontSize: '18px', marginRight: '12px', color: '#10b981' }}>✅</span>
-                    <Text style={{
-                      fontSize: '15px',
-                      color: LoftColors.text,
-                      margin: '0',
-                    }}>
-                      Smart auto-tagging and organization
-                    </Text>
-                  </div>
-                </div>
                 
                 <Text style={{
                   fontSize: '16px',
@@ -170,56 +66,40 @@ export default function SubscriptionRenewal({
                   margin: '0 0 16px 0',
                   lineHeight: '1.6',
                 }}>
-                  Need to update your payment method or manage your subscription?
+                  No action needed unless you want to make changes:
                 </Text>
                 
                 <EmailButton
                   href="https://loftit.ai/account/billing"
-                  emoji="⚙️"
+                  emoji="👉"
                   className="email-button"
                 >
                   Manage Subscription
                 </EmailButton>
                 
                 <Text style={{
-                  fontSize: '14px',
-                  color: LoftColors.textMuted,
-                  margin: '16px 0 0 0',
-                  textAlign: 'center' as const,
-                  lineHeight: '1.5',
+                  fontSize: '16px',
+                  color: LoftColors.textSecondary,
+                  margin: '32px 0 0 0',
+                  lineHeight: '1.6',
                 }}>
-                  Questions about your subscription? Just reply to this email and we'll help!
+                  We're so glad to have you with us — here's to more magic at your fingertips! 🫰
                 </Text>
                 
-                <div
-                  style={{
-                    background: '#fff2',
-                    borderRadius: '6px',
-                    padding: '8px 16px',
-                    display: 'inline-block',
-                    margin: '24px 0 8px 0',
-                    color: LoftColors.textMuted,
-                    fontSize: '16px',
-                    lineHeight: '1.6',
-                    fontFamily: 'inherit',
-                  }}
-                >
-                  — The Loft Team
-                </div>
+                {/* Signature */}
                 <Text style={{
-                  fontSize: '14px',
-                  color: LoftColors.textLight,
+                  fontSize: '16px',
+                  color: LoftColors.textSecondary,
                   margin: '16px 0 0 0',
-                  textAlign: 'center' as const,
-                  fontStyle: 'italic',
+                  lineHeight: '1.6',
                 }}>
-                  Link it. Love it. Loft it.
+                  — The Loft Team
                 </Text>
-              </td>
-            </tr>
-          </table>
+                      </td>
+                    </tr>
+                  </table>
         </div>
-      </Section>
+                </Section>
     </EmailLayout>
   );
-}
+} 

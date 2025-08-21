@@ -1,7 +1,10 @@
 import { Section, Text, Link } from "@react-email/components";
 import * as React from "react";
 import EmailLayout from "../../components/email/EmailLayout";
+import TitleSection from "../../components/email/TitleSection";
 import { LoftColors } from "../../components/email/EmailStyles";
+
+export const subject = "You've left Loft — but we hope it's not goodbye 💙";
 
 interface DeleteProps {
   username?: string;
@@ -13,12 +16,12 @@ export default function Delete({
   userEmail = "user@example.com",
 }: DeleteProps) {
   return (
-    <EmailLayout 
-      userEmail={userEmail}
-      headerTitle="Account deleted"
-      headerSubtitle="We're sorry to see you go"
-      headerEmoji="👋"
-    >
+    <EmailLayout userEmail={userEmail}>
+      <TitleSection 
+        title="You've left Loft — but we hope it's not goodbye"
+        subtitle="Thank you for being part of our journey"
+        emoji="💙"
+      />
       {/* Main Content */}
       <Section style={{ padding: '0 24px 32px 24px' }}>
         <div
@@ -44,103 +47,41 @@ export default function Delete({
                 </Text>
                 
                 <Text style={{
-                  fontSize: '24px',
-                  fontWeight: '600',
-                  color: LoftColors.text,
-                  margin: '0 0 16px 0',
-                  lineHeight: '1.2',
-                  textAlign: 'center' as const,
+                  fontSize: '16px',
+                  color: LoftColors.textSecondary,
+                  margin: '0 0 24px 0',
+                  lineHeight: '1.6',
                 }}>
-                  Sorry to see you go
-                </Text>
-                <Text style={{ 
-                  fontSize: '16px', 
-                  color: LoftColors.primary, 
-                  margin: '0 0 8px 0', 
-                  fontWeight: 500,
-                  textAlign: 'center' as const,
-                }}>
-                  <span style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '8px'
-                  }}>
-                    <span style={{
-                      fontSize: '20px',
-                      fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji'
-                    }}>😢</span>
-                    Your account has been successfully deleted
-                  </span>
+                  We're sorry to see you go but thank you for being part of the Loft journey.
                 </Text>
                 
-                {/* Deletion Confirmation */}
-                <div style={{
-                  backgroundColor: '#f3f4f6',
-                  padding: '20px',
-                  borderRadius: '8px',
-                  margin: '24px 0',
-                  border: '1px solid #d1d5db',
+                <Text style={{
+                  fontSize: '16px',
+                  color: LoftColors.textSecondary,
+                  margin: '0 0 24px 0',
+                  lineHeight: '1.6',
                 }}>
-                  <Text style={{
-                    fontSize: '16px',
-                    color: LoftColors.text,
-                    margin: '0 0 12px 0',
-                    fontWeight: '600',
-                  }}>
-                    What's been deleted:
-                  </Text>
-                  <Text style={{
-                    fontSize: '14px',
-                    color: LoftColors.textMuted,
-                    margin: '0 0 8px 0',
-                    lineHeight: '1.5',
-                  }}>
-                    • All your saved links and content
-                  </Text>
-                  <Text style={{
-                    fontSize: '14px',
-                    color: LoftColors.textMuted,
-                    margin: '0 0 8px 0',
-                    lineHeight: '1.5',
-                  }}>
-                    • Your collections and tags
-                  </Text>
-                  <Text style={{
-                    fontSize: '14px',
-                    color: LoftColors.textMuted,
-                    margin: '0 0 8px 0',
-                    lineHeight: '1.5',
-                  }}>
-                    • Account settings and preferences
-                  </Text>
-                  <Text style={{
-                    fontSize: '14px',
-                    color: LoftColors.textMuted,
-                    margin: '0',
-                    lineHeight: '1.5',
-                  }}>
-                    • Any active subscriptions
-                  </Text>
-                </div>
+                  Whether you used Loft to save links, collect inspiration, or just keep your digital world a little more organized, we hope it brought you a bit of ease and magic along the way. ✨
+                </Text>
+                
+                <Text style={{
+                  fontSize: '16px',
+                  color: LoftColors.textSecondary,
+                  margin: '0 0 24px 0',
+                  lineHeight: '1.6',
+                }}>
+                  While your account has now been deleted, we'd love to keep you in the loop as we continue to build and improve. Expect the occasional update with what's new just in case you want to come back someday (we hope you do!).
+                </Text>
                 
                 <Text style={{ 
                   fontSize: '16px', 
                   color: LoftColors.textSecondary, 
-                  margin: '0 0 16px 0',
-                  lineHeight: '1.6',
-                }}>
-                  We hope <strong>Loft</strong> was helpful during your time with us. If you ever change your mind, you're always welcome back!
-                </Text>
-                
-                <Text style={{ 
-                  fontSize: '16px', 
-                  color: '#fbbf24', 
-                  margin: '0 0 16px 0',
+                  margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
                   👉 Prefer not to receive updates? No problem, you can{' '}
                   <Link
-                    href={`https://loftit.ai/unsubscribe?email=${userEmail}`}
+                    href="https://loftit.ai/unsubscribe?email=${userEmail}"
                     style={{ color: LoftColors.link, textDecoration: 'underline' }}
                   >
                     unsubscribe here
@@ -150,35 +91,31 @@ export default function Delete({
                 <Text style={{ 
                   fontSize: '16px', 
                   color: LoftColors.textSecondary, 
-                  margin: '24px 0 0 0',
+                  margin: '24px 0 16px 0',
                   lineHeight: '1.6',
                 }}>
-                  Thank you for trying Loft. We wish you all the best! 🙏
+                  Thanks again for being with us,
                 </Text>
                 
-                <div
-                  style={{
-                    background: '#fff2',
-                    borderRadius: '6px',
-                    padding: '8px 16px',
-                    display: 'inline-block',
-                    margin: '24px 0 8px 0',
-                    color: LoftColors.textMuted,
-                    fontSize: '16px',
-                    lineHeight: '1.6',
-                    fontFamily: 'inherit',
-                  }}
-                >
-                  — The Loft Team
-                </div>
+                {/* Signature */}
+                <Text style={{
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  color: LoftColors.text,
+                  margin: '0 0 24px 0',
+                  lineHeight: '1.6',
+                }}>
+                  <strong>The Loft Team</strong>
+                </Text>
+
                 <Text style={{
                   fontSize: '14px',
-                  color: LoftColors.textLight,
-                  margin: '16px 0 0 0',
+                  color: LoftColors.textMuted,
+                  margin: '32px 0 0 0',
                   textAlign: 'center' as const,
                   fontStyle: 'italic',
                 }}>
-                  Take care! 💙
+                  <em>Link it. Love it. Loft it.</em>
                 </Text>
               </td>
             </tr>

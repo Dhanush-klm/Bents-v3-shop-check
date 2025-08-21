@@ -13,6 +13,7 @@ import Month1PaidUser from "@/app/emails/Month1PaidUser";
 import SubscriptionRenewal from "@/app/emails/SubscriptionRenewal";
 import SubscriptionRenewalDay from "@/app/emails/SubscriptionRenewalDay";
 import SubscriptionRenewalWeek from "@/app/emails/SubscriptionRenewalWeek";
+import { getTemplateSubjectWithFallback } from "@/lib/email-subjects";
 
 function getEnv(name: string): string | undefined {
   const value = process.env[name];
@@ -85,7 +86,7 @@ export async function GET() {
         const res = await resend.emails.send({
           from: getResendFrom(),
           to: user.email,
-          subject: "Reminder: Try Loft — your smarter way to save links",
+          subject: await getTemplateSubjectWithFallback("Day3TrialReminder"),
           react: Day3TrialReminder({ username: name, userEmail: user.email }),
         });
         if (res?.data?.id) sent3 += 1;
@@ -118,7 +119,7 @@ export async function GET() {
         const res = await resend.emails.send({
           from: getResendFrom(),
           to: user.email,
-          subject: "Your trial is ending soon — keep your Loft flow going",
+          subject: await getTemplateSubjectWithFallback("Day5TrialEnding"),
           react: Day5TrialEnding({ username: name, userEmail: user.email }),
         });
         if (res?.data?.id) sent5 += 1;
@@ -151,7 +152,7 @@ export async function GET() {
         const res = await resend.emails.send({
           from: getResendFrom(),
           to: user.email,
-          subject: "Your Loft trial ends tomorrow",
+          subject: await getTemplateSubjectWithFallback("Day6TrialEndsTomorrow"),
           react: Day6TrialEndsTomorrow({ username: name, userEmail: user.email }),
         });
         if (res?.data?.id) sent6 += 1;
@@ -184,7 +185,7 @@ export async function GET() {
         const res = await resend.emails.send({
           from: getResendFrom(),
           to: user.email,
-          subject: "Your Loft trial ends today",
+          subject: await getTemplateSubjectWithFallback("Day7TrialEndsToday"),
           react: Day7TrialEndsToday({ username: name, userEmail: user.email }),
         });
         if (res?.data?.id) sent7 += 1;
@@ -213,7 +214,7 @@ export async function GET() {
         const res = await resend.emails.send({
           from: getResendFrom(),
           to: user.email,
-          subject: "Getting started with Loft: 3 ways to make it work for you",
+          subject: await getTemplateSubjectWithFallback("Week1PostCreation"),
           react: Week1PostCreation({ username: name, userEmail: user.email }),
         });
         if (res?.data?.id) sentW1 += 1;
@@ -242,7 +243,7 @@ export async function GET() {
         const res = await resend.emails.send({
           from: getResendFrom(),
           to: user.email,
-          subject: "Loft tip: Let AI do the heavy lifting",
+          subject: await getTemplateSubjectWithFallback("Week2PostCreation"),
           react: Week2PostCreation({ username: name, userEmail: user.email }),
         });
         if (res?.data?.id) sentW2 += 1;
@@ -271,7 +272,7 @@ export async function GET() {
         const res = await resend.emails.send({
           from: getResendFrom(),
           to: user.email,
-          subject: "From chaos to clarity: How others use Loft",
+          subject: await getTemplateSubjectWithFallback("Week3PostCreation"),
           react: Week3PostCreation({ username: name, userEmail: user.email }),
         });
         if (res?.data?.id) sentW3 += 1;
@@ -300,7 +301,7 @@ export async function GET() {
         const res = await resend.emails.send({
           from: getResendFrom(),
           to: user.email,
-          subject: "Save smarter. Search faster. Stay organized",
+          subject: await getTemplateSubjectWithFallback("Week4PostCreation"),
           react: Week4PostCreation({ username: name, userEmail: user.email }),
         });
         if (res?.data?.id) sentW4 += 1;
@@ -329,7 +330,7 @@ export async function GET() {
         const res = await resend.emails.send({
           from: getResendFrom(),
           to: user.email,
-          subject: "We'd love your feedback — 30 days with Loft",
+          subject: "bye",
           react: FeedbackSurvey30Days({ 
             username: name, 
             userEmail: user.email,
@@ -360,13 +361,13 @@ export async function GET() {
       try {
         if (!user.email) continue;
         const name = (user.full_name || "there").toString();
-        const res = await resend.emails.send({
+                const res = await resend.emails.send({
           from: getResendFrom(),
           to: user.email,
-          subject: "A month with Loft — here's what's next",
+          subject: await getTemplateSubjectWithFallback("Month1PaidUser"),
           react: Month1PaidUser({ 
             username: name, 
-            userEmail: user.email
+            userEmail: user.email 
           }),
         });
         if (res?.data?.id) sent1MonthPaid += 1;
@@ -446,7 +447,7 @@ export async function GET() {
             const res = await resend.emails.send({
               from: getResendFrom(),
               to: user.email,
-              subject: "Your Loft subscription renews next week",
+              subject: await getTemplateSubjectWithFallback("SubscriptionRenewalWeek"),
               react: SubscriptionRenewalWeek({ 
                 username: name, 
                 userEmail: user.email,
@@ -462,7 +463,7 @@ export async function GET() {
             const res = await resend.emails.send({
               from: getResendFrom(),
               to: user.email,
-              subject: "Your Loft subscription renews tomorrow",
+              subject: await getTemplateSubjectWithFallback("SubscriptionRenewalDay"),
               react: SubscriptionRenewalDay({ 
                 username: name, 
                 userEmail: user.email,
@@ -478,7 +479,7 @@ export async function GET() {
             const res = await resend.emails.send({
               from: getResendFrom(),
               to: user.email,
-              subject: "Your Loft subscription renews in 30 days",
+              subject: await getTemplateSubjectWithFallback("SubscriptionRenewal"),
               react: SubscriptionRenewal({ 
                 username: name, 
                 userEmail: user.email,

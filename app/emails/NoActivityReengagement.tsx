@@ -2,6 +2,7 @@ import { Section, Text } from "@react-email/components";
 import * as React from "react";
 import EmailLayout from "../../components/email/EmailLayout";
 import EmailButton from "../../components/email/EmailButton";
+import TitleSection from "../../components/email/TitleSection";
 import { LoftColors } from "../../components/email/EmailStyles";
 
 interface NoActivityReengagementProps {
@@ -16,16 +17,16 @@ export default function NoActivityReengagement({
   chromeExtensionUrl = "https://loftit.ai/chrome-extension",
 }: NoActivityReengagementProps) {
   return (
-    <EmailLayout 
-      userEmail={userEmail}
-      headerTitle="We miss you!"
-      headerSubtitle="Let's get you back to saving"
-      headerEmoji="👋"
-    >
+    <EmailLayout userEmail={userEmail}>
+      <TitleSection 
+        title="We miss you!"
+        subtitle="Let's get you back to saving"
+        emoji="👋"
+      />
       {/* Main Content */}
       <Section style={{ padding: '0 24px 32px 24px' }}>
         <div
-          style={{
+              style={{
             background: '#fff2',
             borderRadius: '8px',
             padding: '24px',
@@ -67,7 +68,7 @@ export default function NoActivityReengagement({
                     fontSize: '16px',
                     fontWeight: '600',
                     color: '#d97706',
-                    margin: '0 0 8px 0',
+                      margin: '0 0 8px 0',
                   }}>
                     🔗 Your content is waiting for you
                   </Text>
@@ -87,8 +88,8 @@ export default function NoActivityReengagement({
                   lineHeight: '1.6',
                 }}>
                   Maybe you've been busy, or perhaps you just need a little reminder of how Loft can fit into your routine. Here are some quick ways to get back into the flow:
-                </Text>
-                
+                  </Text>
+                  
                 {/* Re-engagement suggestions */}
                 <Text style={{
                   fontSize: '16px',
@@ -126,7 +127,7 @@ export default function NoActivityReengagement({
                         margin: '0',
                       }}>
                         Found something cool today? Save it to Loft and start building your collection again
-                      </Text>
+                  </Text>
                     </div>
                   </div>
                   <div style={{
@@ -203,37 +204,37 @@ export default function NoActivityReengagement({
                   lineHeight: '1.5',
                 }}>
                   If you're having any issues or need help, just reply to this email. We're here for you! 💙
-                </Text>
+                  </Text>
                 
-                <div
-                  style={{
-                    background: '#fff2',
-                    borderRadius: '6px',
-                    padding: '8px 16px',
-                    display: 'inline-block',
+                  <div
+                    style={{
+                      background: '#fff2',
+                      borderRadius: '6px',
+                      padding: '8px 16px',
+                      display: 'inline-block',
                     margin: '24px 0 8px 0',
                     color: LoftColors.textMuted,
-                    fontSize: '16px',
-                    lineHeight: '1.6',
-                    fontFamily: 'inherit',
-                  }}
-                >
-                  — The Loft Team
-                </div>
-                <Text style={{
-                  fontSize: '14px',
+                      fontSize: '16px',
+                      lineHeight: '1.6',
+                      fontFamily: 'inherit',
+                    }}
+                  >
+                    — The Loft Team
+                  </div>
+                        <Text style={{
+                          fontSize: '14px',
                   color: LoftColors.textLight,
                   margin: '16px 0 0 0',
-                  textAlign: 'center' as const,
+                          textAlign: 'center' as const,
                   fontStyle: 'italic',
                 }}>
                   Link it. Love it. Loft it.
-                </Text>
-              </td>
-            </tr>
-          </table>
+                        </Text>
+                      </td>
+                    </tr>
+                  </table>
         </div>
-      </Section>
+                </Section>
     </EmailLayout>
   );
-}
+} 

@@ -2,7 +2,10 @@ import { Section, Text, Link } from "@react-email/components";
 import * as React from "react";
 import EmailLayout from "../../components/email/EmailLayout";
 import EmailButton from "../../components/email/EmailButton";
+import TitleSection from "../../components/email/TitleSection";
 import { LoftColors } from "../../components/email/EmailStyles";
+
+export const subject = "Getting started with Loft: 3 ways to make it work for you";
 
 interface Week1PostCreationProps {
   username?: string;
@@ -14,16 +17,16 @@ export default function Week1PostCreation({
   userEmail = "user@example.com",
 }: Week1PostCreationProps) {
   return (
-    <EmailLayout 
-      userEmail={userEmail}
-      headerTitle="How's Loft working for you?"
-      headerSubtitle="Week 1 check-in"
-      headerEmoji="👋"
-    >
+    <EmailLayout userEmail={userEmail}>
+      <TitleSection 
+        title="Getting started with Loft"
+        subtitle="3 ways to make it work for you"
+        emoji="🚀"
+      />
       {/* Main Content */}
       <Section style={{ padding: '0 24px 32px 24px' }}>
         <div
-          style={{
+              style={{
             background: '#fff2',
             borderRadius: '8px',
             padding: '24px',
@@ -42,165 +45,129 @@ export default function Week1PostCreation({
                   lineHeight: '1.5',
                 }}>
                   Hi {username},
-                </Text>
+                  </Text>
                 
-                <Text style={{
-                  fontSize: '16px',
+                  <Text style={{
+                    fontSize: '16px',
                   color: LoftColors.textSecondary,
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  It's been a week since you joined <strong>Loft</strong>! We hope you're already finding it useful for organizing your digital life.
-                </Text>
-                
-                {/* Quick Tips */}
-                <Text style={{
-                  fontSize: '16px',
-                  fontWeight: '600',
-                  color: LoftColors.textSecondary,
-                  margin: '0 0 16px 0',
-                  lineHeight: '1.6',
-                }}>
-                  Quick tips to get the most out of Loft:
-                </Text>
-                <div style={{
-                  backgroundColor: LoftColors.backgroundGray,
-                  padding: '20px',
+                  You've signed up — now it's time to make Loft work for you. Here are 3 ways to get the most out of your first week:
+                  </Text>
+                {/* 3 Ways to Use Loft */}
+                  <div style={{
+                    backgroundColor: '#f9fafb',
+                    padding: '20px',
                   borderRadius: '8px',
                   margin: '0 0 32px 0',
-                }}>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    marginBottom: '16px',
                   }}>
-                    <span style={{ fontSize: '20px', marginRight: '12px' }}>📱</span>
-                    <div>
-                      <Text style={{
-                        fontSize: '16px',
-                        fontWeight: '500',
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      marginBottom: '16px',
+                    }}>
+                      <span style={{ fontSize: '20px', marginRight: '12px' }}>🔗</span>
+                      <div>
+                        <Text style={{
+                          fontSize: '16px',
+                          fontWeight: '500',
                         color: LoftColors.text,
-                        margin: '0 0 4px 0',
-                      }}>
-                        Use the share sheet
-                      </Text>
-                      <Text style={{
-                        fontSize: '14px',
+                          margin: '0 0 4px 0',
+                        }}>
+                          Save from anywhere
+                        </Text>
+                        <Text style={{
+                          fontSize: '14px',
                         color: LoftColors.textMuted,
-                        margin: '0',
-                      }}>
-                        Save directly from Safari, YouTube, or any app — no need to copy/paste URLs
-                      </Text>
+                          margin: '0',
+                        }}>
+                        Use Loft through your phone's share sheet
+                        </Text>
+                      </div>
+                    </div>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      marginBottom: '16px',
+                    }}>
+                      <span style={{ fontSize: '20px', marginRight: '12px' }}>📂</span>
+                      <div>
+                        <Text style={{
+                          fontSize: '16px',
+                          fontWeight: '500',
+                        color: LoftColors.text,
+                          margin: '0 0 4px 0',
+                        }}>
+                          Organize easily
+                        </Text>
+                        <Text style={{
+                          fontSize: '14px',
+                        color: LoftColors.textMuted,
+                          margin: '0',
+                        }}>
+                        Add collections and tags to sort content your way
+                        </Text>
+                      </div>
+                    </div>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                    }}>
+                      <span style={{ fontSize: '20px', marginRight: '12px' }}>✨</span>
+                      <div>
+                        <Text style={{
+                          fontSize: '16px',
+                          fontWeight: '500',
+                        color: LoftColors.text,
+                          margin: '0 0 4px 0',
+                        }}>
+                          Search like magic
+                        </Text>
+                        <Text style={{
+                          fontSize: '14px',
+                        color: LoftColors.textMuted,
+                          margin: '0',
+                        }}>
+                          Type anything you remember, Loft will find it
+                        </Text>
+                      </div>
                     </div>
                   </div>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    marginBottom: '16px',
-                  }}>
-                    <span style={{ fontSize: '20px', marginRight: '12px' }}>🏷️</span>
-                    <div>
-                      <Text style={{
-                        fontSize: '16px',
-                        fontWeight: '500',
-                        color: LoftColors.text,
-                        margin: '0 0 4px 0',
-                      }}>
-                        Let Loft organize for you
-                      </Text>
-                      <Text style={{
-                        fontSize: '14px',
-                        color: LoftColors.textMuted,
-                        margin: '0',
-                      }}>
-                        Our AI automatically creates smart collections and tags your content
-                      </Text>
-                    </div>
-                  </div>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                  }}>
-                    <span style={{ fontSize: '20px', marginRight: '12px' }}>🔍</span>
-                    <div>
-                      <Text style={{
-                        fontSize: '16px',
-                        fontWeight: '500',
-                        color: LoftColors.text,
-                        margin: '0 0 4px 0',
-                      }}>
-                        Try smart search
-                      </Text>
-                      <Text style={{
-                        fontSize: '14px',
-                        color: LoftColors.textMuted,
-                        margin: '0',
-                      }}>
-                        Search by topic, not just title — Loft understands the content of your saves
-                      </Text>
-                    </div>
-                  </div>
-                </div>
-                
+                  
                 <Text style={{
                   fontSize: '16px',
                   color: LoftColors.textSecondary,
-                  margin: '0 0 24px 0',
+                  margin: '0 0 32px 0',
                   lineHeight: '1.6',
                 }}>
-                  Have you tried our share sheet extension yet? It makes saving links incredibly fast: {' '}
-                  <Link href="https://loftit.ai/ios-share-extension" style={{ color: LoftColors.link, textDecoration: 'underline' }}>
-                    Learn how to set it up
-                  </Link>
-                </Text>
+                    Your link library is just getting started, happy saving!
+                  </Text>
                 
-                <EmailButton
-                  href="https://loftit.ai"
-                  emoji="🚀"
-                  className="email-button"
-                >
-                  Open Loft
-                </EmailButton>
-                
+                {/* Signature */}
                 <Text style={{
-                  fontSize: '14px',
-                  color: LoftColors.textMuted,
-                  margin: '16px 0 0 0',
-                  textAlign: 'center' as const,
-                  lineHeight: '1.5',
+                  fontSize: '16px',
+                  color: LoftColors.textSecondary,
+                      margin: '0 0 8px 0',
+                      lineHeight: '1.6',
                 }}>
-                  Questions or feedback? Just reply to this email — we read every message!
-                </Text>
-                
-                <div
-                  style={{
-                    background: '#fff2',
-                    borderRadius: '6px',
-                    padding: '8px 16px',
-                    display: 'inline-block',
-                    margin: '24px 0 8px 0',
-                    color: LoftColors.textMuted,
-                    fontSize: '16px',
-                    lineHeight: '1.6',
-                    fontFamily: 'inherit',
-                  }}
-                >
                   — The Loft Team
-                </div>
-                <Text style={{
-                  fontSize: '14px',
-                  color: LoftColors.textLight,
-                  margin: '16px 0 0 0',
-                  textAlign: 'center' as const,
+                        </Text>
+
+                        <Text style={{
+                          fontSize: '14px',
+                  color: LoftColors.textMuted,
+                  margin: '32px 0 0 0',
+                          textAlign: 'center' as const,
                   fontStyle: 'italic',
                 }}>
-                  Link it. Love it. Loft it.
-                </Text>
-              </td>
-            </tr>
-          </table>
+                  <em>Link it. Love it. Loft it.</em>
+                        </Text>
+                      </td>
+                    </tr>
+                  </table>
         </div>
-      </Section>
+                </Section>
     </EmailLayout>
   );
-}
+} 
