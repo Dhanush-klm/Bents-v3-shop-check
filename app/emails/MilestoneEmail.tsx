@@ -17,14 +17,9 @@ export default function MilestoneEmail({
   userEmail = "user@example.com",
 }: MilestoneEmailProps) {
   return (
-    <EmailLayout userEmail={userEmail}>
-      <TitleSection 
-        title="You've saved 100 links 🎉"
-        subtitle="That's what we call progress"
-        emoji="🎉"
-      />
-                {/* Main Content */}
-      <Section style={{ padding: '0 24px 32px 24px' }}>
+        <EmailLayout userEmail={userEmail}>
+      {/* Main Content */}
+      <Section style={{ padding: '0 16px 12px 16px' }}>
                   <div
                     style={{
                       background: '#fff2',
@@ -88,6 +83,6 @@ export default function MilestoneEmail({
                     </table>
                   </div>
                 </Section>
-    </EmailLayout>
+    </EmailLayout>  
   );
 }

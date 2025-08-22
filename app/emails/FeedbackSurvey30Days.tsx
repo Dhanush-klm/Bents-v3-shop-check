@@ -16,17 +16,12 @@ interface FeedbackSurvey30DaysProps {
 export default function FeedbackSurvey30Days({
   username = "there",
   userEmail = "user@example.com",
-  surveyUrl = "https://loftit.ai/feedback",
+  surveyUrl = "https://tally.so/r/mOqv08",
 }: FeedbackSurvey30DaysProps) {
   return (
     <EmailLayout userEmail={userEmail}>
-      <TitleSection 
-        title="Got a minute?"
-        subtitle="We'd love your thoughts"
-        emoji="💭"
-      />
       {/* Main Content */}
-      <Section style={{ padding: '0 24px 32px 24px' }}>
+      <Section style={{ padding: '0 16px 12px 16px' }}>
         <div
               style={{
             background: '#fff2',

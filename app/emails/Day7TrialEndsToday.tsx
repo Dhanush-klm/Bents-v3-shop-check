@@ -18,13 +18,9 @@ export default function Day7TrialEndsToday({
 }: Day7TrialEndsTodayProps) {
   return (
     <EmailLayout userEmail={userEmail}>
-      <TitleSection 
-        title="Today's the last day of your Loft Pro trial"
-        subtitle="Final day before Pro begins"
-        emoji="⏰"
-      />
+
       {/* Main Content */}
-      <Section style={{ padding: '0 24px 32px 24px' }}>
+      <Section style={{ padding: '0 16px 12px 16px' }}>
         <div
               style={{
             background: '#fff2',

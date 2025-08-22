@@ -18,20 +18,16 @@ export default function Week2PostCreation({
 }: Week2PostCreationProps) {
   return (
     <EmailLayout userEmail={userEmail}>
-      <TitleSection 
-        title="Let AI do the heavy lifting"
-        subtitle="Smart summaries and categorization"
-        emoji="🤖"
-      />
+      
       {/* Main Content */}
-      <Section style={{ padding: '0 24px 32px 24px' }}>
+      <Section style={{ padding: '0 16px 12px 16px' }}>
         <div
               style={{
-            background: '#fff2',
-            borderRadius: '8px',
-            padding: '24px',
-            margin: '0 0 32px 0',
-            display: 'block',
+                background: '#fff2',
+                borderRadius: '8px',
+                padding: '16px',
+                margin: '0 0 12px 0',
+                display: 'block',
           }}
         >
           <table width="100%" cellPadding="0" cellSpacing="0" style={{ borderSpacing: '0' }}>

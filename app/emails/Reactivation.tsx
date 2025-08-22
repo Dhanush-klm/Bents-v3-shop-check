@@ -18,13 +18,8 @@ export default function Reactivation({
 }: ReactivationProps) {
   return (
     <EmailLayout userEmail={userEmail}>
-      <TitleSection 
-        title="Still thinking about Loft? We haven't forgotten you"
-        subtitle="Ready when you are"
-        emoji="💙"
-      />
       {/* Main Content */}
-      <Section style={{ padding: '0 24px 32px 24px' }}>
+      <Section style={{ padding: '0 16px 12px 16px' }}>
         <div
               style={{
             background: '#fff2',

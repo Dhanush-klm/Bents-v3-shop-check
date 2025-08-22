@@ -111,7 +111,7 @@ export default function FreeUserWelcome({
                                   color: '#6b7280',
                                   margin: '0',
                                 }}>
-                                  Loft creates smart ones for you, and you can add your own anytime.
+                                  Loft creates smart ones for you, and you can add your own anytime
                                 </Text>
                               </div>
                             </div>
@@ -135,7 +135,7 @@ export default function FreeUserWelcome({
                                   color: '#6b7280',
                                   margin: '0',
                                 }}>
-                                  to find what you've saved
+                                  To find what you've saved
                                 </Text>
                               </div>
                             </div>
@@ -176,13 +176,16 @@ export default function FreeUserWelcome({
                           
                           <Text style={{
                             fontSize: '16px',
-                            color: '#374151',
+                            color: '#ffffff',
                             margin: '16px 0',
-                            padding: '12px 16px',
-                            backgroundColor: '#f3f4f6',
+                            padding: '14px 20px',
+                            backgroundColor: '#FF5A5F',
                             borderRadius: '8px',
                             textAlign: 'center' as const,
-                            fontWeight: '500',
+                            fontWeight: '600',
+                            display: 'inline-block',
+                            border: 'none',
+                            cursor: 'pointer',
                           }}>
                             Go to Loft {'>'}  Settings {'>'}  Subscription {'>'}  Upgrade to Pro
                           </Text>
@@ -204,7 +207,7 @@ export default function FreeUserWelcome({
                           }}>
                             Start by saving your first link today:{' '}
                             <Link href="https://www.youtube.com/shorts/IoQXaCfgXKA" style={{ color: LoftColors.link, textDecoration: 'underline' }}>
-                              Watch our YouTube help video
+                              Watch our help video
                             </Link>
                           </Text>
                           

@@ -1,4 +1,4 @@
-import { Section, Text } from "@react-email/components";
+import { Section, Text, Link } from "@react-email/components";
 import * as React from "react";
 import EmailLayout from "../../components/email/EmailLayout";
 
@@ -18,20 +18,16 @@ export default function Week1PostCreation({
 }: Week1PostCreationProps) {
   return (
     <EmailLayout userEmail={userEmail}>
-      <TitleSection 
-        title="Getting started with Loft"
-        subtitle="3 ways to make it work for you"
-        emoji="🚀"
-      />
+      
       {/* Main Content */}
-      <Section style={{ padding: '0 24px 32px 24px' }}>
+      <Section style={{ padding: '0 16px 12px 16px' }}>
         <div
               style={{
-            background: '#fff2',
-            borderRadius: '8px',
-            padding: '24px',
-            margin: '0 0 32px 0',
-            display: 'block',
+                background: '#fff2',
+                borderRadius: '8px',
+                padding: '16px',
+                margin: '0 0 12px 0',
+                display: 'block',
           }}
         >
           <table width="100%" cellPadding="0" cellSpacing="0" style={{ borderSpacing: '0' }}>
@@ -106,7 +102,7 @@ export default function Week1PostCreation({
                         color: LoftColors.textMuted,
                           margin: '0',
                         }}>
-                        Add collections and tags to sort content your way
+                        Add Collections and tags to sort content your way
                         </Text>
                       </div>
                     </div>
@@ -135,6 +131,18 @@ export default function Week1PostCreation({
                     </div>
                   </div>
                   
+                <Text style={{
+                  fontSize: '16px',
+                  color: LoftColors.textSecondary,
+                  margin: '0 0 16px 0',
+                  lineHeight: '1.6',
+                }}>
+                  <Link href="https://www.loftit.ai/ios-share-extension" style={{ color: LoftColors.link, textDecoration: 'underline' }}>
+                    Click here
+                  </Link>
+                  {' '}to Learn How to Add Loft to Your Share Sheet
+                </Text>
+                
                 <Text style={{
                   fontSize: '16px',
                   color: LoftColors.textSecondary,
