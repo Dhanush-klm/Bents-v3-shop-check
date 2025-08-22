@@ -1,8 +1,6 @@
 import { Section, Text } from "@react-email/components";
 import * as React from "react";
 import EmailLayout from "../../components/email/EmailLayout";
-
-import TitleSection from "../../components/email/TitleSection";
 import { LoftColors } from "../../components/email/EmailStyles";
 
 export const subject = "Your Loft Pro trial ends tomorrow";
@@ -18,19 +16,15 @@ export default function Day6TrialEndsTomorrow({
 }: Day6TrialEndsTomorrowProps) {
   return (
     <EmailLayout userEmail={userEmail}>
-      <TitleSection 
-        title="Your Loft Pro trial ends tomorrow"
-        subtitle="Seamless transition to Pro"
-        emoji="⏰"
-      />
+      
       {/* Main Content */}
       <Section style={{ padding: '0 16px 12px 16px' }}>
         <div
               style={{
             background: '#fff2',
             borderRadius: '8px',
-            padding: '24px',
-            margin: '0 0 32px 0',
+            padding: '16px',
+            margin: '0 0 12px 0',
             display: 'block',
           }}
         >

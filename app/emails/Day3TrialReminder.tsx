@@ -1,8 +1,7 @@
-import { Section, Text } from "@react-email/components";
+import { Section, Text, Link } from "@react-email/components";
 import * as React from "react";
 import EmailLayout from "../../components/email/EmailLayout";
 import EmailButton from "../../components/email/EmailButton";
-import TitleSection from "../../components/email/TitleSection";
 import { LoftColors } from "../../components/email/EmailStyles";
 
 export const subject = "Still haven't tried Loft? Let's get you started";
@@ -16,23 +15,19 @@ interface Day3TrialReminderProps {
 export default function Day3TrialReminder({
   username = "there",
   userEmail = "user@example.com",
-  helpUrl = "https://loftit.ai/ios-share-extension",
+  helpUrl = "https://loftit.ai/faq",
 }: Day3TrialReminderProps) {
   return (
     <EmailLayout userEmail={userEmail}>
-      <TitleSection 
-        title="Still haven't tried Loft?"
-        subtitle="Let's get you started"
-        emoji="🚀"
-      />
+      
       {/* Main Content */}
       <Section style={{ padding: '0 16px 12px 16px' }}>
         <div
               style={{
             background: '#fff2',
                   borderRadius: '8px',
-            padding: '24px',
-            margin: '0 0 32px 0',
+            padding: '16px',
+            margin: '0 0 12px 0',
             display: 'block',
           }}
         >
@@ -125,7 +120,17 @@ export default function Day3TrialReminder({
                   }}>
                     Your free trial is ticking — make the most of it before it ends!
                   </Text>
-                  
+                  <Text style={{
+                  fontSize: '16px',
+                  color: LoftColors.textSecondary,
+                  margin: '0 0 16px 0',
+                  lineHeight: '1.6',
+                }}>
+                  <Link href="https://www.loftit.ai/ios-share-extension" style={{ color: LoftColors.link, textDecoration: 'underline' }}>
+                    Click here
+                  </Link>
+                  {' '}to Learn How to Add Loft to Your Share Sheet
+                </Text>
                 <EmailButton
                       href={helpUrl}
                   emoji="👉"
