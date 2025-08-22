@@ -30,6 +30,7 @@ export const DEFAULT_SUBJECTS: Record<string, string> = {
   SubscriptionRenewal: "Your Loft subscription renews in 30 days",
   Delete: "Your Loft account has been deleted",
   MilestoneEmail: "🎉 You've saved 100 links with Loft!",
+  NoActivityReengagement: "Still here when you're ready",
   UnsubscribeActivePaid: "You'll no longer receive Loft updates — but your subscription is still active",
   UnsubscribedAll: "You've been unsubscribed from all Loft emails"
 };
