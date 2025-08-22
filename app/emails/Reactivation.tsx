@@ -5,7 +5,7 @@ import EmailButton from "../../components/email/EmailButton";
 import TitleSection from "../../components/email/TitleSection";
 import { LoftColors } from "../../components/email/EmailStyles";
 
-export const subject = "Still thinking about Loft? We haven&apos;t forgotten you";
+export const subject = "Still thinking about Loft? We haven't forgotten you";
 
 interface ReactivationProps {
   username?: string;
@@ -19,7 +19,7 @@ export default function Reactivation({
   return (
     <EmailLayout userEmail={userEmail}>
       <TitleSection 
-        title="Still thinking about Loft? We haven&apos;t forgotten you"
+        title="Still thinking about Loft? We haven't forgotten you"
         subtitle="Ready when you are"
         emoji="💙"
       />
@@ -53,7 +53,7 @@ export default function Reactivation({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  It&apos;s been a while since you used Loft — and we wanted to check in.
+                  It's been a while since you used Loft — and we wanted to check in.
                 </Text>
                 
                 <Text style={{
@@ -62,7 +62,7 @@ export default function Reactivation({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  You signed up for a smarter way to save, search, and organize your digital world — and we&apos;re still here, ready when you are.
+                  You signed up for a smarter way to save, search, and organize your digital world — and we're still here, ready when you are.
                 </Text>
                 
                 <Text style={{
@@ -115,7 +115,7 @@ export default function Reactivation({
                   margin: '32px 0 0 0',
                   lineHeight: '1.6',
                 }}>
-                  We&apos;d love to have you back.
+                  We'd love to have you back.
                 </Text>
                 
                 {/* Signature */}

@@ -20,7 +20,7 @@ export default function PaymentError({
     <EmailLayout userEmail={userEmail}>
       <TitleSection 
         title="Trouble processing your Loft subscription"
-        subtitle="Let&apos;s get this resolved quickly"
+        subtitle="Let's get this resolved quickly"
         emoji="💳"
       />
       {/* Main Content */}
@@ -53,7 +53,7 @@ export default function PaymentError({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  We tried to renew your Loft subscription, but the payment didn&apos;t go through.
+                  We tried to renew your Loft subscription, but the payment didn't go through.
                 </Text>
                 
                 <Text style={{
@@ -88,7 +88,7 @@ export default function PaymentError({
                   margin: '32px 0 0 0',
                   lineHeight: '1.6',
                 }}>
-                  We&apos;ll retry automatically in a few days, but if the issue isn&apos;t resolved, your subscription may be paused.
+                  We'll retry automatically in a few days, but if the issue isn't resolved, your subscription may be paused.
                 </Text>
                 
                 <Text style={{
@@ -97,7 +97,7 @@ export default function PaymentError({
                   margin: '24px 0 0 0',
                   lineHeight: '1.6',
                 }}>
-                  Need help? Just reply to this email — we&apos;ve got you.
+                  Need help? Just reply to this email — we've got you.
                 </Text>
                 
                 {/* Signature */}

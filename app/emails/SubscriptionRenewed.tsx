@@ -65,7 +65,7 @@ export default function SubscriptionRenewed({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  You&apos;ve been charged {amount} and will continue enjoying full access to everything Loft offers.
+                  You've been charged {amount} and will continue enjoying full access to everything Loft offers.
                   </Text>
                   
                 <Text style={{

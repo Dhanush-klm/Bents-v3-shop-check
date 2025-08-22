@@ -5,7 +5,7 @@ import EmailLayout from "../../components/email/EmailLayout";
 import TitleSection from "../../components/email/TitleSection";
 import { LoftColors } from "../../components/email/EmailStyles";
 
-export const subject = "Today&apos;s the last day of your Loft Pro trial";
+export const subject = "Today's the last day of your Loft Pro trial";
 
 interface Day7TrialEndsTodayProps {
   username?: string;
@@ -19,7 +19,7 @@ export default function Day7TrialEndsToday({
   return (
     <EmailLayout userEmail={userEmail}>
       <TitleSection 
-        title="Today&apos;s the last day of your Loft Pro trial"
+        title="Today's the last day of your Loft Pro trial"
         subtitle="Final day before Pro begins"
         emoji="⏰"
       />
@@ -122,7 +122,7 @@ export default function Day7TrialEndsToday({
                   margin: '0 0 32px 0',
                   lineHeight: '1.6',
                 }}>
-                  We can&apos;t wait to continue helping you save smarter and find faster!
+                  We can't wait to continue helping you save smarter and find faster!
                   </Text>
                   
                 {/* Signature */}

@@ -5,7 +5,7 @@ import EmailLayout from "../../components/email/EmailLayout";
 import TitleSection from "../../components/email/TitleSection";
 import { LoftColors } from "../../components/email/EmailStyles";
 
-export const subject = "You&apos;ve saved 100 links 🎉";
+export const subject = "You've saved 100 links 🎉";
 
 interface MilestoneEmailProps {
   username?: string;
@@ -19,8 +19,8 @@ export default function MilestoneEmail({
   return (
     <EmailLayout userEmail={userEmail}>
       <TitleSection 
-        title="You&apos;ve saved 100 links 🎉"
-        subtitle="That&apos;s what we call progress"
+        title="You've saved 100 links 🎉"
+        subtitle="That's what we call progress"
         emoji="🎉"
       />
                 {/* Main Content */}
@@ -53,7 +53,7 @@ export default function MilestoneEmail({
                             margin: '0 0 24px 0',
                             lineHeight: '1.6',
                           }}>
-                            You just hit <strong>100 links saved with Loft</strong> — that&apos;s 100 ideas, inspirations, insights, and rabbit holes all organized, searchable, and always within reach.
+                            You just hit <strong>100 links saved with Loft</strong> — that's 100 ideas, inspirations, insights, and rabbit holes all organized, searchable, and always within reach.
                           </Text>
                           
                           <Text style={{
@@ -62,7 +62,7 @@ export default function MilestoneEmail({
                             margin: '0 0 24px 0',
                             lineHeight: '1.6',
                           }}>
-                            That&apos;s what we call progress.
+                            That's what we call progress.
                           </Text>
                           
                           <Text style={{
@@ -71,7 +71,7 @@ export default function MilestoneEmail({
                             margin: '0 0 32px 0',
                             lineHeight: '1.6',
                           }}>
-                            We&apos;re so glad Loft is part of your flow 💙
+                            We're so glad Loft is part of your flow 💙
                           </Text>
                           
                           {/* Signature */}

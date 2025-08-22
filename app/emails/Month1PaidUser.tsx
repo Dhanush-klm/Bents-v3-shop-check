@@ -5,7 +5,7 @@ import EmailLayout from "../../components/email/EmailLayout";
 import TitleSection from "../../components/email/TitleSection";
 import { LoftColors } from "../../components/email/EmailStyles";
 
-export const subject = "A month with Loft — here&apos;s what&apos;s next";
+export const subject = "A month with Loft — here's what's next";
 
 interface Month1PaidUserProps {
   username?: string;
@@ -19,7 +19,7 @@ export default function Month1PaidUser({
   return (
     <EmailLayout userEmail={userEmail}>
       <TitleSection 
-        title="A month with Loft — here&apos;s what&apos;s next"
+        title="A month with Loft — here's what's next"
         subtitle="Your second brain in the making"
         emoji="✨"
       />
@@ -53,7 +53,7 @@ export default function Month1PaidUser({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  You&apos;ve had Loft for a month — and we hope it&apos;s made saving and finding your favorite content easier ✨
+                  You've had Loft for a month — and we hope it's made saving and finding your favorite content easier ✨
                 </Text>
                 
                 <Text style={{
@@ -62,7 +62,7 @@ export default function Month1PaidUser({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  Don&apos;t forget:
+                  Don't forget:
                 </Text>
                 
                 <Text style={{

@@ -5,7 +5,7 @@ import EmailButton from "../../components/email/EmailButton";
 import TitleSection from "../../components/email/TitleSection";
 import { LoftColors } from "../../components/email/EmailStyles";
 
-export const subject = "Got a minute? We&apos;d love your thoughts";
+export const subject = "Got a minute? We'd love your thoughts";
 
 interface FeedbackSurvey30DaysProps {
   username?: string;
@@ -22,7 +22,7 @@ export default function FeedbackSurvey30Days({
     <EmailLayout userEmail={userEmail}>
       <TitleSection 
         title="Got a minute?"
-        subtitle="We&apos;d love your thoughts"
+        subtitle="We'd love your thoughts"
         emoji="💭"
       />
       {/* Main Content */}
@@ -55,7 +55,7 @@ export default function FeedbackSurvey30Days({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  You&apos;ve been with Loft for a month and we&apos;d love to hear how it&apos;s going.
+                  You've been with Loft for a month and we'd love to hear how it's going.
                   </Text>
                 
                 <Text style={{
@@ -64,7 +64,7 @@ export default function FeedbackSurvey30Days({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  What&apos;s working well? What can we do better?
+                  What's working well? What can we do better?
                   </Text>
                   
                 <Text style={{

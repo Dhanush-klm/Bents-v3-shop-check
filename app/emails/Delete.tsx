@@ -4,7 +4,7 @@ import EmailLayout from "../../components/email/EmailLayout";
 import TitleSection from "../../components/email/TitleSection";
 import { LoftColors } from "../../components/email/EmailStyles";
 
-export const subject = "You&apos;ve left Loft — but we hope it&apos;s not goodbye 💙";
+export const subject = "You've left Loft — but we hope it's not goodbye 💙";
 
 interface DeleteProps {
   username?: string;
@@ -18,7 +18,7 @@ export default function Delete({
   return (
     <EmailLayout userEmail={userEmail}>
       <TitleSection 
-        title="You&apos;ve left Loft — but we hope it&apos;s not goodbye"
+        title="You've left Loft — but we hope it's not goodbye"
         subtitle="Thank you for being part of our journey"
         emoji="💙"
       />
@@ -52,7 +52,7 @@ export default function Delete({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  We&apos;re sorry to see you go but thank you for being part of the Loft journey.
+                  We're sorry to see you go but thank you for being part of the Loft journey.
                 </Text>
                 
                 <Text style={{
@@ -70,7 +70,7 @@ export default function Delete({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  While your account has now been deleted, we&apos;d love to keep you in the loop as we continue to build and improve. Expect the occasional update with what&apos;s new just in case you want to come back someday (we hope you do!).
+                  While your account has now been deleted, we'd love to keep you in the loop as we continue to build and improve. Expect the occasional update with what's new just in case you want to come back someday (we hope you do!).
                 </Text>
                 
                 <Text style={{ 

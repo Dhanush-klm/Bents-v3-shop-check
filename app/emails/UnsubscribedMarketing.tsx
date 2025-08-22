@@ -20,7 +20,7 @@ export default function UnsubscribedMarketing({
     <EmailLayout userEmail={userEmail}>
       <TitleSection 
         title="Unsubscribed from marketing"
-        subtitle="You&apos;ll still get important updates"
+        subtitle="You'll still get important updates"
         emoji="📧"
       />
       {/* Main Content */}
@@ -55,7 +55,7 @@ export default function UnsubscribedMarketing({
                   lineHeight: '1.2',
                   textAlign: 'center' as const,
                 }}>
-                  You&apos;ve successfully unsubscribed
+                  You've successfully unsubscribed
                 </Text>
                 <Text style={{ 
                   fontSize: '16px', 
@@ -64,7 +64,7 @@ export default function UnsubscribedMarketing({
                   fontWeight: 500,
                   textAlign: 'center' as const,
                 }}>
-                  from Loft&apos;s marketing emails
+                  from Loft's marketing emails
                 </Text>
                 
                 {/* Unsubscribe Details */}
@@ -88,7 +88,7 @@ export default function UnsubscribedMarketing({
                     color: '#0369a1',
                     margin: '0',
                   }}>
-                    You&apos;ll still receive important account and service notifications
+                    You'll still receive important account and service notifications
                   </Text>
                 </div>
                 
@@ -98,10 +98,10 @@ export default function UnsubscribedMarketing({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  Perfect! You&apos;ve opted out of promotional emails while keeping the essential ones. Here&apos;s what this means:
+                  Perfect! You've opted out of promotional emails while keeping the essential ones. Here's what this means:
                 </Text>
                 
-                {/* What you&apos;ll still receive */}
+                {/* What you'll still receive */}
                 <Text style={{
                   fontSize: '16px',
                   fontWeight: '600',
@@ -109,7 +109,7 @@ export default function UnsubscribedMarketing({
                   margin: '0 0 16px 0',
                   lineHeight: '1.6',
                 }}>
-                  You&apos;ll still receive:
+                  You'll still receive:
                 </Text>
                 <div style={{
                   backgroundColor: LoftColors.backgroundGray,
@@ -230,7 +230,7 @@ export default function UnsubscribedMarketing({
                   textAlign: 'center' as const,
                   lineHeight: '1.5',
                 }}>
-                  Thank you for choosing what&apos;s right for you! 🙏
+                  Thank you for choosing what's right for you! 🙏
                 </Text>
                 
                 <div

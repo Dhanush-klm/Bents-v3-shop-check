@@ -62,7 +62,7 @@ export default function Day5TrialEnding({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  After that, your subscription will begin automatically, and you&apos;ll continue to enjoy:
+                  After that, your subscription will begin automatically, and you'll continue to enjoy:
                   </Text>
                   <div style={{
                     backgroundColor: '#f9fafb',

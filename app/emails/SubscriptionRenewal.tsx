@@ -82,7 +82,7 @@ export default function SubscriptionRenewal({
                   margin: '32px 0 0 0',
                   lineHeight: '1.6',
                 }}>
-                  We&apos;re so glad to have you with us — here&apos;s to more magic at your fingertips! 🫰
+                  We're so glad to have you with us — here's to more magic at your fingertips! 🫰
                 </Text>
                 
                 {/* Signature */}

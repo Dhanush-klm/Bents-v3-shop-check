@@ -53,7 +53,7 @@ export default function Week3PostCreation({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  You&apos;re not alone in having dozens of tabs and saved links scattered across apps. Here&apos;s how users are turning Loft into their digital second brain:
+                  You're not alone in having dozens of tabs and saved links scattered across apps. Here's how users are turning Loft into their digital second brain:
                   </Text>
                   
                 {/* How Others Use Loft */}

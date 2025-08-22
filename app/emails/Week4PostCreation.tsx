@@ -52,7 +52,7 @@ export default function Week4PostCreation({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  You&apos;ve had Loft for nearly a month — have you tried these power features yet?
+                  You've had Loft for nearly a month — have you tried these power features yet?
                 </Text>
                 
                 {/* Power Features */}
@@ -120,7 +120,7 @@ export default function Week4PostCreation({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  It&apos;s all designed to make your digital life more manageable.
+                  It's all designed to make your digital life more manageable.
                 </Text>
                 
                 <Text style={{
@@ -129,7 +129,7 @@ export default function Week4PostCreation({
                   margin: '0 0 32px 0',
                   lineHeight: '1.6',
                 }}>
-                  If you need help or want tips, we&apos;re just a reply away!
+                  If you need help or want tips, we're just a reply away!
                 </Text>
                 
                 {/* Signature */}

@@ -18,7 +18,7 @@ export default function TitleSection({
   return (
     <Section style={{
       backgroundColor: '#ffffff',
-      padding: '0 24px 24px 24px',
+      padding: '0 24px 16px 24px',
       textAlign: 'center' as const,
     }}>
       <div

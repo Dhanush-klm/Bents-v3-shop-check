@@ -5,7 +5,7 @@ import EmailButton from "../../components/email/EmailButton";
 import TitleSection from "../../components/email/TitleSection";
 import { LoftColors } from "../../components/email/EmailStyles";
 
-export const subject = "You&apos;ll no longer receive Loft updates — but your subscription is still active";
+export const subject = "You'll no longer receive Loft updates — but your subscription is still active";
 
 interface UnsubscribeActivePaidProps {
   username?: string;
@@ -21,7 +21,7 @@ export default function UnsubscribeActivePaid({
   return (
     <EmailLayout userEmail={userEmail}>
       <TitleSection 
-        title="You&apos;ll no longer receive Loft updates"
+        title="You'll no longer receive Loft updates"
         subtitle="But your subscription is still active"
         emoji="✉️"
       />
@@ -55,7 +55,7 @@ export default function UnsubscribeActivePaid({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  You&apos;ve successfully unsubscribed from Loft&apos;s marketing emails.
+                  You've successfully unsubscribed from Loft's marketing emails.
                   </Text>
                 
                 <Text style={{
@@ -73,7 +73,7 @@ export default function UnsubscribeActivePaid({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  Don&apos;t worry — your <strong>Loft subscription is still active</strong>, and you&apos;ll continue to have full access to all your saved content, summaries, and smart search features.
+                  Don't worry — your <strong>Loft subscription is still active</strong>, and you'll continue to have full access to all your saved content, summaries, and smart search features.
                   </Text>
                 
                 <Text style={{
@@ -82,7 +82,7 @@ export default function UnsubscribeActivePaid({
                   margin: '0 0 24px 0',
                       lineHeight: '1.6',
                 }}>
-                  You&apos;ll still receive important service-related emails (like billing or account updates), but we&apos;ll stay out of your inbox for everything else.
+                  You'll still receive important service-related emails (like billing or account updates), but we'll stay out of your inbox for everything else.
                 </Text>
                 
                         <Text style={{
@@ -108,7 +108,7 @@ export default function UnsubscribeActivePaid({
                   margin: '32px 0 0 0',
                   lineHeight: '1.6',
                 }}>
-                  Thanks for being part of Loft — we&apos;re glad you&apos;re here.
+                  Thanks for being part of Loft — we're glad you're here.
                         </Text>
                 
                 {/* Signature */}

@@ -18,19 +18,15 @@ export default function FreeUserWelcome({
 }: FreeUserWelcomeProps) {
   return (
     <EmailLayout userEmail={userEmail}>
-      <TitleSection 
-        title="Welcome to Loft"
-        subtitle="Your smarter way to save links"
-        emoji="👋"
-      />
+      
                 {/* Main Content */}
-      <Section style={{ padding: '0 24px 32px 24px' }}>
+      <Section style={{ padding: '0 16px 12px 16px' }}>
                   <div
                     style={{
                       background: '#fff2',
                       borderRadius: '8px',
-                      padding: '24px',
-                      margin: '0 0 32px 0',
+                      padding: '16px',
+                      margin: '0 0 12px 0',
                       display: 'block',
                     }}
                   >
@@ -41,7 +37,7 @@ export default function FreeUserWelcome({
                           <Text style={{
                             fontSize: '18px',
                             color: '#111827',
-                            margin: '0 0 24px 0',
+                            margin: '0 0 12px 0',
                             lineHeight: '1.5',
                           }}>
                             Hi {username},
@@ -49,10 +45,10 @@ export default function FreeUserWelcome({
                           <Text style={{
                             fontSize: '16px',
                             color: '#374151',
-                            margin: '0 0 24px 0',
+                            margin: '0 0 16px 0',
                             lineHeight: '1.6',
                           }}>
-                  Thanks for joining <strong>Loft</strong> — we&apos;re so excited to have you here!
+                  Thanks for joining <strong>Loft</strong> — we're so excited to have you here!
                           </Text>
                           
                           {/* Free Features */}
@@ -67,9 +63,9 @@ export default function FreeUserWelcome({
                           </Text>
                           <div style={{
                             backgroundColor: '#f9fafb',
-                            padding: '20px',
+                            padding: '16px',
                             borderRadius: '8px',
-                            margin: '0 0 32px 0',
+                            margin: '0 0 24px 0',
                           }}>
                             <div style={{
                               display: 'flex',
@@ -91,7 +87,7 @@ export default function FreeUserWelcome({
                                   color: '#6b7280',
                                   margin: '0',
                                 }}>
-                                  using our Loft extension or your phone&apos;s share sheet
+                                  Use Loft’s in-app “Link URL feature or your phone’s share sheet to quickly save content
                                 </Text>
                               </div>
                             </div>
@@ -115,7 +111,7 @@ export default function FreeUserWelcome({
                                   color: '#6b7280',
                                   margin: '0',
                                 }}>
-                                  you create
+                                  Loft creates smart ones for you, and you can add your own anytime.
                                 </Text>
                               </div>
                             </div>
@@ -139,7 +135,7 @@ export default function FreeUserWelcome({
                                   color: '#6b7280',
                                   margin: '0',
                                 }}>
-                                  to find what you&apos;ve saved
+                                  to find what you've saved
                                 </Text>
                               </div>
                             </div>
@@ -178,13 +174,18 @@ export default function FreeUserWelcome({
                             Want unlimited Ask Loft sessions, AI-powered tagging, and intelligent collections curated for you?
                           </Text>
                           
-                          <EmailButton
-                              href="loft://upgrade"
-                            emoji="👉"
-                            className="email-button"
-                          >
-                            Upgrade to Loft Pro
-                          </EmailButton>
+                          <Text style={{
+                            fontSize: '16px',
+                            color: '#374151',
+                            margin: '16px 0',
+                            padding: '12px 16px',
+                            backgroundColor: '#f3f4f6',
+                            borderRadius: '8px',
+                            textAlign: 'center' as const,
+                            fontWeight: '500',
+                          }}>
+                            Go to Loft {'>'}  Settings {'>'}  Subscription {'>'}  Upgrade to Pro
+                          </Text>
                           
                           <Text style={{
                             fontSize: '14px',
@@ -193,7 +194,6 @@ export default function FreeUserWelcome({
                             lineHeight: '1.6',
                             textAlign: 'center' as const,
                           }}>
-                            to unlock the full experience.
                           </Text>
                           
                           <Text style={{
@@ -204,7 +204,7 @@ export default function FreeUserWelcome({
                           }}>
                             Start by saving your first link today:{' '}
                             <Link href="https://www.youtube.com/shorts/IoQXaCfgXKA" style={{ color: LoftColors.link, textDecoration: 'underline' }}>
-                              link to YouTube help video
+                              Watch our YouTube help video
                             </Link>
                           </Text>
                           

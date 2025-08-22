@@ -62,7 +62,7 @@ export default function Day6TrialEndsTomorrow({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  You&apos;ll continue enjoying all of Loft&apos;s Pro features without interruption:
+                  You'll continue enjoying all of Loft's Pro features without interruption:
                   </Text>
                 <div style={{
                   backgroundColor: '#f9fafb',
@@ -122,7 +122,7 @@ export default function Day6TrialEndsTomorrow({
                   margin: '0 0 32px 0',
                   lineHeight: '1.6',
                 }}>
-                  We&apos;re thrilled to have you with us — here&apos;s to smarter saving!
+                  We're thrilled to have you with us — here's to smarter saving!
                   </Text>
                   
                 {/* Signature */}

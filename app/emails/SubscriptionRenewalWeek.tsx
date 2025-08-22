@@ -65,7 +65,7 @@ export default function SubscriptionRenewalWeek({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  You&apos;ll continue to enjoy full access to AI-enhanced summaries, smart search, and seamless link organization — no interruptions.
+                  You'll continue to enjoy full access to AI-enhanced summaries, smart search, and seamless link organization — no interruptions.
                   </Text>
                   
                 <Text style={{

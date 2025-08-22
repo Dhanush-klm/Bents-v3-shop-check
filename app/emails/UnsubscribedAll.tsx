@@ -5,7 +5,7 @@ import EmailButton from "../../components/email/EmailButton";
 import TitleSection from "../../components/email/TitleSection";
 import { LoftColors } from "../../components/email/EmailStyles";
 
-export const subject = "You&apos;ve unsubscribed — we&apos;ll miss you in our inbox";
+export const subject = "You've unsubscribed — we'll miss you in our inbox";
 
 interface UnsubscribedAllProps {
   username?: string;
@@ -21,7 +21,7 @@ export default function UnsubscribedAll({
   return (
     <EmailLayout userEmail={userEmail}>
       <TitleSection 
-        title="You&apos;ve unsubscribed — we&apos;ll miss you in our inbox"
+        title="You've unsubscribed — we'll miss you in our inbox"
         subtitle="No more marketing emails from Loft"
         emoji="📧"
       />
@@ -55,7 +55,7 @@ export default function UnsubscribedAll({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  You&apos;ve been unsubscribed from all marketing emails from Loft.
+                  You've been unsubscribed from all marketing emails from Loft.
                   </Text>
                 
                 <Text style={{
@@ -64,7 +64,7 @@ export default function UnsubscribedAll({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  We&apos;ll make sure your inbox stays quiet no promotions, no updates, no product news.
+                  We'll make sure your inbox stays quiet no promotions, no updates, no product news.
                   </Text>
                 
                 <Text style={{
@@ -73,7 +73,7 @@ export default function UnsubscribedAll({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  If you ever change your mind, you&apos;re always welcome back.
+                  If you ever change your mind, you're always welcome back.
                   </Text>
                 
                 <EmailButton
@@ -90,7 +90,7 @@ export default function UnsubscribedAll({
                   margin: '32px 0 0 0',
                   lineHeight: '1.6',
                 }}>
-                  Thanks again for being part of our journey — we&apos;ve loved having you with us.
+                  Thanks again for being part of our journey — we've loved having you with us.
                   </Text>
                                 
                 {/* Signature */}

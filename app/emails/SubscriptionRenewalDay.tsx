@@ -64,7 +64,7 @@ export default function SubscriptionRenewalDay({
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  We&apos;ll charge the card on file and your access will continue uninterrupted.
+                  We'll charge the card on file and your access will continue uninterrupted.
                   </Text>
                   
                 <Text style={{
