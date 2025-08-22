@@ -1,8 +1,6 @@
 import { Section, Text } from "@react-email/components";
 import * as React from "react";
 import EmailLayout from "../../components/email/EmailLayout";
-
-import TitleSection from "../../components/email/TitleSection";
 import { LoftColors } from "../../components/email/EmailStyles";
 
 export const subject = "Loft tip: Let AI do the heavy lifting";

@@ -2,7 +2,6 @@ import { Section, Text } from "@react-email/components";
 import * as React from "react";
 import EmailLayout from "../../components/email/EmailLayout";
 import EmailButton from "../../components/email/EmailButton";
-import TitleSection from "../../components/email/TitleSection";
 import { LoftColors } from "../../components/email/EmailStyles";
 
 export const subject = "You'll no longer receive Loft updates — but your subscription is still active";
@@ -20,19 +19,15 @@ export default function UnsubscribeActivePaid({
 }: UnsubscribeActivePaidProps) {
   return (
     <EmailLayout userEmail={userEmail}>
-      <TitleSection 
-        title="You'll no longer receive Loft updates"
-        subtitle="But your subscription is still active"
-        emoji="✉️"
-      />
+      
       {/* Main Content */}
       <Section style={{ padding: '0 16px 12px 16px' }}>
         <div
               style={{
             background: '#fff2',
                   borderRadius: '8px',
-            padding: '24px',
-            margin: '0 0 32px 0',
+            padding: '16px',  
+            margin: '0 0 12px 0',
             display: 'block',
           }}
         >

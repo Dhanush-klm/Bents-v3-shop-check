@@ -2,7 +2,6 @@ import { Section, Text, Link } from "@react-email/components";
 import * as React from "react";
 import EmailLayout from "../../components/email/EmailLayout";
 import EmailButton from "../../components/email/EmailButton";
-import TitleSection from "../../components/email/TitleSection";
 import { LoftColors } from "../../components/email/EmailStyles";
 
 interface ProUserWelcomeProps {
@@ -16,19 +15,15 @@ export default function ProUserWelcome({
 }: ProUserWelcomeProps) {
   return (
     <EmailLayout userEmail={userEmail}>
-      <TitleSection 
-        title="Welcome to Loft Pro"
-        subtitle="Your smarter way to save links"
-        emoji="🚀"
-      />
+      
                 {/* Main Content */}
       <Section style={{ padding: '0 16px 12px 16px' }}>
                   <div
                     style={{
                       background: '#fff2',
                       borderRadius: '8px',
-                      padding: '24px',
-                      margin: '0 0 32px 0',
+                      padding: '16px',
+                      margin: '0 0 12px 0',
                       display: 'block',
                     }}
                   >

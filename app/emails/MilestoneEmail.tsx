@@ -2,7 +2,6 @@ import { Section, Text } from "@react-email/components";
 import * as React from "react";
 import EmailLayout from "../../components/email/EmailLayout";
 
-import TitleSection from "../../components/email/TitleSection";
 import { LoftColors } from "../../components/email/EmailStyles";
 
 export const subject = "You've saved 100 links 🎉";
@@ -24,8 +23,8 @@ export default function MilestoneEmail({
                     style={{
                       background: '#fff2',
             borderRadius: '8px',
-                      padding: '24px',
-                      margin: '0 0 32px 0',
+                      padding: '16px',
+                      margin: '0 0 12px 0',
                       display: 'block',
                     }}
                   >

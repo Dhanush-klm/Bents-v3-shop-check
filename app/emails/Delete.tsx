@@ -1,7 +1,6 @@
 import { Section, Text, Link } from "@react-email/components";
 import * as React from "react";
 import EmailLayout from "../../components/email/EmailLayout";
-import TitleSection from "../../components/email/TitleSection";
 import { LoftColors } from "../../components/email/EmailStyles";
 
 export const subject = "You've left Loft — but we hope it's not goodbye 💙";
@@ -17,19 +16,15 @@ export default function Delete({
 }: DeleteProps) {
   return (
     <EmailLayout userEmail={userEmail}>
-      <TitleSection 
-        title="You've left Loft — but we hope it's not goodbye"
-        subtitle="Thank you for being part of our journey"
-        emoji="💙"
-      />
+      
       {/* Main Content */}
       <Section style={{ padding: '0 16px 12px 16px' }}>
         <div
           style={{
             background: '#fff2',
             borderRadius: '8px',
-            padding: '24px',
-            margin: '0 0 32px 0',
+            padding: '16px',
+            margin: '0 0 12px 0',
             display: 'block',
           }}
         >
