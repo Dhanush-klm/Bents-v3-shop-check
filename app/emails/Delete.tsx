@@ -59,29 +59,7 @@ export default function Delete({
                   Whether you used Loft to save links, collect inspiration, or just keep your digital world a little more organized, we hope it brought you a bit of ease and magic along the way. ✨
                 </Text>
                 
-                <Text style={{
-                  fontSize: '16px',
-                  color: LoftColors.textSecondary,
-                  margin: '0 0 24px 0',
-                  lineHeight: '1.6',
-                }}>
-                  While your account has now been deleted, we'd love to keep you in the loop as we continue to build and improve. Expect the occasional update with what's new just in case you want to come back someday (we hope you do!).
-                </Text>
                 
-                <Text style={{ 
-                  fontSize: '16px', 
-                  color: LoftColors.textSecondary, 
-                  margin: '0 0 24px 0',
-                  lineHeight: '1.6',
-                }}>
-                  👉 Prefer not to receive updates? No problem, you can{' '}
-                  <Link
-                    href="https://loftit.ai/unsubscribe?email=${userEmail}"
-                    style={{ color: LoftColors.link, textDecoration: 'underline' }}
-                  >
-                    unsubscribe here
-                  </Link>.
-                </Text>
                 
                 <Text style={{ 
                   fontSize: '16px', 
@@ -95,12 +73,11 @@ export default function Delete({
                 {/* Signature */}
                 <Text style={{
                   fontSize: '16px',
-                  fontWeight: '600',
                   color: LoftColors.text,
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                  <strong>The Loft Team</strong>
+                  The Loft Team
                 </Text>
 
                 <Text style={{

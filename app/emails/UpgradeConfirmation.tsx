@@ -138,14 +138,14 @@ export default function UpgradeConfirmation({
                         color: LoftColors.text,
                         margin: '0 0 4px 0',
                       }}>
-                        Smart resurfacing
+                       Unlimited 'Ask Loft'
                       </Text>
                       <Text style={{
                         fontSize: '14px',
                         color: LoftColors.textMuted,
                           margin: '0',
                         }}>
-                        Loft remembers and brings your links back when you need them
+                        Just Ask Loft and it brings back your saved content when you need it
                         </Text>
                       </div>
                     </div>
@@ -217,12 +217,22 @@ export default function UpgradeConfirmation({
                   }}>
                     👉 <strong>Start using your new features today:</strong>
                   </Text>
-                  <EmailButton 
-                    href={openLoftUrl}
-                    variant="primary"
-                  >
-                    Open Loft
-                  </EmailButton>
+                  <div style={{ 
+                    textAlign: 'center' as const,
+                    margin: '16px 0',
+                  }}>
+                    <div style={{
+                      backgroundColor: '#FF5A5F',
+                      color: '#ffffff',
+                      padding: '14px 20px',
+                      borderRadius: '8px',
+                      display: 'inline-block',
+                      fontSize: '16px',
+                      fontWeight: '600',
+                    }}>
+                      Open Loft
+                    </div>
+                  </div>
                   </div>
 
                 <Text style={{
