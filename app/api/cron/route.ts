@@ -61,6 +61,7 @@ export async function GET() {
        where u.trial_started_at >= t.start_utc and u.trial_started_at < t.end_utc
          and lower(coalesce(u.subscription_status, '')) = 'trial'
          and u.entitlement_pro_until > now()
+         and u.out_from_marketing is null
          and not exists (
            select 1 from public.links l where l.user_id = u.id
          )`
@@ -109,6 +110,7 @@ export async function GET() {
        where u.trial_started_at >= t.start_utc and u.trial_started_at < t.end_utc
          and lower(coalesce(u.subscription_status, '')) = 'trial'
          and u.entitlement_pro_until > now()
+         and u.out_from_marketing is null
          and not exists (
            select 1 from public.links l where l.user_id = u.id
          )`
@@ -143,6 +145,7 @@ export async function GET() {
        where u.trial_started_at >= t.start_utc and u.trial_started_at < t.end_utc
          and lower(coalesce(u.subscription_status, '')) = 'trial'
          and u.entitlement_pro_until > now()
+         and u.out_from_marketing is null
          and not exists (
            select 1 from public.links l where l.user_id = u.id
          )`
@@ -177,6 +180,7 @@ export async function GET() {
        where u.trial_started_at >= t.start_utc and u.trial_started_at < t.end_utc
          and lower(coalesce(u.subscription_status, '')) = 'trial'
          and u.entitlement_pro_until > now()
+         and u.out_from_marketing is null
          and not exists (
            select 1 from public.links l where l.user_id = u.id
          )`
@@ -209,6 +213,7 @@ export async function GET() {
        select u.id, u.email, u.full_name
        from public.users u, target_day t
        where u.created_at >= t.start_utc and u.created_at < t.end_utc
+         and u.out_from_marketing is null
          and not exists (
            select 1 from public.links l where l.user_id = u.id
          )`
@@ -240,7 +245,8 @@ export async function GET() {
        )
        select u.id, u.email, u.full_name
        from public.users u, target_day t
-       where u.created_at >= t.start_utc and u.created_at < t.end_utc`
+       where u.created_at >= t.start_utc and u.created_at < t.end_utc
+         and u.out_from_marketing is null`
     );
     const usersW1: Array<{ id: string; email: string; full_name?: string | null }> = resultW1.rows || [];
     let sentW1 = 0;
@@ -269,7 +275,8 @@ export async function GET() {
        )
        select u.id, u.email, u.full_name
        from public.users u, target_day t
-       where u.created_at >= t.start_utc and u.created_at < t.end_utc`
+       where u.created_at >= t.start_utc and u.created_at < t.end_utc
+         and u.out_from_marketing is null`
     );
     const usersW2: Array<{ id: string; email: string; full_name?: string | null }> = resultW2.rows || [];
     let sentW2 = 0;
@@ -298,7 +305,8 @@ export async function GET() {
        )
        select u.id, u.email, u.full_name
        from public.users u, target_day t
-       where u.created_at >= t.start_utc and u.created_at < t.end_utc`
+       where u.created_at >= t.start_utc and u.created_at < t.end_utc
+         and u.out_from_marketing is null`
     );
     const usersW3: Array<{ id: string; email: string; full_name?: string | null }> = resultW3.rows || [];
     let sentW3 = 0;
@@ -327,7 +335,8 @@ export async function GET() {
        )
        select u.id, u.email, u.full_name
        from public.users u, target_day t
-       where u.created_at >= t.start_utc and u.created_at < t.end_utc`
+       where u.created_at >= t.start_utc and u.created_at < t.end_utc
+         and u.out_from_marketing is null`
     );
     const usersW4: Array<{ id: string; email: string; full_name?: string | null }> = resultW4.rows || [];
     let sentW4 = 0;
@@ -356,7 +365,8 @@ export async function GET() {
        )
        select u.id, u.email, u.full_name
        from public.users u, target_day t
-       where u.created_at >= t.start_utc and u.created_at < t.end_utc`
+       where u.created_at >= t.start_utc and u.created_at < t.end_utc
+         and u.out_from_marketing is null`
     );
     const users30Days: Array<{ id: string; email: string; full_name?: string | null }> = result30Days.rows || [];
     let sent30Days = 0;
@@ -390,7 +400,8 @@ export async function GET() {
        select u.id, u.email, u.full_name
        from public.users u, target_day t
        where u.created_at >= t.start_utc and u.created_at < t.end_utc
-         and lower(coalesce(u.subscription_status, '')) = 'paid'`
+         and lower(coalesce(u.subscription_status, '')) = 'paid'
+         and u.out_from_marketing is null`
     );
     const users1MonthPaid: Array<{ id: string; email: string; full_name?: string | null }> = result1MonthPaid.rows || [];
     let sent1MonthPaid = 0;
@@ -427,6 +438,7 @@ export async function GET() {
        from public.users u
        where u.entitlement_pro_until > now()
          and lower(coalesce(u.subscription_status, '')) = 'active'
+         and u.out_from_marketing is null
          and extract(day from (u.entitlement_pro_until - now())) between 0 and 32`
     );
 
