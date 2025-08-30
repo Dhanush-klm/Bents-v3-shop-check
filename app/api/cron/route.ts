@@ -197,10 +197,10 @@ export async function GET() {
     }
 
     // Day 9: ALL users created exactly 9 days ago with zero links (re-engagement)
-    const result9 = await db.query(
+    const result_7 = await db.query(
       `with target_day as (
-         select date_trunc('day', now() at time zone 'utc' - interval '9 days') as start_utc,
-                date_trunc('day', now() at time zone 'utc' - interval '8 days') as end_utc
+         select date_trunc('day', now() at time zone 'utc' - interval '7 days') as start_utc,
+                date_trunc('day', now() at time zone 'utc' - interval '6 days') as end_utc
        )
        select u.id, u.email, u.full_name
        from public.users u, target_day t
@@ -209,9 +209,9 @@ export async function GET() {
            select 1 from public.links l where l.user_id = u.id
          )`
     );
-    const users9: Array<{ id: string; email: string; full_name?: string | null }> = result9.rows || [];
-    let sent9 = 0;
-    for (const user of users9) {
+    const users_7: Array<{ id: string; email: string; full_name?: string | null }> = result_7.rows || [];
+    let sent_7 = 0;
+    for (const user of users_7) {
       try {
         if (!user.email) continue;
         const name = (user.full_name || "there").toString();
@@ -221,9 +221,9 @@ export async function GET() {
           subject: await getTemplateSubjectWithFallback("NoActivityReengagement"),
           react: NoActivityReengagement({ username: name, userEmail: user.email }),
         });
-        if (res?.data?.id) sent9 += 1;
+        if (res?.data?.id) sent_7 += 1;
       } catch (err) {
-        console.error("[Cron] day9 no activity send failed", user.email, err);
+        console.error("[Cron] day7 no activity send failed", user.email, err);
       }
       if (delayMs > 0) await sleep(delayMs);
     }
@@ -546,8 +546,8 @@ export async function GET() {
       sent6, 
       processed7: users7.length, 
       sent7, 
-      processed9: users9.length, 
-      sent9, 
+      processed_7: users_7.length, 
+      sent_7, 
       processedW1: usersW1.length, 
       sentW1, 
       processedW2: usersW2.length, 
