@@ -414,129 +414,103 @@ export async function GET() {
       if (delayMs > 0) await sleep(delayMs);
     }
 
-    // Subscription renewal reminders based on subscription_events
-    const now = Date.now();
-    
-    // First: Get all subscription events and do calculations in SQL
-    const renewalEventsResult = await db.query(
-      `select se.user_id, se.payload,
-              (se.payload::jsonb->'event'->>'expiration_at_ms')::bigint as expiration_ms,
-              extract(day from (to_timestamp((se.payload::jsonb->'event'->>'expiration_at_ms')::bigint / 1000) - now())) as days_until_expiration
-       from public.subscription_events se
-       where se.payload::jsonb->'event'->>'expiration_at_ms' is not null
-         and (se.payload::jsonb->'event'->>'expiration_at_ms')::bigint > $1`
-    , [now]);
-
-    const renewalEvents: Array<{ 
-      user_id: string; 
-      payload: Record<string, unknown>; 
-      expiration_ms: number; 
-      days_until_expiration: number 
-    }> = renewalEventsResult.rows || [];
-
+    // Subscription renewal reminders - using entitlement_pro_until and excluding trial users
     let sentRenewalWeek = 0;
     let sentRenewalDay = 0;
     let sentRenewal30Day = 0;
     let processedRenewalEvents = 0;
 
-    // Second: Filter only the rows that match our criteria
-    const matchedEvents = renewalEvents.filter(event => {
-      const days = Math.round(event.days_until_expiration);
-      return (days >= 6 && days <= 8) ||    // 7 days before
-             (days >= 0 && days <= 2) ||    // 1 day before  
-             (days >= 28 && days <= 32);    // 30 days before
-    });
+    // Get paid users approaching subscription expiration using entitlement_pro_until
+    const renewalUsersResult = await db.query(
+      `select u.id, u.email, u.full_name, u.entitlement_pro_until,
+              extract(day from (u.entitlement_pro_until - now())) as days_until_expiration
+       from public.users u
+       where u.entitlement_pro_until > now()
+         and lower(coalesce(u.subscription_status, '')) = 'active'
+         and extract(day from (u.entitlement_pro_until - now())) between 0 and 32`
+    );
 
-    // Third: Get user details for matched events
-    if (matchedEvents.length > 0) {
-      const userIds = matchedEvents.map(e => e.user_id);
-      const usersResult = await db.query(
-        `select id, email, full_name 
-         from public.users 
-         where id = any($1)`,
-        [userIds]
-      );
+    const renewalUsers: Array<{ 
+      id: string; 
+      email: string; 
+      full_name?: string | null;
+      entitlement_pro_until: string;
+      days_until_expiration: number 
+    }> = renewalUsersResult.rows || [];
 
-      const usersMap = new Map();
-      usersResult.rows.forEach(user => {
-        usersMap.set(user.id, user);
-      });
+    // Send emails based on days until expiration
+    for (const user of renewalUsers) {
+      try {
+        if (!user.email) continue;
 
-      // Send emails for matched events
-      for (const event of matchedEvents) {
-        try {
-          const user = usersMap.get(event.user_id);
-          if (!user || !user.email) continue;
+        const expirationDate = new Date(user.entitlement_pro_until).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
 
-          const expirationDate = new Date(event.expiration_ms).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
+        const name = (user.full_name || "there").toString();
+        const days = Math.round(user.days_until_expiration);
+        let emailSent = false;
+
+        // Send appropriate renewal reminder based on days until expiration
+        if (days >= 6 && days <= 8) {
+          // ~7 days before expiration
+          const res = await resend.emails.send({
+            from: getResendFrom(),
+            to: user.email,
+            subject: await getTemplateSubjectWithFallback("SubscriptionRenewalWeek"),
+            react: SubscriptionRenewalWeek({ 
+              username: name, 
+              userEmail: user.email,
+              renewalDate: expirationDate
+            }),
           });
-
-          const name = (user.full_name || "there").toString();
-          const days = Math.round(event.days_until_expiration);
-          let emailSent = false;
-
-          // Send appropriate renewal reminder based on days until expiration
-          if (days >= 6 && days <= 8) {
-            // ~7 days before expiration
-            const res = await resend.emails.send({
-              from: getResendFrom(),
-              to: user.email,
-              subject: await getTemplateSubjectWithFallback("SubscriptionRenewalWeek"),
-              react: SubscriptionRenewalWeek({ 
-                username: name, 
-                userEmail: user.email,
-                renewalDate: expirationDate
-              }),
-            });
-            if (res?.data?.id) {
-              sentRenewalWeek += 1;
-              emailSent = true;
-            }
-          } else if (days >= 0 && days <= 2) {
-            // ~1 day before expiration (0-2 days range)
-            const res = await resend.emails.send({
-              from: getResendFrom(),
-              to: user.email,
-              subject: await getTemplateSubjectWithFallback("SubscriptionRenewalDay"),
-              react: SubscriptionRenewalDay({ 
-                username: name, 
-                userEmail: user.email,
-                renewalDate: expirationDate
-              }),
-            });
-            if (res?.data?.id) {
-              sentRenewalDay += 1;
-              emailSent = true;
-            }
-          } else if (days >= 28 && days <= 32) {
-            // ~30 days before expiration
-            const res = await resend.emails.send({
-              from: getResendFrom(),
-              to: user.email,
-              subject: await getTemplateSubjectWithFallback("SubscriptionRenewal"),
-              react: SubscriptionRenewal({ 
-                username: name, 
-                userEmail: user.email,
-                renewalDate: expirationDate
-              }),
-            });
-            if (res?.data?.id) {
-              sentRenewal30Day += 1;
-              emailSent = true;
-            }
+          if (res?.data?.id) {
+            sentRenewalWeek += 1;
+            emailSent = true;
           }
-
-          if (emailSent) {
-            processedRenewalEvents += 1;
-            if (delayMs > 0) await sleep(delayMs);
+        } else if (days >= 0 && days <= 2) {
+          // ~1 day before expiration (0-2 days range)
+          const res = await resend.emails.send({
+            from: getResendFrom(),
+            to: user.email,
+            subject: await getTemplateSubjectWithFallback("SubscriptionRenewalDay"),
+            react: SubscriptionRenewalDay({ 
+              username: name, 
+              userEmail: user.email,
+              renewalDate: expirationDate
+            }),
+          });
+          if (res?.data?.id) {
+            sentRenewalDay += 1;
+            emailSent = true;
           }
-
-        } catch (err) {
-          console.error("[Cron] renewal reminder send failed", err);
+        } else if (days >= 28 && days <= 32) {
+          // ~30 days before expiration
+          const res = await resend.emails.send({
+            from: getResendFrom(),
+            to: user.email,
+            subject: await getTemplateSubjectWithFallback("SubscriptionRenewal"),
+            react: SubscriptionRenewal({ 
+              username: name, 
+              userEmail: user.email,
+              renewalDate: expirationDate
+            }),
+          });
+          if (res?.data?.id) {
+            sentRenewal30Day += 1;
+            emailSent = true;
+          }
         }
+
+        if (emailSent) {
+          processedRenewalEvents += 1;
+          if (delayMs > 0) await sleep(delayMs);
+        }
+
+      } catch (err) {
+        console.error("[Cron] renewal reminder send failed", user.email, err);
       }
     }
 
