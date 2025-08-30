@@ -49,8 +49,8 @@ export async function GET() {
   try {
     const db = getDataDb();
 
-    // Compute the 3-day window (UTC)
-    // Select users whose created_at is on the day exactly 3 days ago (00:00 to 23:59:59)
+    // Compute the 3-day window (UTC) - using trial_started_at for trial timing
+    // Select users whose trial started exactly 3 days ago (00:00 to 23:59:59)
     const result = await db.query(
       `with target_day as (
          select date_trunc('day', now() at time zone 'utc' - interval '3 days') as start_utc,
@@ -58,8 +58,9 @@ export async function GET() {
        )
        select u.id, u.email, u.full_name
        from public.users u, target_day t
-       where u.created_at >= t.start_utc and u.created_at < t.end_utc
+       where u.trial_started_at >= t.start_utc and u.trial_started_at < t.end_utc
          and lower(coalesce(u.subscription_status, '')) = 'trial'
+         and u.entitlement_pro_until > now()
          and not exists (
            select 1 from public.links l where l.user_id = u.id
          )`
@@ -97,7 +98,7 @@ export async function GET() {
       if (delayMs > 0) await sleep(delayMs);
     }
 
-    // Day 5: users created exactly 5 days ago (UTC day) with no links
+    // Day 5: users whose trial started exactly 5 days ago (UTC day) with no links
     const result5 = await db.query(
       `with target_day as (
          select date_trunc('day', now() at time zone 'utc' - interval '5 days') as start_utc,
@@ -105,8 +106,9 @@ export async function GET() {
        )
        select u.id, u.email, u.full_name
        from public.users u, target_day t
-       where u.created_at >= t.start_utc and u.created_at < t.end_utc
+       where u.trial_started_at >= t.start_utc and u.trial_started_at < t.end_utc
          and lower(coalesce(u.subscription_status, '')) = 'trial'
+         and u.entitlement_pro_until > now()
          and not exists (
            select 1 from public.links l where l.user_id = u.id
          )`
@@ -130,7 +132,7 @@ export async function GET() {
       if (delayMs > 0) await sleep(delayMs);
     }
 
-    // Day 6: users created exactly 6 days ago (UTC day) with no links
+    // Day 6: users whose trial started exactly 6 days ago (UTC day) with no links
     const result6 = await db.query(
       `with target_day as (
          select date_trunc('day', now() at time zone 'utc' - interval '6 days') as start_utc,
@@ -138,8 +140,9 @@ export async function GET() {
        )
        select u.id, u.email, u.full_name
        from public.users u, target_day t
-       where u.created_at >= t.start_utc and u.created_at < t.end_utc
+       where u.trial_started_at >= t.start_utc and u.trial_started_at < t.end_utc
          and lower(coalesce(u.subscription_status, '')) = 'trial'
+         and u.entitlement_pro_until > now()
          and not exists (
            select 1 from public.links l where l.user_id = u.id
          )`
@@ -163,7 +166,7 @@ export async function GET() {
       if (delayMs > 0) await sleep(delayMs);
     }
 
-    // Day 7: users created exactly 7 days ago (UTC day) with no links
+    // Day 7: users whose trial started exactly 7 days ago (UTC day) with no links
     const result7 = await db.query(
       `with target_day as (
          select date_trunc('day', now() at time zone 'utc' - interval '7 days') as start_utc,
@@ -171,8 +174,9 @@ export async function GET() {
        )
        select u.id, u.email, u.full_name
        from public.users u, target_day t
-       where u.created_at >= t.start_utc and u.created_at < t.end_utc
+       where u.trial_started_at >= t.start_utc and u.trial_started_at < t.end_utc
          and lower(coalesce(u.subscription_status, '')) = 'trial'
+         and u.entitlement_pro_until > now()
          and not exists (
            select 1 from public.links l where l.user_id = u.id
          )`
