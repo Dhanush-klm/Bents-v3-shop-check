@@ -132,14 +132,7 @@ const EMAIL_TEMPLATES: EmailTemplate[] = [
     category: 'Feedback',
     component: 'FeedbackSurvey30Days'
   },
-  {
-    id: 'UnsubscribedMarketing',
-    name: 'Unsubscribed Marketing',
-    subject: 'You\'ll no longer receive Loft updates — but your subscription is still active',
-    description: 'Marketing unsubscribe confirmation',
-    category: 'Unsubscribe',
-    component: 'UnsubscribedMarketing'
-  },
+
   {
     id: 'UnsubscribedAll',
     name: 'Unsubscribed All',
