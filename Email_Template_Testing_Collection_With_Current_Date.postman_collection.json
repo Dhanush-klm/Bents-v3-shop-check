@@ -734,7 +734,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"template\": \"Month1PaidUser\",\n  \"email\": \"{{test_email}}\",\n  \"username\": \"Dhanush\",\n  \"current_date\": \"2025-09-03T00:00:00Z\",\n  \"conditions\": {\n    \"created_at\": \"2025-08-04T00:00:00Z\",\n    \"days_since_created\": 30,\n    \"subscription_status\": \"paid\"\n  }\n}"
+							"raw": "{\n  \"template\": \"Month1PaidUser\",\n  \"email\": \"{{test_email}}\",\n  \"username\": \"Dhanush\",\n  \"current_date\": \"2025-09-03T00:00:00Z\",\n  \"conditions\": {\n    \"created_at\": \"2025-08-04T00:00:00Z\",\n    \"days_since_created\": 30,\n    \"subscription_status\": \"active\"\n  }\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/test-email",
