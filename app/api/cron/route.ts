@@ -61,7 +61,7 @@ export async function GET() {
        where u.trial_started_at >= t.start_utc and u.trial_started_at < t.end_utc
          and lower(coalesce(u.subscription_status, '')) = 'trial'
          and u.entitlement_pro_until > now()
-         and u.out_from_marketing is null
+
          and not exists (
            select 1 from public.links l where l.user_id = u.id
          )`
@@ -110,7 +110,7 @@ export async function GET() {
        where u.trial_started_at >= t.start_utc and u.trial_started_at < t.end_utc
          and lower(coalesce(u.subscription_status, '')) = 'trial'
          and u.entitlement_pro_until > now()
-         and u.out_from_marketing is null
+
          and not exists (
            select 1 from public.links l where l.user_id = u.id
          )`
@@ -145,7 +145,7 @@ export async function GET() {
        where u.trial_started_at >= t.start_utc and u.trial_started_at < t.end_utc
          and lower(coalesce(u.subscription_status, '')) = 'trial'
          and u.entitlement_pro_until > now()
-         and u.out_from_marketing is null
+
          and not exists (
            select 1 from public.links l where l.user_id = u.id
          )`
@@ -180,7 +180,7 @@ export async function GET() {
        where u.trial_started_at >= t.start_utc and u.trial_started_at < t.end_utc
          and lower(coalesce(u.subscription_status, '')) = 'trial'
          and u.entitlement_pro_until > now()
-         and u.out_from_marketing is null
+
          and not exists (
            select 1 from public.links l where l.user_id = u.id
          )`
@@ -213,7 +213,7 @@ export async function GET() {
        select u.id, u.email, u.full_name
        from public.users u, target_day t
        where u.created_at >= t.start_utc and u.created_at < t.end_utc
-         and u.out_from_marketing is null
+
          and not exists (
            select 1 from public.links l where l.user_id = u.id
          )`
@@ -246,7 +246,7 @@ export async function GET() {
        select u.id, u.email, u.full_name
        from public.users u, target_day t
        where u.created_at >= t.start_utc and u.created_at < t.end_utc
-         and u.out_from_marketing is null`
+`
     );
     const usersW1: Array<{ id: string; email: string; full_name?: string | null }> = resultW1.rows || [];
     let sentW1 = 0;
@@ -276,7 +276,7 @@ export async function GET() {
        select u.id, u.email, u.full_name
        from public.users u, target_day t
        where u.created_at >= t.start_utc and u.created_at < t.end_utc
-         and u.out_from_marketing is null`
+`
     );
     const usersW2: Array<{ id: string; email: string; full_name?: string | null }> = resultW2.rows || [];
     let sentW2 = 0;
@@ -306,7 +306,7 @@ export async function GET() {
        select u.id, u.email, u.full_name
        from public.users u, target_day t
        where u.created_at >= t.start_utc and u.created_at < t.end_utc
-         and u.out_from_marketing is null`
+`
     );
     const usersW3: Array<{ id: string; email: string; full_name?: string | null }> = resultW3.rows || [];
     let sentW3 = 0;
@@ -336,7 +336,7 @@ export async function GET() {
        select u.id, u.email, u.full_name
        from public.users u, target_day t
        where u.created_at >= t.start_utc and u.created_at < t.end_utc
-         and u.out_from_marketing is null`
+`
     );
     const usersW4: Array<{ id: string; email: string; full_name?: string | null }> = resultW4.rows || [];
     let sentW4 = 0;
@@ -366,7 +366,7 @@ export async function GET() {
        select u.id, u.email, u.full_name
        from public.users u, target_day t
        where u.created_at >= t.start_utc and u.created_at < t.end_utc
-         and u.out_from_marketing is null`
+`
     );
     const users30Days: Array<{ id: string; email: string; full_name?: string | null }> = result30Days.rows || [];
     let sent30Days = 0;
@@ -401,7 +401,7 @@ export async function GET() {
        from public.users u, target_day t
        where u.created_at >= t.start_utc and u.created_at < t.end_utc
          and lower(coalesce(u.subscription_status, '')) = 'paid'
-         and u.out_from_marketing is null`
+`
     );
     const users1MonthPaid: Array<{ id: string; email: string; full_name?: string | null }> = result1MonthPaid.rows || [];
     let sent1MonthPaid = 0;
@@ -434,12 +434,11 @@ export async function GET() {
     // Get paid users approaching subscription expiration using entitlement_pro_until
     const renewalUsersResult = await db.query(
       `select u.id, u.email, u.full_name, u.entitlement_pro_until,
-              extract(day from (u.entitlement_pro_until - now())) as days_until_expiration
+              (u.entitlement_pro_until::date - now()::date) as days_until_expiration
        from public.users u
        where u.entitlement_pro_until > now()
          and lower(coalesce(u.subscription_status, '')) = 'active'
-         and u.out_from_marketing is null
-         and extract(day from (u.entitlement_pro_until - now())) between 0 and 32`
+         and (u.entitlement_pro_until::date - now()::date) in (1, 7, 30)`
     );
 
     const renewalUsers: Array<{ 
@@ -465,9 +464,25 @@ export async function GET() {
         const days = Math.round(user.days_until_expiration);
         let emailSent = false;
 
-        // Send appropriate renewal reminder based on days until expiration
-        if (days >= 6 && days <= 8) {
-          // ~7 days before expiration
+        // Send appropriate renewal reminder based on exact days until expiration
+        if (days === 30) {
+          // Exactly 30 days before expiration
+          const res = await resend.emails.send({
+            from: getResendFrom(),
+            to: user.email,
+            subject: await getTemplateSubjectWithFallback("SubscriptionRenewal"),
+            react: SubscriptionRenewal({ 
+              username: name, 
+              userEmail: user.email,
+              renewalDate: expirationDate
+            }),
+          });
+          if (res?.data?.id) {
+            sentRenewal30Day += 1;
+            emailSent = true;
+          }
+        } else if (days === 7) {
+          // Exactly 7 days before expiration
           const res = await resend.emails.send({
             from: getResendFrom(),
             to: user.email,
@@ -482,8 +497,8 @@ export async function GET() {
             sentRenewalWeek += 1;
             emailSent = true;
           }
-        } else if (days >= 0 && days <= 2) {
-          // ~1 day before expiration (0-2 days range)
+        } else if (days === 1) {
+          // Exactly 1 day before expiration
           const res = await resend.emails.send({
             from: getResendFrom(),
             to: user.email,
@@ -496,22 +511,6 @@ export async function GET() {
           });
           if (res?.data?.id) {
             sentRenewalDay += 1;
-            emailSent = true;
-          }
-        } else if (days >= 28 && days <= 32) {
-          // ~30 days before expiration
-          const res = await resend.emails.send({
-            from: getResendFrom(),
-            to: user.email,
-            subject: await getTemplateSubjectWithFallback("SubscriptionRenewal"),
-            react: SubscriptionRenewal({ 
-              username: name, 
-              userEmail: user.email,
-              renewalDate: expirationDate
-            }),
-          });
-          if (res?.data?.id) {
-            sentRenewal30Day += 1;
             emailSent = true;
           }
         }
