@@ -1,4 +1,4 @@
-import { Section, Text, Link } from "@react-email/components";
+import { Section, Text } from "@react-email/components";
 import * as React from "react";
 import EmailLayout from "../../components/email/EmailLayout";
 import { LoftColors } from "../../components/email/EmailStyles";

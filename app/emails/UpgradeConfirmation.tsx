@@ -1,7 +1,6 @@
 import { Section, Text } from "@react-email/components";
 import * as React from "react";
 import EmailLayout from "../../components/email/EmailLayout";
-import EmailButton from "../../components/email/EmailButton";
 import { LoftColors } from "../../components/email/EmailStyles";
 
 export const subject = "You've unlocked Loft Pro ✨ Smarter saving starts now";
@@ -9,13 +8,11 @@ export const subject = "You've unlocked Loft Pro ✨ Smarter saving starts now";
 interface UpgradeConfirmationProps {
   username?: string;
   userEmail?: string;
-  openLoftUrl?: string;
 }
 
 export default function UpgradeConfirmation({
   username = "there",
   userEmail = "user@example.com",
-  openLoftUrl = "loft://open",
 }: UpgradeConfirmationProps) {
   return (
     <EmailLayout userEmail={userEmail}>

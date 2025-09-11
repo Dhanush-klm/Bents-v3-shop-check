@@ -67,9 +67,29 @@ const emailTemplates = {
   UpgradeConfirmation,
 };
 
+// Define condition types
+interface TrialConditions {
+  trial_started_at?: string;
+  subscription_status: string;
+  entitlement_pro_until?: string;
+  has_links: boolean;
+  days_since_trial_start: number;
+}
+
+interface AccountConditions {
+  created_at?: string;
+  has_links: boolean;
+  days_since_created: number;
+}
+
+interface SubscriptionConditions {
+  subscription_status: string;
+  days_until_expiration: number;
+}
+
 // Condition validation functions
-function validateDay3TrialReminder(conditions: any): { valid: boolean; message: string } {
-  const { trial_started_at, subscription_status, entitlement_pro_until, has_links, days_since_trial_start } = conditions;
+function validateDay3TrialReminder(conditions: Record<string, unknown>): { valid: boolean; message: string } {
+  const { subscription_status, entitlement_pro_until, has_links, days_since_trial_start } = conditions as unknown as TrialConditions;
   
   if (days_since_trial_start !== 3) {
     return { valid: false, message: "Day3TrialReminder requires exactly 3 days since trial start" };
@@ -87,8 +107,8 @@ function validateDay3TrialReminder(conditions: any): { valid: boolean; message: 
   return { valid: true, message: "Conditions satisfied for Day3TrialReminder" };
 }
 
-function validateDay5TrialEnding(conditions: any): { valid: boolean; message: string } {
-  const { trial_started_at, subscription_status, entitlement_pro_until, has_links, days_since_trial_start } = conditions;
+function validateDay5TrialEnding(conditions: Record<string, unknown>): { valid: boolean; message: string } {
+  const { subscription_status, entitlement_pro_until, has_links, days_since_trial_start } = conditions as unknown as TrialConditions;
   
   if (days_since_trial_start !== 5) {
     return { valid: false, message: "Day5TrialEnding requires exactly 5 days since trial start" };
@@ -106,8 +126,8 @@ function validateDay5TrialEnding(conditions: any): { valid: boolean; message: st
   return { valid: true, message: "Conditions satisfied for Day5TrialEnding" };
 }
 
-function validateDay6TrialEndsTomorrow(conditions: any): { valid: boolean; message: string } {
-  const { trial_started_at, subscription_status, entitlement_pro_until, has_links, days_since_trial_start } = conditions;
+function validateDay6TrialEndsTomorrow(conditions: Record<string, unknown>): { valid: boolean; message: string } {
+  const { subscription_status, entitlement_pro_until, has_links, days_since_trial_start } = conditions as unknown as TrialConditions;
   
   if (days_since_trial_start !== 6) {
     return { valid: false, message: "Day6TrialEndsTomorrow requires exactly 6 days since trial start" };
@@ -125,8 +145,8 @@ function validateDay6TrialEndsTomorrow(conditions: any): { valid: boolean; messa
   return { valid: true, message: "Conditions satisfied for Day6TrialEndsTomorrow" };
 }
 
-function validateDay7TrialEndsToday(conditions: any): { valid: boolean; message: string } {
-  const { trial_started_at, subscription_status, entitlement_pro_until, has_links, days_since_trial_start } = conditions;
+function validateDay7TrialEndsToday(conditions: Record<string, unknown>): { valid: boolean; message: string } {
+  const { subscription_status, entitlement_pro_until, has_links, days_since_trial_start } = conditions as unknown as TrialConditions;
   
   if (days_since_trial_start !== 7) {
     return { valid: false, message: "Day7TrialEndsToday requires exactly 7 days since trial start" };
@@ -144,8 +164,8 @@ function validateDay7TrialEndsToday(conditions: any): { valid: boolean; message:
   return { valid: true, message: "Conditions satisfied for Day7TrialEndsToday" };
 }
 
-function validateNoActivityReengagement(conditions: any): { valid: boolean; message: string } {
-  const { created_at, has_links, days_since_created } = conditions;
+function validateNoActivityReengagement(conditions: Record<string, unknown>): { valid: boolean; message: string } {
+  const { has_links, days_since_created } = conditions as unknown as AccountConditions;
   
   if (days_since_created !== 7) {
     return { valid: false, message: "NoActivityReengagement requires exactly 7 days since account creation" };
@@ -157,8 +177,8 @@ function validateNoActivityReengagement(conditions: any): { valid: boolean; mess
   return { valid: true, message: "Conditions satisfied for NoActivityReengagement" };
 }
 
-function validateWeek1PostCreation(conditions: any): { valid: boolean; message: string } {
-  const { created_at, days_since_created } = conditions;
+function validateWeek1PostCreation(conditions: Record<string, unknown>): { valid: boolean; message: string } {
+  const { days_since_created } = conditions as unknown as AccountConditions;
   
   if (days_since_created !== 7) {
     return { valid: false, message: "Week1PostCreation requires exactly 7 days since account creation" };
@@ -167,8 +187,8 @@ function validateWeek1PostCreation(conditions: any): { valid: boolean; message: 
   return { valid: true, message: "Conditions satisfied for Week1PostCreation" };
 }
 
-function validateWeek2PostCreation(conditions: any): { valid: boolean; message: string } {
-  const { created_at, days_since_created } = conditions;
+function validateWeek2PostCreation(conditions: Record<string, unknown>): { valid: boolean; message: string } {
+  const { days_since_created } = conditions as unknown as AccountConditions;
   
   if (days_since_created !== 14) {
     return { valid: false, message: "Week2PostCreation requires exactly 14 days since account creation" };
@@ -177,8 +197,8 @@ function validateWeek2PostCreation(conditions: any): { valid: boolean; message: 
   return { valid: true, message: "Conditions satisfied for Week2PostCreation" };
 }
 
-function validateWeek3PostCreation(conditions: any): { valid: boolean; message: string } {
-  const { created_at, days_since_created } = conditions;
+function validateWeek3PostCreation(conditions: Record<string, unknown>): { valid: boolean; message: string } {
+  const { days_since_created } = conditions as unknown as AccountConditions;
   
   if (days_since_created !== 21) {
     return { valid: false, message: "Week3PostCreation requires exactly 21 days since account creation" };
@@ -187,8 +207,8 @@ function validateWeek3PostCreation(conditions: any): { valid: boolean; message: 
   return { valid: true, message: "Conditions satisfied for Week3PostCreation" };
 }
 
-function validateWeek4PostCreation(conditions: any): { valid: boolean; message: string } {
-  const { created_at, days_since_created } = conditions;
+function validateWeek4PostCreation(conditions: Record<string, unknown>): { valid: boolean; message: string } {
+  const { days_since_created } = conditions as unknown as AccountConditions;
   
   if (days_since_created !== 28) {
     return { valid: false, message: "Week4PostCreation requires exactly 28 days since account creation" };
@@ -197,8 +217,8 @@ function validateWeek4PostCreation(conditions: any): { valid: boolean; message: 
   return { valid: true, message: "Conditions satisfied for Week4PostCreation" };
 }
 
-function validateFeedbackSurvey30Days(conditions: any): { valid: boolean; message: string } {
-  const { created_at, days_since_created } = conditions;
+function validateFeedbackSurvey30Days(conditions: Record<string, unknown>): { valid: boolean; message: string } {
+  const { days_since_created } = conditions as unknown as AccountConditions;
   
   if (days_since_created !== 30) {
     return { valid: false, message: "FeedbackSurvey30Days requires exactly 30 days since account creation" };
@@ -207,8 +227,8 @@ function validateFeedbackSurvey30Days(conditions: any): { valid: boolean; messag
   return { valid: true, message: "Conditions satisfied for FeedbackSurvey30Days" };
 }
 
-function validateMonth1PaidUser(conditions: any): { valid: boolean; message: string } {
-  const { created_at, days_since_created, subscription_status } = conditions;
+function validateMonth1PaidUser(conditions: Record<string, unknown>): { valid: boolean; message: string } {
+  const { days_since_created, subscription_status } = conditions as unknown as AccountConditions & { subscription_status: string };
   
   if (days_since_created !== 30) {
     return { valid: false, message: "Month1PaidUser requires exactly 30 days since account creation" };
@@ -220,8 +240,8 @@ function validateMonth1PaidUser(conditions: any): { valid: boolean; message: str
   return { valid: true, message: "Conditions satisfied for Month1PaidUser" };
 }
 
-function validateSubscriptionRenewal(conditions: any): { valid: boolean; message: string } {
-  const { subscription_status, days_until_expiration } = conditions;
+function validateSubscriptionRenewal(conditions: Record<string, unknown>): { valid: boolean; message: string } {
+  const { subscription_status, days_until_expiration } = conditions as unknown as SubscriptionConditions;
   
   if (subscription_status !== "active") {
     return { valid: false, message: "SubscriptionRenewal requires subscription_status to be 'active'" };
@@ -233,8 +253,8 @@ function validateSubscriptionRenewal(conditions: any): { valid: boolean; message
   return { valid: true, message: "Conditions satisfied for SubscriptionRenewal" };
 }
 
-function validateSubscriptionRenewalWeek(conditions: any): { valid: boolean; message: string } {
-  const { subscription_status, days_until_expiration } = conditions;
+function validateSubscriptionRenewalWeek(conditions: Record<string, unknown>): { valid: boolean; message: string } {
+  const { subscription_status, days_until_expiration } = conditions as unknown as SubscriptionConditions;
   
   if (subscription_status !== "active") {
     return { valid: false, message: "SubscriptionRenewalWeek requires subscription_status to be 'active'" };
@@ -246,8 +266,8 @@ function validateSubscriptionRenewalWeek(conditions: any): { valid: boolean; mes
   return { valid: true, message: "Conditions satisfied for SubscriptionRenewalWeek" };
 }
 
-function validateSubscriptionRenewalDay(conditions: any): { valid: boolean; message: string } {
-  const { subscription_status, days_until_expiration } = conditions;
+function validateSubscriptionRenewalDay(conditions: Record<string, unknown>): { valid: boolean; message: string } {
+  const { subscription_status, days_until_expiration } = conditions as unknown as SubscriptionConditions;
   
   if (subscription_status !== "active") {
     return { valid: false, message: "SubscriptionRenewalDay requires subscription_status to be 'active'" };
@@ -260,7 +280,7 @@ function validateSubscriptionRenewalDay(conditions: any): { valid: boolean; mess
 }
 
 // Template validation mapping
-const templateValidators: Record<string, (conditions: any) => { valid: boolean; message: string }> = {
+const templateValidators: Record<string, (conditions: Record<string, unknown>) => { valid: boolean; message: string }> = {
   Day3TrialReminder: validateDay3TrialReminder,
   Day5TrialEnding: validateDay5TrialEnding,
   Day6TrialEndsTomorrow: validateDay6TrialEndsTomorrow,
@@ -349,7 +369,7 @@ export async function POST(request: Request) {
     const name = username || "Test User";
 
     // Prepare template props based on template type
-    let templateProps: any = {
+    const templateProps: Record<string, unknown> = {
       username: name,
       userEmail: email,
     };

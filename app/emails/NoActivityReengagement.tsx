@@ -1,8 +1,6 @@
 import { Section, Text, Link } from "@react-email/components";
 import * as React from "react";
 import EmailLayout from "../../components/email/EmailLayout";
-import EmailButton from "../../components/email/EmailButton";
-import TitleSection from "../../components/email/TitleSection";
 import { LoftColors } from "../../components/email/EmailStyles";
 
 export const subject = "Still here when you're ready";
@@ -10,13 +8,11 @@ export const subject = "Still here when you're ready";
 interface NoActivityReengagementProps {
   username?: string;
   userEmail?: string;
-  chromeExtensionUrl?: string;
 }
 
 export default function NoActivityReengagement({
   username = "there",
   userEmail = "user@example.com",
-  chromeExtensionUrl = "https://loftit.ai/chrome-extension",
 }: NoActivityReengagementProps) {
   return (
     <EmailLayout userEmail={userEmail}>
