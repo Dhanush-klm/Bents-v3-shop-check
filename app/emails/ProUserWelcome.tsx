@@ -1,7 +1,6 @@
 import { Section, Text, Link } from "@react-email/components";
 import * as React from "react";
 import EmailLayout from "../../components/email/EmailLayout";
-import EmailButton from "../../components/email/EmailButton";
 import { LoftColors } from "../../components/email/EmailStyles";
 
 export const subject = "Welcome to Loft Pro ✨ Your smarter, AI-powered way to save links";
