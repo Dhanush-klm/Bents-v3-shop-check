@@ -7,6 +7,7 @@ import MilestoneEmail from "@/app/emails/MilestoneEmail";
 import ProTrialWelcome from "@/app/emails/ProTrialWelcome";
 import SubscriptionRenewed from "@/app/emails/SubscriptionRenewed";
 import PaymentError from "@/app/emails/PaymentError";
+import SubscriptionCancelled from "@/app/emails/SubscriptionCancelled";
 import { getTemplateSubjectWithFallback } from "@/lib/email-subjects";
 
 type ClerkEmailAddress = {
@@ -73,6 +74,15 @@ type ClerkUserUpdated = {
           error_code?: string;
           error_message?: string;
           retry_count?: number;
+        };
+        subscription_cancelled?: boolean;
+        subscription_cancelled_at?: string; // ISOString
+        cancellation_source?: 'revenuecat' | string;
+        cancellation_type?: 'user_initiated' | 'admin_initiated' | 'payment_failed' | string;
+        cancellation_details?: {
+          cancellation_reason?: string;
+          grace_period_ends_at?: string; // ISOString
+          access_continues_until?: string; // ISOString
         };
         subscription_info?: {
           plan_id?: string;
@@ -360,9 +370,12 @@ export async function POST(request: Request) {
       // Payment error detection
       const isPaymentError = (subscriptionMilestones?.payment_error === true);
 
-      console.log("[Webhook] Triggers detected - Pro upgrade:", isProUpgrade, "100th link:", isHundredthLink, "Pro trial start:", isProTrialStart, "Subscription renewed:", isSubscriptionRenewed, "Payment error:", isPaymentError);
+      // Subscription cancellation detection
+      const isSubscriptionCancelled = (subscriptionMilestones?.subscription_cancelled === true);
 
-      if (!isProUpgrade && !isHundredthLink && !isProTrialStart && !isSubscriptionRenewed && !isPaymentError) {
+      console.log("[Webhook] Triggers detected - Pro upgrade:", isProUpgrade, "100th link:", isHundredthLink, "Pro trial start:", isProTrialStart, "Subscription renewed:", isSubscriptionRenewed, "Payment error:", isPaymentError, "Subscription cancelled:", isSubscriptionCancelled);
+
+      if (!isProUpgrade && !isHundredthLink && !isProTrialStart && !isSubscriptionRenewed && !isPaymentError && !isSubscriptionCancelled) {
         console.log("[Webhook] No relevant triggers detected, returning success");
         return new Response(JSON.stringify({ success: true, action: "no_triggers" }), {
           status: 200,
@@ -630,6 +643,64 @@ export async function POST(request: Request) {
             actions.push("payment_error_failed");
           }
         }
+        
+        // Handle subscription cancellation email
+        if (isSubscriptionCancelled) {
+          console.log("[Webhook] Attempting to send subscription cancellation email");
+          try {
+            if (delayMs > 0 && actions.length > 0) {
+              await sleep(delayMs);
+            }
+            
+            // Extract end date from webhook data
+            const subscriptionInfo = subscriptionMilestones?.subscription_info;
+            const endDate = subscriptionInfo?.subscription_end_date;
+            
+            // Format end date
+            const formattedEndDate = endDate 
+              ? new Date(endDate).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })
+              : 'the end of your billing cycle';
+            
+            const emailPayload = {
+              from: getResendFrom(),
+              to: email,
+              subject: await getTemplateSubjectWithFallback("SubscriptionCancelled"),
+              react: SubscriptionCancelled({ 
+                username: displayName, 
+                userEmail: email,
+                endDate: formattedEndDate
+              }),
+            };
+            
+            console.log("[Webhook] Subscription cancellation email payload:", {
+              from: emailPayload.from,
+              to: emailPayload.to,
+              subject: emailPayload.subject,
+              username: displayName,
+              userEmail: email,
+              endDate: formattedEndDate
+            });
+            
+            const sendResult = await resend.emails.send(emailPayload);
+            
+            console.log("[Webhook] Subscription cancellation Resend API response:", sendResult);
+            
+            if (!sendResult?.data?.id) {
+              console.error("[Resend] Subscription cancellation email send returned no id", sendResult);
+              actions.push("subscription_cancelled_failed");
+            } else {
+              console.log(`[Resend] Subscription cancellation email sent to ${email} with id ${sendResult.data.id}`);
+              actions.push("subscription_cancelled_sent");
+            }
+          } catch (sendErr) {
+            console.error("[Resend] Subscription cancellation email send failed", sendErr);
+            actions.push("subscription_cancelled_failed");
+          }
+        }
       } else {
         console.warn("[Resend] RESEND_API_KEY not set. Skipping emails");
         actions.push("resend_api_key_missing");
@@ -643,7 +714,8 @@ export async function POST(request: Request) {
           hundredth_link: isHundredthLink,
           pro_trial_start: isProTrialStart,
           subscription_renewed: isSubscriptionRenewed,
-          payment_error: isPaymentError
+          payment_error: isPaymentError,
+          subscription_cancelled: isSubscriptionCancelled
         }
       }), {
         status: 200,
