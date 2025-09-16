@@ -18,7 +18,6 @@ import SubscriptionRenewalDay from "@/app/emails/SubscriptionRenewalDay";
 import SubscriptionRenewalWeek from "@/app/emails/SubscriptionRenewalWeek";
 import FreeUserWelcome from "@/app/emails/FreeUserWelcome";
 import ProTrialWelcome from "@/app/emails/ProTrialWelcome";
-import ProUserWelcome from "@/app/emails/ProUserWelcome";
 import MilestoneEmail from "@/app/emails/MilestoneEmail";
 import PaymentError from "@/app/emails/PaymentError";
 import Reactivation from "@/app/emails/Reactivation";
@@ -56,7 +55,6 @@ const emailTemplates = {
   SubscriptionRenewalWeek,
   FreeUserWelcome,
   ProTrialWelcome,
-  ProUserWelcome,
   MilestoneEmail,
   PaymentError,
   Reactivation,
@@ -298,7 +296,6 @@ const templateValidators: Record<string, (conditions: Record<string, unknown>) =
   // For templates without specific conditions, always return valid
   FreeUserWelcome: () => ({ valid: true, message: "Conditions satisfied for FreeUserWelcome" }),
   ProTrialWelcome: () => ({ valid: true, message: "Conditions satisfied for ProTrialWelcome" }),
-  ProUserWelcome: () => ({ valid: true, message: "Conditions satisfied for ProUserWelcome" }),
   MilestoneEmail: () => ({ valid: true, message: "Conditions satisfied for MilestoneEmail" }),
   PaymentError: () => ({ valid: true, message: "Conditions satisfied for PaymentError" }),
   Reactivation: () => ({ valid: true, message: "Conditions satisfied for Reactivation" }),
@@ -523,11 +520,6 @@ export async function GET() {
     },
     "ProTrialWelcome": {
       condition: "New pro trial users after signup",
-      requiredParams: ["username", "userEmail"],
-      optionalParams: []
-    },
-    "ProUserWelcome": {
-      condition: "New paid pro users after upgrade",
       requiredParams: ["username", "userEmail"],
       optionalParams: []
     },
