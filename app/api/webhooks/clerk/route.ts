@@ -53,6 +53,13 @@ type ClerkUserUpdated = {
         trial_type?: 'store_trial' | string;
         plan_interval?: 'monthly' | 'yearly';
         trial_duration_days?: number;
+        pro_upgraded?: boolean;
+        pro_upgraded_at?: string; // ISOString
+        upgrade_type?: 'trial_conversion' | 'direct_upgrade' | string;
+        upgrade_source?: 'revenuecat' | string;
+        came_from_trial?: boolean;
+        product_id?: string;
+        upgrade_path?: 'trial_to_pro' | 'free_to_pro' | string;
       };
       last_milestone_update?: string; // ISOString
       [key: string]: unknown;
@@ -312,9 +319,8 @@ export async function POST(request: Request) {
       const milestones = unsafeMetadata?.milestones;
       const subscriptionMilestones = unsafeMetadata?.subscription_milestones;
 
-      // Pro upgrade detection
-      const isProUpgrade = (subscription?.status === 'pro') || 
-                          (events?.last_pro_upgrade_at !== undefined);
+      // Pro upgrade detection - new pattern only
+      const isProUpgrade = (subscriptionMilestones?.pro_upgraded === true);
 
       // 100th link milestone detection  
       const isHundredthLink = (milestones?.hundredth_link_at !== undefined);
