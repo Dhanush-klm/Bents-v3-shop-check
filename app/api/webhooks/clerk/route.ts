@@ -4,6 +4,7 @@ import FreeUserWelcome from "@/app/emails/FreeUserWelcome";
 import DeleteEmail from "@/app/emails/Delete";
 import UpgradeConfirmation from "@/app/emails/UpgradeConfirmation";
 import MilestoneEmail from "@/app/emails/MilestoneEmail";
+import ProTrialWelcome from "@/app/emails/ProTrialWelcome";
 import { getTemplateSubjectWithFallback } from "@/lib/email-subjects";
 
 type ClerkEmailAddress = {
@@ -46,6 +47,14 @@ type ClerkUserUpdated = {
       milestones?: {
         hundredth_link_at?: string; // ISOString
       };
+      subscription_milestones?: {
+        trial_started?: boolean;
+        trial_started_at?: string; // ISOString
+        trial_type?: 'store_trial' | string;
+        plan_interval?: 'monthly' | 'yearly';
+        trial_duration_days?: number;
+      };
+      last_milestone_update?: string; // ISOString
       [key: string]: unknown;
     };
   };
@@ -301,6 +310,7 @@ export async function POST(request: Request) {
       const subscription = unsafeMetadata?.subscription;
       const events = unsafeMetadata?.events;
       const milestones = unsafeMetadata?.milestones;
+      const subscriptionMilestones = unsafeMetadata?.subscription_milestones;
 
       // Pro upgrade detection
       const isProUpgrade = (subscription?.status === 'pro') || 
@@ -309,9 +319,14 @@ export async function POST(request: Request) {
       // 100th link milestone detection  
       const isHundredthLink = (milestones?.hundredth_link_at !== undefined);
 
-      console.log("[Webhook] Triggers detected - Pro upgrade:", isProUpgrade, "100th link:", isHundredthLink);
+      // Pro trial start detection
+      const isProTrialStart = (subscriptionMilestones?.trial_started === true) &&
+                             (subscriptionMilestones?.trial_type === 'store_trial') &&
+                             (subscriptionMilestones?.trial_duration_days === 7);
 
-      if (!isProUpgrade && !isHundredthLink) {
+      console.log("[Webhook] Triggers detected - Pro upgrade:", isProUpgrade, "100th link:", isHundredthLink, "Pro trial start:", isProTrialStart);
+
+      if (!isProUpgrade && !isHundredthLink && !isProTrialStart) {
         console.log("[Webhook] No relevant triggers detected, returning success");
         return new Response(JSON.stringify({ success: true, action: "no_triggers" }), {
           status: 200,
@@ -431,6 +446,46 @@ export async function POST(request: Request) {
             actions.push("hundredth_link_email_failed");
           }
         }
+        
+        // Handle Pro trial start email
+        if (isProTrialStart) {
+          console.log("[Webhook] Attempting to send Pro trial welcome email");
+          try {
+            if (delayMs > 0 && actions.length > 0) {
+              await sleep(delayMs);
+            }
+            
+            const emailPayload = {
+              from: getResendFrom(),
+              to: email,
+              subject: await getTemplateSubjectWithFallback("ProTrialWelcome"),
+              react: ProTrialWelcome({ username: displayName, userEmail: email }),
+            };
+            
+            console.log("[Webhook] Pro trial email payload:", {
+              from: emailPayload.from,
+              to: emailPayload.to,
+              subject: emailPayload.subject,
+              username: displayName,
+              userEmail: email
+            });
+            
+            const sendResult = await resend.emails.send(emailPayload);
+            
+            console.log("[Webhook] Pro trial Resend API response:", sendResult);
+            
+            if (!sendResult?.data?.id) {
+              console.error("[Resend] Pro trial welcome email send returned no id", sendResult);
+              actions.push("pro_trial_welcome_failed");
+            } else {
+              console.log(`[Resend] Pro trial welcome email sent to ${email} with id ${sendResult.data.id}`);
+              actions.push("pro_trial_welcome_sent");
+            }
+          } catch (sendErr) {
+            console.error("[Resend] Pro trial welcome email send failed", sendErr);
+            actions.push("pro_trial_welcome_failed");
+          }
+        }
       } else {
         console.warn("[Resend] RESEND_API_KEY not set. Skipping emails");
         actions.push("resend_api_key_missing");
@@ -441,7 +496,8 @@ export async function POST(request: Request) {
         actions,
         triggers: {
           pro_upgrade: isProUpgrade,
-          hundredth_link: isHundredthLink
+          hundredth_link: isHundredthLink,
+          pro_trial_start: isProTrialStart
         }
       }), {
         status: 200,
