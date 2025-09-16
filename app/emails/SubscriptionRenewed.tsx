@@ -9,28 +9,15 @@ export const subject = "Your Loft subscription has been renewed";
 interface SubscriptionRenewedProps {
   username?: string;
   userEmail?: string;
-  planPrice?: number;
-  planCurrency?: string;
+  amount?: string;
   nextRenewalDate?: string;
 }
 
 export default function SubscriptionRenewed({
   username = "there",
   userEmail = "user@example.com",
-  planPrice = 9.99,
-  planCurrency = "USD",
-  nextRenewalDate = "March 15, 2024",
+  amount = "$9.99",
 }: SubscriptionRenewedProps) {
-  // Format amount based on currency
-  const formatAmount = (price: number, currency: string) => {
-    if (currency === 'USD') return `$${price}`;
-    if (currency === 'INR') return `₹${price}`;
-    if (currency === 'EUR') return `€${price}`;
-    if (currency === 'GBP') return `£${price}`;
-    return `${price} ${currency}`;
-  };
-
-  const amount = formatAmount(planPrice, planCurrency);
   return (
     <EmailLayout userEmail={userEmail}>
       

@@ -524,6 +524,9 @@ export async function POST(request: Request) {
             const planCurrency = subscriptionInfo?.plan_currency || 'USD';
             const nextRenewalDate = subscriptionInfo?.subscription_end_date;
             
+            // Format amount with currency code
+            const amount = `${planPrice} ${planCurrency}`;
+            
             // Format next renewal date
             const formattedNextRenewalDate = nextRenewalDate 
               ? new Date(nextRenewalDate).toLocaleDateString('en-US', {
@@ -540,8 +543,7 @@ export async function POST(request: Request) {
               react: SubscriptionRenewed({ 
                 username: displayName, 
                 userEmail: email,
-                planPrice: planPrice,
-                planCurrency: planCurrency,
+                amount: amount,
                 nextRenewalDate: formattedNextRenewalDate
               }),
             };
@@ -552,8 +554,7 @@ export async function POST(request: Request) {
               subject: emailPayload.subject,
               username: displayName,
               userEmail: email,
-              planPrice: planPrice,
-              planCurrency: planCurrency,
+              amount: amount,
               nextRenewalDate: formattedNextRenewalDate
             });
             
