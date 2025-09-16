@@ -6,6 +6,7 @@ import UpgradeConfirmation from "@/app/emails/UpgradeConfirmation";
 import MilestoneEmail from "@/app/emails/MilestoneEmail";
 import ProTrialWelcome from "@/app/emails/ProTrialWelcome";
 import SubscriptionRenewed from "@/app/emails/SubscriptionRenewed";
+import PaymentError from "@/app/emails/PaymentError";
 import { getTemplateSubjectWithFallback } from "@/lib/email-subjects";
 
 type ClerkEmailAddress = {
@@ -64,6 +65,15 @@ type ClerkUserUpdated = {
         subscription_renewed?: boolean;
         subscription_renewed_at?: string; // ISOString
         renewal_source?: 'revenuecat' | string;
+        payment_error?: boolean;
+        payment_error_at?: string; // ISOString
+        error_source?: 'revenuecat' | string;
+        error_type?: 'billing_issue' | 'card_declined' | 'insufficient_funds' | string;
+        error_details?: {
+          error_code?: string;
+          error_message?: string;
+          retry_count?: number;
+        };
         subscription_info?: {
           plan_id?: string;
           plan_name?: string;
@@ -347,9 +357,12 @@ export async function POST(request: Request) {
       // Subscription renewal detection
       const isSubscriptionRenewed = (subscriptionMilestones?.subscription_renewed === true);
 
-      console.log("[Webhook] Triggers detected - Pro upgrade:", isProUpgrade, "100th link:", isHundredthLink, "Pro trial start:", isProTrialStart, "Subscription renewed:", isSubscriptionRenewed);
+      // Payment error detection
+      const isPaymentError = (subscriptionMilestones?.payment_error === true);
 
-      if (!isProUpgrade && !isHundredthLink && !isProTrialStart && !isSubscriptionRenewed) {
+      console.log("[Webhook] Triggers detected - Pro upgrade:", isProUpgrade, "100th link:", isHundredthLink, "Pro trial start:", isProTrialStart, "Subscription renewed:", isSubscriptionRenewed, "Payment error:", isPaymentError);
+
+      if (!isProUpgrade && !isHundredthLink && !isProTrialStart && !isSubscriptionRenewed && !isPaymentError) {
         console.log("[Webhook] No relevant triggers detected, returning success");
         return new Response(JSON.stringify({ success: true, action: "no_triggers" }), {
           status: 200,
@@ -574,6 +587,49 @@ export async function POST(request: Request) {
             actions.push("subscription_renewed_failed");
           }
         }
+        
+        // Handle payment error email
+        if (isPaymentError) {
+          console.log("[Webhook] Attempting to send payment error email");
+          try {
+            if (delayMs > 0 && actions.length > 0) {
+              await sleep(delayMs);
+            }
+            
+            const emailPayload = {
+              from: getResendFrom(),
+              to: email,
+              subject: await getTemplateSubjectWithFallback("PaymentError"),
+              react: PaymentError({ 
+                username: displayName, 
+                userEmail: email
+              }),
+            };
+            
+            console.log("[Webhook] Payment error email payload:", {
+              from: emailPayload.from,
+              to: emailPayload.to,
+              subject: emailPayload.subject,
+              username: displayName,
+              userEmail: email
+            });
+            
+            const sendResult = await resend.emails.send(emailPayload);
+            
+            console.log("[Webhook] Payment error Resend API response:", sendResult);
+            
+            if (!sendResult?.data?.id) {
+              console.error("[Resend] Payment error email send returned no id", sendResult);
+              actions.push("payment_error_failed");
+            } else {
+              console.log(`[Resend] Payment error email sent to ${email} with id ${sendResult.data.id}`);
+              actions.push("payment_error_sent");
+            }
+          } catch (sendErr) {
+            console.error("[Resend] Payment error email send failed", sendErr);
+            actions.push("payment_error_failed");
+          }
+        }
       } else {
         console.warn("[Resend] RESEND_API_KEY not set. Skipping emails");
         actions.push("resend_api_key_missing");
@@ -586,7 +642,8 @@ export async function POST(request: Request) {
           pro_upgrade: isProUpgrade,
           hundredth_link: isHundredthLink,
           pro_trial_start: isProTrialStart,
-          subscription_renewed: isSubscriptionRenewed
+          subscription_renewed: isSubscriptionRenewed,
+          payment_error: isPaymentError
         }
       }), {
         status: 200,
