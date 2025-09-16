@@ -192,7 +192,7 @@ export async function GET() {
       if (delayMs > 0) await sleep(delayMs);
     }
 
-    // Day 9: ALL users created exactly 9 days ago with zero links (re-engagement)
+    // Day 7: ALL users created exactly 7 days ago with zero links (re-engagement)
     const result_7 = await db.query(
       `with target_day as (
          select date_trunc('day', now() at time zone 'utc' - interval '7 days') as start_utc,
@@ -201,7 +201,9 @@ export async function GET() {
        select u.id, u.email, u.full_name
        from public.users u, target_day t
        where u.created_at >= t.start_utc and u.created_at < t.end_utc
-
+         and u.account_deleted is null
+         and lower(coalesce(u.subscription_status, '')) = 'active'
+         and u.entitlement_pro_until > now()
          and not exists (
            select 1 from public.links l where l.user_id = u.id
          )`
