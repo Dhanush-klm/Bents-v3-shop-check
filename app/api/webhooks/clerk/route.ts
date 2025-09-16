@@ -5,6 +5,7 @@ import DeleteEmail from "@/app/emails/Delete";
 import UpgradeConfirmation from "@/app/emails/UpgradeConfirmation";
 import MilestoneEmail from "@/app/emails/MilestoneEmail";
 import ProTrialWelcome from "@/app/emails/ProTrialWelcome";
+import SubscriptionRenewed from "@/app/emails/SubscriptionRenewed";
 import { getTemplateSubjectWithFallback } from "@/lib/email-subjects";
 
 type ClerkEmailAddress = {
@@ -60,6 +61,19 @@ type ClerkUserUpdated = {
         came_from_trial?: boolean;
         product_id?: string;
         upgrade_path?: 'trial_to_pro' | 'free_to_pro' | string;
+        subscription_renewed?: boolean;
+        subscription_renewed_at?: string; // ISOString
+        renewal_source?: 'revenuecat' | string;
+        subscription_info?: {
+          plan_id?: string;
+          plan_name?: string;
+          plan_interval?: 'monthly' | 'yearly';
+          plan_price?: number;
+          plan_currency?: string;
+          subscription_start_date?: string; // ISOString
+          subscription_end_date?: string; // ISOString
+          store?: string;
+        };
       };
       last_milestone_update?: string; // ISOString
       [key: string]: unknown;
@@ -330,9 +344,12 @@ export async function POST(request: Request) {
                              (subscriptionMilestones?.trial_type === 'store_trial') &&
                              (subscriptionMilestones?.trial_duration_days === 7);
 
-      console.log("[Webhook] Triggers detected - Pro upgrade:", isProUpgrade, "100th link:", isHundredthLink, "Pro trial start:", isProTrialStart);
+      // Subscription renewal detection
+      const isSubscriptionRenewed = (subscriptionMilestones?.subscription_renewed === true);
 
-      if (!isProUpgrade && !isHundredthLink && !isProTrialStart) {
+      console.log("[Webhook] Triggers detected - Pro upgrade:", isProUpgrade, "100th link:", isHundredthLink, "Pro trial start:", isProTrialStart, "Subscription renewed:", isSubscriptionRenewed);
+
+      if (!isProUpgrade && !isHundredthLink && !isProTrialStart && !isSubscriptionRenewed) {
         console.log("[Webhook] No relevant triggers detected, returning success");
         return new Response(JSON.stringify({ success: true, action: "no_triggers" }), {
           status: 200,
@@ -492,6 +509,71 @@ export async function POST(request: Request) {
             actions.push("pro_trial_welcome_failed");
           }
         }
+        
+        // Handle subscription renewal email
+        if (isSubscriptionRenewed) {
+          console.log("[Webhook] Attempting to send subscription renewal email");
+          try {
+            if (delayMs > 0 && actions.length > 0) {
+              await sleep(delayMs);
+            }
+            
+            // Extract plan information from webhook data
+            const subscriptionInfo = subscriptionMilestones?.subscription_info;
+            const planPrice = subscriptionInfo?.plan_price || 9.99;
+            const planCurrency = subscriptionInfo?.plan_currency || 'USD';
+            const nextRenewalDate = subscriptionInfo?.subscription_end_date;
+            
+            // Format amount
+            const amount = `$${planPrice}${planCurrency !== 'USD' ? ` ${planCurrency}` : ''}`;
+            
+            // Format next renewal date
+            const formattedNextRenewalDate = nextRenewalDate 
+              ? new Date(nextRenewalDate).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })
+              : undefined;
+            
+            const emailPayload = {
+              from: getResendFrom(),
+              to: email,
+              subject: await getTemplateSubjectWithFallback("SubscriptionRenewed"),
+              react: SubscriptionRenewed({ 
+                username: displayName, 
+                userEmail: email,
+                amount: amount,
+                nextRenewalDate: formattedNextRenewalDate
+              }),
+            };
+            
+            console.log("[Webhook] Subscription renewal email payload:", {
+              from: emailPayload.from,
+              to: emailPayload.to,
+              subject: emailPayload.subject,
+              username: displayName,
+              userEmail: email,
+              amount: amount,
+              nextRenewalDate: formattedNextRenewalDate
+            });
+            
+            const sendResult = await resend.emails.send(emailPayload);
+            
+            console.log("[Webhook] Subscription renewal Resend API response:", sendResult);
+            
+            if (!sendResult?.data?.id) {
+              console.error("[Resend] Subscription renewal email send returned no id", sendResult);
+              actions.push("subscription_renewed_failed");
+            } else {
+              console.log(`[Resend] Subscription renewal email sent to ${email} with id ${sendResult.data.id}`);
+              actions.push("subscription_renewed_sent");
+            }
+          } catch (sendErr) {
+            console.error("[Resend] Subscription renewal email send failed", sendErr);
+            actions.push("subscription_renewed_failed");
+          }
+        }
       } else {
         console.warn("[Resend] RESEND_API_KEY not set. Skipping emails");
         actions.push("resend_api_key_missing");
@@ -503,7 +585,8 @@ export async function POST(request: Request) {
         triggers: {
           pro_upgrade: isProUpgrade,
           hundredth_link: isHundredthLink,
-          pro_trial_start: isProTrialStart
+          pro_trial_start: isProTrialStart,
+          subscription_renewed: isSubscriptionRenewed
         }
       }), {
         status: 200,
@@ -520,5 +603,3 @@ export async function POST(request: Request) {
     });
   }
 }
-
-
