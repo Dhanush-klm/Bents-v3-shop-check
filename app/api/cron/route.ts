@@ -390,7 +390,9 @@ export async function GET() {
        select u.id, u.email, u.full_name
        from public.users u, target_day t
        where u.created_at >= t.start_utc and u.created_at < t.end_utc
-        and lower(coalesce(u.subscription_status, '')) = 'active'
+         and u.account_deleted is null
+         and lower(coalesce(u.subscription_status, '')) = 'active'
+         and u.entitlement_pro_until > now()
 `
     );
     const users1MonthPaid: Array<{ id: string; email: string; full_name?: string | null }> = result1MonthPaid.rows || [];
