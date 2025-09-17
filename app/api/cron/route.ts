@@ -192,31 +192,16 @@ export async function GET() {
       if (delayMs > 0) await sleep(delayMs);
     }
 
-    // Day 7: ALL users with subscription started exactly 7 days ago with zero links (re-engagement)
-    // Use subscription started date from subscription_events table instead of account created date
+    // Day 7: ALL users created exactly 7 days ago with zero links (re-engagement)
     const result_7 = await db.query(
       `with target_day as (
          select date_trunc('day', now() at time zone 'utc' - interval '7 days') as start_utc,
                 date_trunc('day', now() at time zone 'utc' - interval '6 days') as end_utc
-       ),
-       user_last_events as (
-         select distinct on (user_id) 
-           user_id,
-           payload->>'purchased_at_ms' as purchased_at_ms,
-           rc_event_type
-         from public.subscription_events 
-         where rc_event_type in ('RENEWAL', 'PURCHASE')
-           and payload->>'purchased_at_ms' is not null
-         order by user_id, received_at desc
        )
        select u.id, u.email, u.full_name
-       from public.users u, target_day t, user_last_events e
-       where u.id = e.user_id
-         and to_timestamp((e.purchased_at_ms::bigint) / 1000) >= t.start_utc 
-         and to_timestamp((e.purchased_at_ms::bigint) / 1000) < t.end_utc
+       from public.users u, target_day t
+       where u.created_at >= t.start_utc and u.created_at < t.end_utc
          and u.account_deleted is null
-         and lower(coalesce(u.subscription_status, '')) = 'active'
-         and u.entitlement_pro_until > now()
          and not exists (
            select 1 from public.links l where l.user_id = u.id
          )`
