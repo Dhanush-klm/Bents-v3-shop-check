@@ -50,6 +50,9 @@ type ClerkUserUpdated = {
       milestones?: {
         hundredth_link_at?: string; // ISOString
       };
+      [key: string]: unknown;
+    };
+    private_metadata?: {
       subscription_milestones?: {
         trial_started?: boolean;
         trial_started_at?: string; // ISOString
@@ -335,9 +338,11 @@ export async function POST(request: Request) {
       const userData = (root as ClerkUserUpdated).data;
       const clerkId = userData.id;
       const unsafeMetadata = userData.unsafe_metadata;
+      const privateMetadata = userData.private_metadata;
 
       console.log("[Webhook] Clerk ID:", clerkId);
       console.log("[Webhook] Unsafe metadata:", JSON.stringify(unsafeMetadata, null, 2));
+      console.log("[Webhook] Private metadata:", JSON.stringify(privateMetadata, null, 2));
 
       if (!clerkId) {
         console.error("[Webhook] Missing user id in user.updated payload");
@@ -351,7 +356,7 @@ export async function POST(request: Request) {
       const subscription = unsafeMetadata?.subscription;
       const events = unsafeMetadata?.events;
       const milestones = unsafeMetadata?.milestones;
-      const subscriptionMilestones = unsafeMetadata?.subscription_milestones;
+      const subscriptionMilestones = privateMetadata?.subscription_milestones;
 
       // Pro upgrade detection - new pattern only
       const isProUpgrade = (subscriptionMilestones?.pro_upgraded === true);
