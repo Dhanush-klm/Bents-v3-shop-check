@@ -5,6 +5,7 @@ import Day5TrialEnding from "@/app/emails/Day5TrialEnding";
 import Day6TrialEndsTomorrow from "@/app/emails/Day6TrialEndsTomorrow";
 import Day7TrialEndsToday from "@/app/emails/Day7TrialEndsToday";
 import NoActivityReengagement from "@/app/emails/NoActivityReengagement";
+import Reactivation from "@/app/emails/Reactivation";
 import Week1PostCreation from "@/app/emails/Week1PostCreation";
 import Week2PostCreation from "@/app/emails/Week2PostCreation";
 import Week3PostCreation from "@/app/emails/Week3PostCreation";
@@ -221,6 +222,39 @@ export async function GET() {
         if (res?.data?.id) sent_7 += 1;
       } catch (err) {
         console.error("[Cron] day7 no activity send failed", user.email, err);
+      }
+      if (delayMs > 0) await sleep(delayMs);
+    }
+
+    // Day 30: ALL users created exactly 30 days ago with zero links (reactivation)
+    const result_30 = await db.query(
+      `with target_day as (
+         select date_trunc('day', now() at time zone 'utc' - interval '30 days') as start_utc,
+                date_trunc('day', now() at time zone 'utc' - interval '29 days') as end_utc
+       )
+       select u.id, u.email, u.full_name
+       from public.users u, target_day t
+       where u.created_at >= t.start_utc and u.created_at < t.end_utc
+         and u.account_deleted is null
+         and not exists (
+           select 1 from public.links l where l.user_id = u.id
+         )`
+    );
+    const users_30: Array<{ id: string; email: string; full_name?: string | null }> = result_30.rows || [];
+    let sent_30 = 0;
+    for (const user of users_30) {
+      try {
+        if (!user.email) continue;
+        const name = (user.full_name || "there").toString();
+        const res = await resend.emails.send({
+          from: getResendFrom(),
+          to: user.email,
+          subject: await getTemplateSubjectWithFallback("Reactivation"),
+          react: Reactivation({ username: name, userEmail: user.email }),
+        });
+        if (res?.data?.id) sent_30 += 1;
+      } catch (err) {
+        console.error("[Cron] day30 reactivation send failed", user.email, err);
       }
       if (delayMs > 0) await sleep(delayMs);
     }
@@ -540,6 +574,8 @@ export async function GET() {
       sent7, 
       processed_7: users_7.length, 
       sent_7, 
+      processed_30: users_30.length, 
+      sent_30, 
       processedW1: usersW1.length, 
       sentW1, 
       processedW2: usersW2.length, 
