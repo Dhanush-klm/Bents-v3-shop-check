@@ -55,7 +55,7 @@ export const EMAIL_SUBJECTS: Record<string, string> = {
   Delete: "You’ve left Loft — but we hope it’s not goodbye 💙",
   UpgradeConfirmation: "You’ve unlocked Loft Pro ✨ Smarter saving starts now",
   ProTrialWelcome: "✨ Your 7-Day Loft Pro Trial Starts Now!",
-  FreeUserWelcome: "Welcome to Loft 👋 Your smarter way to save the links",
+  FreeUserWelcome: "Welcome to Loft 👋 Your smarter way to save links",
   UnsubscribeActivePaid: "You'll no longer receive Loft updates — but your subscription is still active",
   UnsubscribedAll: "You’ve unsubscribed — we’ll miss you in our inbox"
 
