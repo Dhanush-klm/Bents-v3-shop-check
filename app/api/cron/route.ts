@@ -15,7 +15,7 @@ import Month1PaidUser from "@/app/emails/Month1PaidUser";
 import SubscriptionRenewal from "@/app/emails/SubscriptionRenewal";
 import SubscriptionRenewalDay from "@/app/emails/SubscriptionRenewalDay";
 import SubscriptionRenewalWeek from "@/app/emails/SubscriptionRenewalWeek";
-import { getTemplateSubjectWithFallback } from "@/lib/email-subjects";
+import { getEmailSubject } from "@/lib/email-subjects";
 
 function getEnv(name: string): string | undefined {
   const value = process.env[name];
@@ -90,7 +90,7 @@ export async function GET() {
         const res = await resend.emails.send({
           from: getResendFrom(),
           to: user.email,
-          subject: await getTemplateSubjectWithFallback("Day3TrialReminder"),
+          subject: getEmailSubject("Day3TrialReminder"),
           react: Day3TrialReminder({ username: name, userEmail: user.email }),
         });
         if (res?.data?.id) sent3 += 1;
@@ -121,7 +121,7 @@ export async function GET() {
         const res = await resend.emails.send({
           from: getResendFrom(),
           to: user.email,
-          subject: await getTemplateSubjectWithFallback("Day5TrialEnding"),
+          subject: getEmailSubject("Day5TrialEnding"),
           react: Day5TrialEnding({ username: name, userEmail: user.email }),
         });
         if (res?.data?.id) sent5 += 1;
@@ -152,7 +152,7 @@ export async function GET() {
         const res = await resend.emails.send({
           from: getResendFrom(),
           to: user.email,
-          subject: await getTemplateSubjectWithFallback("Day6TrialEndsTomorrow"),
+          subject: getEmailSubject("Day6TrialEndsTomorrow"),
           react: Day6TrialEndsTomorrow({ username: name, userEmail: user.email }),
         });
         if (res?.data?.id) sent6 += 1;
@@ -183,7 +183,7 @@ export async function GET() {
         const res = await resend.emails.send({
           from: getResendFrom(),
           to: user.email,
-          subject: await getTemplateSubjectWithFallback("Day7TrialEndsToday"),
+          subject: getEmailSubject("Day7TrialEndsToday"),
           react: Day7TrialEndsToday({ username: name, userEmail: user.email }),
         });
         if (res?.data?.id) sent7 += 1;
@@ -216,7 +216,7 @@ export async function GET() {
         const res = await resend.emails.send({
           from: getResendFrom(),
           to: user.email,
-          subject: await getTemplateSubjectWithFallback("NoActivityReengagement"),
+          subject: getEmailSubject("NoActivityReengagement"),
           react: NoActivityReengagement({ username: name, userEmail: user.email }),
         });
         if (res?.data?.id) sent_7 += 1;
@@ -249,7 +249,7 @@ export async function GET() {
         const res = await resend.emails.send({
           from: getResendFrom(),
           to: user.email,
-          subject: await getTemplateSubjectWithFallback("Reactivation"),
+          subject: getEmailSubject("Reactivation"),
           react: Reactivation({ username: name, userEmail: user.email }),
         });
         if (res?.data?.id) sent_30 += 1;
@@ -279,7 +279,7 @@ export async function GET() {
         const res = await resend.emails.send({
           from: getResendFrom(),
           to: user.email,
-          subject: await getTemplateSubjectWithFallback("Week1PostCreation"),
+          subject: getEmailSubject("Week1PostCreation"),
           react: Week1PostCreation({ username: name, userEmail: user.email }),
         });
         if (res?.data?.id) sentW1 += 1;
@@ -309,7 +309,7 @@ export async function GET() {
         const res = await resend.emails.send({
           from: getResendFrom(),
           to: user.email,
-          subject: await getTemplateSubjectWithFallback("Week2PostCreation"),
+          subject: getEmailSubject("Week2PostCreation"),
           react: Week2PostCreation({ username: name, userEmail: user.email }),
         });
         if (res?.data?.id) sentW2 += 1;
@@ -339,7 +339,7 @@ export async function GET() {
         const res = await resend.emails.send({
           from: getResendFrom(),
           to: user.email,
-          subject: await getTemplateSubjectWithFallback("Week3PostCreation"),
+          subject: getEmailSubject("Week3PostCreation"),
           react: Week3PostCreation({ username: name, userEmail: user.email }),
         });
         if (res?.data?.id) sentW3 += 1;
@@ -369,7 +369,7 @@ export async function GET() {
         const res = await resend.emails.send({
           from: getResendFrom(),
           to: user.email,
-          subject: await getTemplateSubjectWithFallback("Week4PostCreation"),
+          subject: getEmailSubject("Week4PostCreation"),
           react: Week4PostCreation({ username: name, userEmail: user.email }),
         });
         if (res?.data?.id) sentW4 += 1;
@@ -399,7 +399,7 @@ export async function GET() {
         const res = await resend.emails.send({
           from: getResendFrom(),
           to: user.email,
-          subject: "bye",
+          subject: getEmailSubject("FeedbackSurvey30Days"),
           react: FeedbackSurvey30Days({ 
             username: name, 
             userEmail: user.email,
@@ -449,7 +449,7 @@ export async function GET() {
                 const res = await resend.emails.send({
           from: getResendFrom(),
           to: user.email,
-          subject: await getTemplateSubjectWithFallback("Month1PaidUser"),
+          subject: getEmailSubject("Month1PaidUser"),
           react: Month1PaidUser({ 
             username: name, 
             userEmail: user.email 
@@ -507,7 +507,7 @@ export async function GET() {
           const res = await resend.emails.send({
             from: getResendFrom(),
             to: user.email,
-            subject: await getTemplateSubjectWithFallback("SubscriptionRenewal"),
+            subject: getEmailSubject("SubscriptionRenewal"),
             react: SubscriptionRenewal({ 
               username: name, 
               userEmail: user.email,
@@ -523,7 +523,7 @@ export async function GET() {
           const res = await resend.emails.send({
             from: getResendFrom(),
             to: user.email,
-            subject: await getTemplateSubjectWithFallback("SubscriptionRenewalWeek"),
+            subject: getEmailSubject("SubscriptionRenewalWeek"),
             react: SubscriptionRenewalWeek({ 
               username: name, 
               userEmail: user.email,
@@ -539,7 +539,7 @@ export async function GET() {
           const res = await resend.emails.send({
             from: getResendFrom(),
             to: user.email,
-            subject: await getTemplateSubjectWithFallback("SubscriptionRenewalDay"),
+            subject: getEmailSubject("SubscriptionRenewalDay"),
             react: SubscriptionRenewalDay({ 
               username: name, 
               userEmail: user.email,
