@@ -4,7 +4,6 @@ import EmailLayout from "../../components/email/EmailLayout";
 import EmailButton from "../../components/email/EmailButton";
 import { LoftColors } from "../../components/email/EmailStyles";
 
-export const subject = "Got a minute? We'd love your thoughts";
 
 interface FeedbackSurvey30DaysProps {
   username?: string;

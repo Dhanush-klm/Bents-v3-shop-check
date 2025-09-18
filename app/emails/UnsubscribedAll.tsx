@@ -4,7 +4,6 @@ import EmailLayout from "../../components/email/EmailLayout";
 import EmailButton from "../../components/email/EmailButton";
 import { LoftColors } from "../../components/email/EmailStyles";
 
-export const subject = "You've unsubscribed — we'll miss you in our inbox";
 
 interface UnsubscribedAllProps {
   username?: string;

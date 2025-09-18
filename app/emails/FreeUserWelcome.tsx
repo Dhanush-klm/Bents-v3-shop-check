@@ -3,7 +3,6 @@ import * as React from "react";
 import EmailLayout from "../../components/email/EmailLayout";
 import { LoftColors } from "../../components/email/EmailStyles";
 
-export const subject = "Welcome to Loft 👋 Your smarter way to save links";
 
 interface FreeUserWelcomeProps {
   username?: string;

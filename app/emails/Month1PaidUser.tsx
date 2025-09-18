@@ -3,7 +3,6 @@ import * as React from "react";
 import EmailLayout from "../../components/email/EmailLayout";
 import { LoftColors } from "../../components/email/EmailStyles";
 
-export const subject = "A month with Loft — here's what's next";
 
 interface Month1PaidUserProps {
   username?: string;

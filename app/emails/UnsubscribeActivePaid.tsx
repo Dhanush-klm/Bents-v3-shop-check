@@ -4,7 +4,6 @@ import EmailLayout from "../../components/email/EmailLayout";
 import EmailButton from "../../components/email/EmailButton";
 import { LoftColors } from "../../components/email/EmailStyles";
 
-export const subject = "You'll no longer receive Loft updates — but your subscription is still active";
 
 interface UnsubscribeActivePaidProps {
   username?: string;

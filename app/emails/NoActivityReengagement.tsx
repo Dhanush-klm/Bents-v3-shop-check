@@ -3,7 +3,6 @@ import * as React from "react";
 import EmailLayout from "../../components/email/EmailLayout";
 import { LoftColors } from "../../components/email/EmailStyles";
 
-export const subject = "Still here when you're ready";
 
 interface NoActivityReengagementProps {
   username?: string;

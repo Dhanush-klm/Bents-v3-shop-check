@@ -3,7 +3,6 @@ import * as React from "react";
 import EmailLayout from "../../components/email/EmailLayout";
 import { LoftColors } from "../../components/email/EmailStyles";
 
-export const subject = "Save smarter. Search faster. Stay organized";
 
 interface Week4PostCreationProps {
   username?: string;

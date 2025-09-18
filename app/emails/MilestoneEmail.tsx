@@ -4,7 +4,6 @@ import EmailLayout from "../../components/email/EmailLayout";
 
 import { LoftColors } from "../../components/email/EmailStyles";
 
-export const subject = "You've saved 100 links 🎉";
 
 interface MilestoneEmailProps {
   username?: string;

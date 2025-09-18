@@ -3,7 +3,6 @@ import * as React from "react";
 import EmailLayout from "../../components/email/EmailLayout";
 import { LoftColors } from "../../components/email/EmailStyles";
 
-export const subject = "✨ Your 7-Day Loft Pro Trial Starts Now!";
 
 interface ProTrialWelcomeProps {
   username?: string;

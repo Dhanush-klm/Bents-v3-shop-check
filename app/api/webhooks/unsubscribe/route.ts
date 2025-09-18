@@ -2,7 +2,7 @@ import { Pool } from "pg";
 import { Resend } from "resend";
 import UnsubscribedAll from "@/app/emails/UnsubscribedAll";
 import UnsubscribeActivePaid from "@/app/emails/UnsubscribeActivePaid";
-import { getTemplateSubjectWithFallback } from "@/lib/email-subjects";
+import { getEmailSubject } from "@/lib/email-subjects";
 
 function getEnv(name: string): string | undefined {
   const value = process.env[name];
@@ -294,13 +294,13 @@ export async function POST(request: Request) {
               ? {
                   from: getResendFrom(),
                   to: email,
-                  subject: await getTemplateSubjectWithFallback("UnsubscribeActivePaid"),
+                  subject: getEmailSubject("UnsubscribeActivePaid"),
                   react: UnsubscribeActivePaid({ username, userEmail: email }),
                 }
               : {
                   from: getResendFrom(),
                   to: email,
-                  subject: await getTemplateSubjectWithFallback("UnsubscribedAll"),
+                  subject: getEmailSubject("UnsubscribedAll"),
                   react: UnsubscribedAll({ username, userEmail: email }),
                 }
           );

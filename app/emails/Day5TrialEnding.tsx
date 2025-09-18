@@ -4,7 +4,6 @@ import EmailLayout from "../../components/email/EmailLayout";
 
 import { LoftColors } from "../../components/email/EmailStyles";
 
-export const subject = "Your Loft Pro trial ends in 2 days";
 
 interface Day5TrialEndingProps {
   username?: string;

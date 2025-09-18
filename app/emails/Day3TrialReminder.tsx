@@ -4,7 +4,6 @@ import EmailLayout from "../../components/email/EmailLayout";
 import EmailButton from "../../components/email/EmailButton";
 import { LoftColors } from "../../components/email/EmailStyles";
 
-export const subject = "Still haven't tried Loft? Let's get you started";
 
 interface Day3TrialReminderProps {
   username?: string;

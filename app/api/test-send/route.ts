@@ -1,5 +1,6 @@
 import { Resend } from "resend";
 import * as React from "react";
+import { getEmailSubject } from "@/lib/email-subjects";
 
 function getEnv(name: string): string | undefined {
   const value = process.env[name];
@@ -92,36 +93,9 @@ export async function POST(request: Request) {
     const mergedProps = { ...autoProps, ...inboundProps };
 
     // Default subjects for common templates (fallback if template doesn't export subject)
-    const defaultSubjects: Record<string, string> = {
-      FreeUserWelcome: "Welcome to Loft!",
-      Delete: "Your Loft account has been deleted",
-      SubscriptionRenewalWeek: "Your Loft subscription renews next week",
-      SubscriptionRenewalDay: "Your Loft subscription renews tomorrow",
-      SubscriptionRenewal: "Your Loft subscription renews in 30 days",
-      UnsubscribeActivePaid: "You’ll no longer receive Loft updates — but your subscription is still active",
-      UnsubscribedAll: "You've been unsubscribed from all Loft emails",
-      Day3TrialReminder: "Reminder: Try Loft — your smarter way to save links",
-      Day5TrialEnding: "Your trial is ending soon — keep your Loft flow going",
-      Day6TrialEndsTomorrow: "Your Loft trial ends tomorrow",
-      Day7TrialEndsToday: "Your Loft trial ends today",
-      Week1PostCreation: "3 ways to make it work for you",
-      Week2PostCreation: "Loft tip: Let AI do the heavy lifting",
-      Week3PostCreation: "From chaos to clarity: How others use Loft",
-      Week4PostCreation: "Save smarter. Search faster. Stay organized",
-      FeedbackSurvey30Days: "hi",
-      Month1PaidUser: "A month with Loft — here's what's next",
-      SubscriptionRenewed: "Your Loft subscription has renewed",
-      SubscriptionCancelled: "Your Loft subscription has been cancelled",
-      PaymentError: "Payment issue with your Loft subscription",
-      ProUserWelcome: "Welcome to Loft Pro!",
-      MilestoneEmail: "🎉 You've saved 100 links with Loft!",
-      NoActivityReengagement: "We miss you at Loft — jump back in",
-      Reactivation: "Welcome back to Loft!",
-    };
 
-    // Try to get subject from template module first, then fallback to defaults
-    const templateSubject = EmailModule?.subject;
-    const subject = providedSubject || templateSubject || defaultSubjects[template] || `Test: ${template}`;
+    // Use centralized subject system
+    const subject = providedSubject || getEmailSubject(template) || `Test: ${template}`;
     const reactElement = EmailComponent(mergedProps);
 
     const resend = new Resend(resendKey);

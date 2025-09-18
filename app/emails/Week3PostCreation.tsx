@@ -3,7 +3,6 @@ import * as React from "react";
 import EmailLayout from "../../components/email/EmailLayout";
 import { LoftColors } from "../../components/email/EmailStyles";
 
-export const subject = "From chaos to clarity: How others use Loft";
 
 interface Week3PostCreationProps {
   username?: string;

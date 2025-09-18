@@ -8,7 +8,7 @@ import ProTrialWelcome from "@/app/emails/ProTrialWelcome";
 import SubscriptionRenewed from "@/app/emails/SubscriptionRenewed";
 import PaymentError from "@/app/emails/PaymentError";
 import SubscriptionCancelled from "@/app/emails/SubscriptionCancelled";
-import { getTemplateSubjectWithFallback } from "@/lib/email-subjects";
+import { getEmailSubject } from "@/lib/email-subjects";
 
 type ClerkEmailAddress = {
   id: string;
@@ -243,7 +243,7 @@ export async function POST(request: Request) {
           const sendResult = await resend.emails.send({
             from: getResendFrom(),
             to: email,
-            subject: await getTemplateSubjectWithFallback("FreeUserWelcome"),
+            subject: getEmailSubject("FreeUserWelcome"),
             react: FreeUserWelcome({ username: (fullName || firstName || "there"), userEmail: email }),
           });
           if (!sendResult?.data?.id) {
@@ -312,7 +312,7 @@ export async function POST(request: Request) {
           const sendResult = await resend.emails.send({
             from: getResendFrom(),
             to: email,
-            subject: await getTemplateSubjectWithFallback("Delete"),
+            subject: getEmailSubject("Delete"),
             react: DeleteEmail({ username: fullName || "there", userEmail: email }),
           });
           if (!sendResult?.data?.id) {
@@ -445,7 +445,7 @@ export async function POST(request: Request) {
             const emailPayload = {
               from: getResendFrom(),
               to: email,
-              subject: await getTemplateSubjectWithFallback("UpgradeConfirmation"),
+              subject: getEmailSubject("UpgradeConfirmation"),
               react: UpgradeConfirmation({ username: displayName, userEmail: email }),
             };
             
@@ -484,7 +484,7 @@ export async function POST(request: Request) {
             const sendResult = await resend.emails.send({
               from: getResendFrom(),
               to: email,
-              subject: await getTemplateSubjectWithFallback("MilestoneEmail"),
+              subject: getEmailSubject("MilestoneEmail"),
               react: MilestoneEmail({ username: displayName, userEmail: email }),
             });
             
@@ -512,7 +512,7 @@ export async function POST(request: Request) {
             const emailPayload = {
               from: getResendFrom(),
               to: email,
-              subject: await getTemplateSubjectWithFallback("ProTrialWelcome"),
+              subject: getEmailSubject("ProTrialWelcome"),
               react: ProTrialWelcome({ username: displayName, userEmail: email }),
             };
             
@@ -570,7 +570,7 @@ export async function POST(request: Request) {
             const emailPayload = {
               from: getResendFrom(),
               to: email,
-              subject: await getTemplateSubjectWithFallback("SubscriptionRenewed"),
+              subject: getEmailSubject("SubscriptionRenewed"),
               react: SubscriptionRenewed({ 
                 username: displayName, 
                 userEmail: email,
@@ -617,7 +617,7 @@ export async function POST(request: Request) {
             const emailPayload = {
               from: getResendFrom(),
               to: email,
-              subject: await getTemplateSubjectWithFallback("PaymentError"),
+              subject: getEmailSubject("PaymentError"),
               react: PaymentError({ 
                 username: displayName, 
                 userEmail: email
@@ -673,7 +673,7 @@ export async function POST(request: Request) {
             const emailPayload = {
               from: getResendFrom(),
               to: email,
-              subject: await getTemplateSubjectWithFallback("SubscriptionCancelled"),
+              subject: getEmailSubject("SubscriptionCancelled"),
               react: SubscriptionCancelled({ 
                 username: displayName, 
                 userEmail: email,

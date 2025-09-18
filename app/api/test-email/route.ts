@@ -1,5 +1,5 @@
 import { Resend } from "resend";
-import { getTemplateSubjectWithFallback } from "@/lib/email-subjects";
+import { getEmailSubject } from "@/lib/email-subjects";
 
 // Import all email templates
 import Day3TrialReminder from "@/app/emails/Day3TrialReminder";
@@ -401,7 +401,7 @@ export async function POST(request: Request) {
     const result = await resend.emails.send({
       from: getResendFrom(),
       to: email,
-      subject: await getTemplateSubjectWithFallback(template),
+      subject: getEmailSubject(template),
       react: templateComponent(templateProps),
     });
 
