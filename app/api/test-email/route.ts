@@ -13,6 +13,7 @@ import Week3PostCreation from "@/app/emails/Week3PostCreation";
 import Week4PostCreation from "@/app/emails/Week4PostCreation";
 import FeedbackSurvey30Days from "@/app/emails/FeedbackSurvey30Days";
 import Month1PaidUser from "@/app/emails/Month1PaidUser";
+import Anniversary from "@/app/emails/Anniversary";
 import SubscriptionRenewal from "@/app/emails/SubscriptionRenewal";
 import SubscriptionRenewalDay from "@/app/emails/SubscriptionRenewalDay";
 import SubscriptionRenewalWeek from "@/app/emails/SubscriptionRenewalWeek";
@@ -50,6 +51,7 @@ const emailTemplates = {
   Week4PostCreation,
   FeedbackSurvey30Days,
   Month1PaidUser,
+  Anniversary,
   SubscriptionRenewal,
   SubscriptionRenewalDay,
   SubscriptionRenewalWeek,
@@ -238,6 +240,10 @@ function validateMonth1PaidUser(conditions: Record<string, unknown>): { valid: b
   return { valid: true, message: "Conditions satisfied for Month1PaidUser" };
 }
 
+function validateAnniversary(): { valid: boolean; message: string } {
+  return { valid: true, message: "Conditions satisfied for Anniversary" };
+}
+
 function validateSubscriptionRenewal(conditions: Record<string, unknown>): { valid: boolean; message: string } {
   const { subscription_status, days_until_expiration } = conditions as unknown as SubscriptionConditions;
   
@@ -290,6 +296,7 @@ const templateValidators: Record<string, (conditions: Record<string, unknown>) =
   Week4PostCreation: validateWeek4PostCreation,
   FeedbackSurvey30Days: validateFeedbackSurvey30Days,
   Month1PaidUser: validateMonth1PaidUser,
+  Anniversary: validateAnniversary,
   SubscriptionRenewal: validateSubscriptionRenewal,
   SubscriptionRenewalWeek: validateSubscriptionRenewalWeek,
   SubscriptionRenewalDay: validateSubscriptionRenewalDay,
@@ -390,6 +397,9 @@ export async function POST(request: Request) {
         break;
       case "PaymentError":
         templateProps.errorMessage = templateParams.errorMessage || "Payment failed due to insufficient funds";
+        break;
+      case "Anniversary":
+        templateProps.anniversaryDuration = templateParams.anniversaryDuration || "1 year";
         break;
       case "UpgradeConfirmation":
         templateProps.planName = templateParams.planName || "Pro Plan";
@@ -497,6 +507,11 @@ export async function GET() {
       condition: "Paid users created exactly 30 days ago",
       requiredParams: ["username", "userEmail"],
       optionalParams: []
+    },
+    "Anniversary": {
+      condition: "Users celebrating 6 months or 1 year anniversary",
+      requiredParams: ["username", "userEmail"],
+      optionalParams: ["anniversaryDuration"]
     },
     "SubscriptionRenewal": {
       condition: "Paid users with subscription expiring in 30 days",

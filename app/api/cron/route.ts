@@ -12,10 +12,11 @@ import Week3PostCreation from "@/app/emails/Week3PostCreation";
 import Week4PostCreation from "@/app/emails/Week4PostCreation";
 import FeedbackSurvey30Days from "@/app/emails/FeedbackSurvey30Days";
 import Month1PaidUser from "@/app/emails/Month1PaidUser";
+import Anniversary from "@/app/emails/Anniversary";
 import SubscriptionRenewal from "@/app/emails/SubscriptionRenewal";
 import SubscriptionRenewalDay from "@/app/emails/SubscriptionRenewalDay";
 import SubscriptionRenewalWeek from "@/app/emails/SubscriptionRenewalWeek";
-import { getEmailSubject } from "@/lib/email-subjects";
+import { getEmailSubject, getEmailSubjectWithReplacements } from "@/lib/email-subjects";
 
 function getEnv(name: string): string | undefined {
   const value = process.env[name];
@@ -565,6 +566,80 @@ export async function GET() {
       }
     }
 
+    // 6 months anniversary
+    const result6MonthsAnniversary = await db.query(
+      `with target_day as (
+         select date_trunc('day', now() at time zone 'utc' - interval '6 months') as start_utc,
+                date_trunc('day', now() at time zone 'utc' - interval '5 months 29 days') as end_utc
+       )
+       select u.id, u.email, u.full_name, u.first_name
+       from public.users u, target_day t
+       where u.created_at >= t.start_utc and u.created_at < t.end_utc
+         and u.account_deleted is null`
+    );
+    const users6MonthsAnniversary: Array<{ id: string; email: string; full_name?: string | null; first_name?: string | null }> = result6MonthsAnniversary.rows || [];
+    let sent6MonthsAnniversary = 0;
+    for (const user of users6MonthsAnniversary) {
+      try {
+        if (!user.email) continue;
+        const firstName = (user.first_name || "there").toString();
+        const subject = getEmailSubjectWithReplacements("Anniversary", { 
+          firstName: firstName
+        });
+        const res = await resend.emails.send({
+          from: getResendFrom(),
+          to: user.email,
+          subject: subject,
+          react: Anniversary({ 
+            username: firstName, 
+            userEmail: user.email,
+            anniversaryDuration: "6 months"
+          }),
+        });
+        if (res?.data?.id) sent6MonthsAnniversary += 1;
+      } catch (err) {
+        console.error("[Cron] 6 months anniversary send failed", user.email, err);
+      }
+      if (delayMs > 0) await sleep(delayMs);
+    }
+
+    // 1 year anniversary
+    const result1YearAnniversary = await db.query(
+      `with target_day as (
+         select date_trunc('day', now() at time zone 'utc' - interval '1 year') as start_utc,
+                date_trunc('day', now() at time zone 'utc' - interval '364 days') as end_utc
+       )
+       select u.id, u.email, u.full_name, u.first_name
+       from public.users u, target_day t
+       where u.created_at >= t.start_utc and u.created_at < t.end_utc
+         and u.account_deleted is null`
+    );
+    const users1YearAnniversary: Array<{ id: string; email: string; full_name?: string | null; first_name?: string | null }> = result1YearAnniversary.rows || [];
+    let sent1YearAnniversary = 0;
+    for (const user of users1YearAnniversary) {
+      try {
+        if (!user.email) continue;
+        const firstName = (user.first_name || "there").toString();
+        const subject = getEmailSubjectWithReplacements("Anniversary", { 
+          firstName: firstName
+        });
+        const res = await resend.emails.send({
+          from: getResendFrom(),
+          to: user.email,
+          subject: subject,
+          react: Anniversary({ 
+            username: firstName, 
+            userEmail: user.email,
+            anniversaryDuration: "1 year"
+          }),
+        });
+        if (res?.data?.id) sent1YearAnniversary += 1;
+      } catch (err) {
+        console.error("[Cron] 1 year anniversary send failed", user.email, err);
+      }
+      if (delayMs > 0) await sleep(delayMs);
+    }
+
     return new Response(JSON.stringify({ 
       success: true, 
       processed3: processed3Count, 
@@ -594,7 +669,11 @@ export async function GET() {
       processedRenewalEvents,
       sentRenewalWeek,
       sentRenewalDay,
-      sentRenewal30Day
+      sentRenewal30Day,
+      processed6MonthsAnniversary: users6MonthsAnniversary.length,
+      sent6MonthsAnniversary,
+      processed1YearAnniversary: users1YearAnniversary.length,
+      sent1YearAnniversary
     }), {
       status: 200,
       headers: { "Content-Type": "application/json" },

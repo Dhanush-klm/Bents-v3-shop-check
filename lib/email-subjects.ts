@@ -41,6 +41,7 @@ export const EMAIL_SUBJECTS: Record<string, string> = {
   // Feedback & paid users
   FeedbackSurvey30Days: "Got a minute? We'd love your thoughts",
   Month1PaidUser: "A month with Loft — here's what's next",
+  Anniversary: "{firstName}, thanks for being with Loft 💙",
   
   // Subscription renewals
   SubscriptionRenewal: "Your Loft subscription renews in 30 days",
@@ -67,6 +68,21 @@ export const EMAIL_SUBJECTS: Record<string, string> = {
  */
 export function getEmailSubject(templateName: string): string {
   return EMAIL_SUBJECTS[templateName] || `Email from Loft: ${templateName}`;
+}
+
+/**
+ * Get email subject with dynamic replacements (e.g., firstName)
+ */
+export function getEmailSubjectWithReplacements(templateName: string, replacements: Record<string, string> = {}): string {
+  let subject = EMAIL_SUBJECTS[templateName] || `Email from Loft: ${templateName}`;
+  
+  // Replace placeholders like {firstName}
+  Object.keys(replacements).forEach(key => {
+    const placeholder = `{${key}}`;
+    subject = subject.replace(placeholder, replacements[key] || '');
+  });
+  
+  return subject;
 }
 
 /**
