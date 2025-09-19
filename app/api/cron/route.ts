@@ -415,6 +415,7 @@ export async function GET() {
 
     // 1 month paid users (30 days ago with paid subscription)
     // Use subscription paid date from events table instead of account created date
+    // Exclude users with product_id = 'loft00'
     const result1MonthPaid = await db.query(
       `with target_day as (
          select date_trunc('day', now() at time zone 'utc' - interval '30 days') as start_utc,
@@ -424,6 +425,7 @@ export async function GET() {
          select distinct on (user_id) 
            user_id,
            payload->>'purchased_at_ms' as purchased_at_ms,
+           payload->>'product_id' as product_id,
            rc_event_type
          from public.subscription_events 
          where rc_event_type in ('RENEWAL', 'PURCHASE')
@@ -438,6 +440,7 @@ export async function GET() {
          and u.account_deleted is null
          and lower(coalesce(u.subscription_status, '')) = 'active'
          and u.entitlement_pro_until > now()
+         and (e.product_id is null or e.product_id != 'loft00')
 `
     );
     const users1MonthPaid: Array<{ id: string; email: string; full_name?: string | null }> = result1MonthPaid.rows || [];
