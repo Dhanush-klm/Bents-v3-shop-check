@@ -1,6 +1,7 @@
 import { Section, Text } from "@react-email/components";
 import * as React from "react";
 import EmailLayout from "../../components/email/EmailLayout";
+import EmailButton from "../../components/email/EmailButton";
 import { LoftColors } from "../../components/email/EmailStyles";
 
 
@@ -217,17 +218,12 @@ export default function UpgradeConfirmation({
                     textAlign: 'center' as const,
                     margin: '16px 0',
                   }}>
-                    <div style={{
-                      backgroundColor: '#FF5A5F',
-                      color: '#ffffff',
-                      padding: '14px 20px',
-                      borderRadius: '8px',
-                      display: 'inline-block',
-                      fontSize: '16px',
-                      fontWeight: '600',
-                    }}>
-                      Open Loft
-                    </div>
+                    <EmailButton
+                  href="https://loftit.ai"
+                  className="email-button"
+                >
+                  Open Loft
+                </EmailButton>
                   </div>
                   </div>
 
