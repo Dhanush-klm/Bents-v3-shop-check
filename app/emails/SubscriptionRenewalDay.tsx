@@ -69,13 +69,21 @@ export default function SubscriptionRenewalDay({
                     Want to make changes before then?
                   </Text>
                   
-                <EmailButton
-                        href="https://loftit.ai/account/billing"
-                  emoji="👉"
-                  className="email-button"
-                >
-                  Manage Subscription
-                </EmailButton>
+                  <Text style={{
+                            fontSize: '16px',
+                            color: '#ffffff',
+                            margin: '16px 0',
+                            padding: '14px 20px',
+                            backgroundColor: '#FF5A5F',
+                            borderRadius: '8px',
+                            textAlign: 'center' as const,
+                            fontWeight: '600',
+                            display: 'inline-block',
+                            border: 'none',
+                            cursor: 'pointer',
+                          }}>
+                            Go to Loft {'>'}  Settings {'>'}  Subscription
+                          </Text>
                   
                   <Text style={{ 
                     fontSize: '16px', 
