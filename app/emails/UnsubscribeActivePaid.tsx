@@ -14,7 +14,7 @@ interface UnsubscribeActivePaidProps {
 export default function UnsubscribeActivePaid({
   username = "there",
   userEmail = "user@example.com",
-  resubscribeUrl = "https://loftit.ai/unsubscribe?email=${userEmail}",
+  resubscribeUrl = `https://loftit.ai/unsubscribe?email=${encodeURIComponent(userEmail)}`,
 }: UnsubscribeActivePaidProps) {
   return (
     <EmailLayout userEmail={userEmail}>
