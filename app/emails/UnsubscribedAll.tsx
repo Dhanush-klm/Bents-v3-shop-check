@@ -14,7 +14,7 @@ interface UnsubscribedAllProps {
 export default function UnsubscribedAll({
   username = "there",
   userEmail = "user@example.com",
-  resubscribeUrl = "https://loftit.ai/unsubscribe?email=${userEmail}",
+  resubscribeUrl = `https://loftit.ai/unsubscribe?email=${encodeURIComponent(userEmail)}`,
 }: UnsubscribedAllProps) {
   return (
     <EmailLayout userEmail={userEmail}>
