@@ -61,6 +61,8 @@ type ClerkUserUpdated = {
         trial_duration_days?: number;
         pro_upgraded?: boolean;
         pro_upgraded_at?: string; // ISOString
+        trial_converted?: boolean;
+        trial_converted_at?: string; // ISOString
         upgrade_type?: 'trial_conversion' | 'direct_upgrade' | string;
         upgrade_source?: 'revenuecat' | string;
         came_from_trial?: boolean;
@@ -361,6 +363,9 @@ export async function POST(request: Request) {
       // Pro upgrade detection - new pattern only
       const isProUpgrade = (subscriptionMilestones?.pro_upgraded === true);
 
+      // Trial conversion detection
+      const isTrialConverted = (subscriptionMilestones?.trial_converted === true);
+
       // 100th link milestone detection  
       const isHundredthLink = (milestones?.hundredth_link_at !== undefined);
 
@@ -378,9 +383,9 @@ export async function POST(request: Request) {
       // Subscription cancellation detection
       const isSubscriptionCancelled = (subscriptionMilestones?.subscription_cancelled === true);
 
-      console.log("[Webhook] Triggers detected - Pro upgrade:", isProUpgrade, "100th link:", isHundredthLink, "Pro trial start:", isProTrialStart, "Subscription renewed:", isSubscriptionRenewed, "Payment error:", isPaymentError, "Subscription cancelled:", isSubscriptionCancelled);
+      console.log("[Webhook] Triggers detected - Pro upgrade:", isProUpgrade, "Trial converted:", isTrialConverted, "100th link:", isHundredthLink, "Pro trial start:", isProTrialStart, "Subscription renewed:", isSubscriptionRenewed, "Payment error:", isPaymentError, "Subscription cancelled:", isSubscriptionCancelled);
 
-      if (!isProUpgrade && !isHundredthLink && !isProTrialStart && !isSubscriptionRenewed && !isPaymentError && !isSubscriptionCancelled) {
+      if (!isProUpgrade && !isTrialConverted && !isHundredthLink && !isProTrialStart && !isSubscriptionRenewed && !isPaymentError && !isSubscriptionCancelled) {
         console.log("[Webhook] No relevant triggers detected, returning success");
         return new Response(JSON.stringify({ success: true, action: "no_triggers" }), {
           status: 200,
@@ -471,6 +476,46 @@ export async function POST(request: Request) {
           } catch (sendErr) {
             console.error("[Resend] Upgrade confirmation email send failed", sendErr);
             actions.push("upgrade_confirmation_failed");
+          }
+        }
+        
+        // Handle trial conversion email
+        if (isTrialConverted) {
+          console.log("[Webhook] Attempting to send trial conversion email");
+          try {
+            if (delayMs > 0 && actions.length > 0) {
+              await sleep(delayMs);
+            }
+            
+            const emailPayload = {
+              from: getResendFrom(),
+              to: email,
+              subject: getEmailSubject("UpgradeConfirmation"),
+              react: UpgradeConfirmation({ username: displayName, userEmail: email }),
+            };
+            
+            console.log("[Webhook] Trial conversion email payload:", {
+              from: emailPayload.from,
+              to: emailPayload.to,
+              subject: emailPayload.subject,
+              username: displayName,
+              userEmail: email
+            });
+            
+            const sendResult = await resend.emails.send(emailPayload);
+            
+            console.log("[Webhook] Trial conversion Resend API response:", sendResult);
+            
+            if (!sendResult?.data?.id) {
+              console.error("[Resend] Trial conversion email send returned no id", sendResult);
+              actions.push("trial_conversion_failed");
+            } else {
+              console.log(`[Resend] Trial conversion email sent to ${email} with id ${sendResult.data.id}`);
+              actions.push("trial_conversion_sent");
+            }
+          } catch (sendErr) {
+            console.error("[Resend] Trial conversion email send failed", sendErr);
+            actions.push("trial_conversion_failed");
           }
         }
         
@@ -738,6 +783,7 @@ export async function POST(request: Request) {
         actions,
         triggers: {
           pro_upgrade: isProUpgrade,
+          trial_converted: isTrialConverted,
           hundredth_link: isHundredthLink,
           pro_trial_start: isProTrialStart,
           subscription_renewed: isSubscriptionRenewed,
