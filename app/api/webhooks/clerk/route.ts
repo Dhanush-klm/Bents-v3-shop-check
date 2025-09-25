@@ -661,6 +661,28 @@ export async function POST(request: Request) {
             const subscriptionInfo = subscriptionMilestones?.subscription_info;
             const endDate = subscriptionInfo?.subscription_end_date;
             
+            // Skip email if user came from Play Store
+            const store = subscriptionInfo?.store;
+            if (store === "PLAY_STORE") {
+              console.log("[Webhook] Skipping subscription cancellation email - user from Play Store:", store);
+              actions.push("subscription_cancelled_skipped_play_store");
+              return new Response(JSON.stringify({ 
+                success: true, 
+                actions,
+                triggers: {
+                  pro_upgrade: isProUpgrade,
+                  hundredth_link: isHundredthLink,
+                  pro_trial_start: isProTrialStart,
+                  subscription_renewed: isSubscriptionRenewed,
+                  payment_error: isPaymentError,
+                  subscription_cancelled: isSubscriptionCancelled
+                }
+              }), {
+                status: 200,
+                headers: { "Content-Type": "application/json" },
+              });
+            }
+            
             // Format end date
             const formattedEndDate = endDate 
               ? new Date(endDate).toLocaleDateString('en-US', {
