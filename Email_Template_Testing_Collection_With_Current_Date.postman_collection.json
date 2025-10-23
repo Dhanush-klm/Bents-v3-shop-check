@@ -690,7 +690,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"template\": \"FeedbackSurvey30Days\",\n  \"email\": \"{{test_email}}\",\n  \"username\": \"Dhanush\",\n  \"current_date\": \"2025-09-03T00:00:00Z\",\n  \"conditions\": {\n    \"created_at\": \"2025-08-04T00:00:00Z\",\n    \"days_since_created\": 30\n  },\n  \"surveyUrl\": \"https://forms.gle/YourSurveyLinkHere\"\n}"
+							"raw": "{\n  \"template\": \"FeedbackSurvey30Days\",\n  \"email\": \"{{test_email}}\",\n  \"username\": \"Dhanush\",\n  \"current_date\": \"2025-09-03T00:00:00Z\",\n  \"conditions\": {\n    \"created_at\": \"2025-08-04T00:00:00Z\",\n    \"days_since_created\": 30\n  },\n  \"surveyUrl\": \"https://tally.so/r/mOqv08\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/test-email",

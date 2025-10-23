@@ -404,7 +404,7 @@ export async function GET() {
           react: FeedbackSurvey30Days({ 
             username: name, 
             userEmail: user.email,
-            surveyUrl: "https://forms.gle/YourSurveyLinkHere" 
+            surveyUrl: "https://tally.so/r/mOqv08" 
           }),
         });
         if (res?.data?.id) sent30Days += 1;

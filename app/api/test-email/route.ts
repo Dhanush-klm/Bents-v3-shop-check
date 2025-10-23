@@ -381,7 +381,7 @@ export async function POST(request: Request) {
     // Add specific props for different templates
     switch (template) {
       case "FeedbackSurvey30Days":
-        templateProps.surveyUrl = templateParams.surveyUrl || "https://forms.gle/YourSurveyLinkHere";
+        templateProps.surveyUrl = templateParams.surveyUrl || "https://tally.so/r/mOqv08";
         break;
       case "SubscriptionRenewal":
       case "SubscriptionRenewalDay":
