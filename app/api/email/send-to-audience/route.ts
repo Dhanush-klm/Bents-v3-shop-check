@@ -68,14 +68,29 @@ function getResendFrom(): string {
   return "Loft <info@loftit.ai>";
 }
 
+interface Contact {
+  id: string;
+  email: string;
+  first_name?: string;
+  last_name?: string;
+  unsubscribed: boolean;
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const { to, template, variables } = await request.json();
+    const { audienceIds, template, variables } = await request.json();
 
     // Validate inputs
-    if (!to || !template) {
+    if (!audienceIds || !Array.isArray(audienceIds) || audienceIds.length === 0) {
       return NextResponse.json(
-        { error: 'Missing required fields: to, template' },
+        { error: 'Missing or invalid audienceIds' },
+        { status: 400 }
+      );
+    }
+
+    if (!template) {
+      return NextResponse.json(
+        { error: 'Missing template' },
         { status: 400 }
       );
     }
@@ -98,49 +113,92 @@ export async function POST(request: NextRequest) {
 
     // Initialize Resend
     const resend = new Resend(resendApiKey);
-
-    // Get template component
     const EmailComponent = TEMPLATE_MAP[template];
 
-    // Get subject line with variable replacements
-    // Extract firstName from username if it exists (for subjects like "{firstName}, thanks...")
-    const subjectReplacements: Record<string, string> = {
-      ...variables,
-    };
-    
-    // If username exists, use first word as firstName for subject
-    if (variables.username) {
-      subjectReplacements.firstName = variables.username.split(' ')[0];
-    }
-    
-    const subject = getEmailSubjectWithReplacements(template, subjectReplacements);
+    let totalContacts = 0;
+    let totalSent = 0;
+    const errors: string[] = [];
 
-    // Send email
-    const sendResult = await resend.emails.send({
-      from: getResendFrom(),
-      to,
-      subject,
-      react: EmailComponent(variables),
-    });
+    // Process each audience
+    for (const audienceId of audienceIds) {
+      try {
+        // Fetch all contacts from this audience
+        const contactsResponse = await resend.contacts.list({ audienceId });
+        
+        if (!contactsResponse.data?.data) {
+          errors.push(`No contacts found for audience ${audienceId}`);
+          continue;
+        }
 
-    if (!sendResult?.data?.id) {
-      console.error("[Send Email] No email ID returned", sendResult);
-      return NextResponse.json(
-        { error: 'Failed to send email - no ID returned' },
-        { status: 500 }
-      );
+        const contacts = contactsResponse.data.data as Contact[];
+        totalContacts += contacts.length;
+
+        // Send email to each contact
+        for (const contact of contacts) {
+          // Skip unsubscribed contacts
+          if (contact.unsubscribed) {
+            continue;
+          }
+
+          try {
+            // Construct username from contact data
+            const username = contact.first_name 
+              ? `${contact.first_name}${contact.last_name ? ' ' + contact.last_name : ''}`
+              : 'there';
+
+            // Merge contact-specific variables with common variables
+            const emailVariables = {
+              ...variables, // Common variables like amount, anniversaryDuration
+              username,
+              userEmail: contact.email,
+            };
+
+            // Get subject line with variable replacements for this contact
+            const subjectReplacements = {
+              ...emailVariables,
+              firstName: contact.first_name || username.split(' ')[0],
+            };
+            const subject = getEmailSubjectWithReplacements(template, subjectReplacements);
+
+            // Send email
+            const sendResult = await resend.emails.send({
+              from: getResendFrom(),
+              to: contact.email,
+              subject,
+              react: EmailComponent(emailVariables),
+            });
+
+            if (sendResult?.data?.id) {
+              totalSent++;
+            } else {
+              errors.push(`Failed to send to ${contact.email}: No ID returned`);
+            }
+
+            // Add small delay to respect rate limits
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+          } catch (sendError) {
+            errors.push(`Failed to send to ${contact.email}: ${sendError instanceof Error ? sendError.message : 'Unknown error'}`);
+          }
+        }
+
+      } catch (audienceError) {
+        errors.push(`Failed to fetch contacts for audience ${audienceId}: ${audienceError instanceof Error ? audienceError.message : 'Unknown error'}`);
+      }
     }
 
     return NextResponse.json({
       success: true,
-      emailId: sendResult.data.id,
-      message: 'Email sent successfully',
+      totalContacts,
+      totalSent,
+      errors: errors.length > 0 ? errors : undefined,
+      message: `Successfully sent ${totalSent} emails to ${totalContacts} contacts`,
     });
 
   } catch (error) {
-    console.error('Send email error:', error);
+    console.error('Send to audience error:', error);
     return NextResponse.json(
-      { error: 'Failed to send email', message: error instanceof Error ? error.message : 'Unknown error' },
+      { error: 'Failed to send emails', message: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
