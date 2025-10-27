@@ -58,7 +58,8 @@ export const EMAIL_SUBJECTS: Record<string, string> = {
   ProTrialWelcome: "✨ Your 7-Day Loft Pro Trial Starts Now!",
   FreeUserWelcome: "Welcome to Loft 👋 Your smarter way to save links",
   UnsubscribeActivePaid: "You'll no longer receive Loft updates — but your subscription is still active",
-  UnsubscribedAll: "You’ve unsubscribed — we’ll miss you in our inbox"
+  UnsubscribedAll: "You've unsubscribed — we'll miss you in our inbox",
+  MilestoneEmail: "You've reached a milestone 🎉"
 
 
 };

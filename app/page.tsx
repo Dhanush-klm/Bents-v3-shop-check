@@ -1,80 +1,35 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Mail, History } from "lucide-react";
+import { Mail } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-center p-8">
-      <div className="w-full max-w-4xl mx-auto text-center">
-        <main className="flex flex-col gap-8 items-center w-full max-w-4xl">
-          <div className="flex flex-col items-center gap-6 mb-8">
-            <Image
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/icon-NYLEum0BjNr1QNxE1HCgTvaqV84l0b.png"
-              alt="Loft Logo"
-              width={120}
-              height={96}
-              className="mb-4 rounded-2xl"
-            />
-            <h1 className="text-5xl font-bold text-black text-center">Loft Email Manager</h1>
-            <p className="text-xl text-black text-center max-w-2xl">
-              Powerful email automation platform. Send targeted campaigns, manage audiences, and track your email performance.
-            </p>
-          </div>
-
-          {/* Navigation Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl">
-            {/* Email Manager Card */}
-            <Link href="/email-manager" className="group">
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 rounded-2xl p-8 hover:from-blue-100 hover:to-blue-200 hover:border-blue-300 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl group-hover:scale-105">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="bg-blue-600 p-3 rounded-xl group-hover:bg-blue-700 transition-colors">
-                    <Mail className="h-8 w-8 text-white" />
-                  </div>
-                  <h2 className="text-2xl font-bold text-blue-900">Email Manager</h2>
-                </div>
-                <p className="text-blue-700 leading-relaxed mb-4">
-                  Create and send email campaigns to your audiences. Choose from pre-built templates and target specific user segments.
-                </p>
-                <div className="text-blue-600 font-semibold group-hover:text-blue-700 transition-colors">
-                  Start Campaign →
-                </div>
-              </div>
-            </Link>
-
-            {/* Campaign History Card */}
-            <Link href="/campaign-history" className="group">
-              <div className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-200 rounded-2xl p-8 hover:from-green-100 hover:to-green-200 hover:border-green-300 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl group-hover:scale-105">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="bg-green-600 p-3 rounded-xl group-hover:bg-green-700 transition-colors">
-                    <History className="h-8 w-8 text-white" />
-                  </div>
-                  <h2 className="text-2xl font-bold text-green-900">Campaign History</h2>
-                </div>
-                <p className="text-green-700 leading-relaxed mb-4">
-                  Track your email campaigns and performance. View detailed history of sent campaigns, recipients, and analytics.
-                </p>
-                <div className="text-green-600 font-semibold group-hover:text-green-700 transition-colors">
-                  View History →
-                </div>
-              </div>
-            </Link>
-          </div>
-
-          {/* Quick Stats */}
-          <div className="mt-8 text-center">
-            <p className="text-gray-600 mb-4">Email Campaign Platform</p>
-            <div className="flex justify-center gap-8 text-sm text-gray-500">
-              <span>✅ Email Templates</span>
-              <span>✅ Audience Management</span>
-              <span>✅ Campaign Analytics</span>
-              <span>✅ Campaign History</span>
-            </div>
-          </div>
-        </main>
-
-        <footer className="mt-16 text-center text-gray-500 text-sm">
-          <p>Powered by Loft • Streamline your email communications</p>
-        </footer>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex flex-col items-center justify-center p-8 relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 -left-4 w-96 h-96 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
+        <div className="absolute top-0 -right-4 w-96 h-96 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
+        <div className="absolute -bottom-8 left-20 w-96 h-96 bg-indigo-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
+      </div>
+      
+      <div className="flex flex-col items-center gap-8 relative z-10 bg-white/70 backdrop-blur-md rounded-3xl p-12 shadow-2xl border border-white/20">
+        <Image
+          src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/icon-NYLEum0BjNr1QNxE1HCgTvaqV84l0b.png"
+          alt="Loft Logo"
+          width={150}
+          height={120}
+          className="rounded-2xl shadow-lg"
+        />
+        <h1 className="text-6xl font-bold text-black text-center">
+          Welcome to Email Backend
+        </h1>
+        
+        <Link href="/send-email">
+          <button className="mt-6 flex items-center gap-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-4 rounded-lg text-lg transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105">
+            <Mail className="h-6 w-6" />
+            Send Email
+          </button>
+        </Link>
       </div>
     </div>
   );
