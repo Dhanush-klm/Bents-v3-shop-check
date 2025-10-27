@@ -7,10 +7,10 @@ function getEnv(name: string): string | undefined {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { audienceId: string } }
+  { params }: { params: Promise<{ audienceId: string }> }
 ) {
   try {
-    const { audienceId } = params;
+    const { audienceId } = await params;
 
     if (!audienceId) {
       return NextResponse.json(
