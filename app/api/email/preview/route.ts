@@ -27,6 +27,7 @@ import UnsubscribeActivePaid from '@/app/emails/UnsubscribeActivePaid';
 import Anniversary from '@/app/emails/Anniversary';
 import MilestoneEmail from '@/app/emails/MilestoneEmail';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const TEMPLATE_MAP: Record<string, any> = {
   FreeUserWelcome,
   ProTrialWelcome,

@@ -355,8 +355,8 @@ export async function POST(request: Request) {
       }
 
       // Check for trigger events
-      const subscription = unsafeMetadata?.subscription;
-      const events = unsafeMetadata?.events;
+      const _subscription = unsafeMetadata?.subscription;
+      const _events = unsafeMetadata?.events;
       const milestones = unsafeMetadata?.milestones;
       const subscriptionMilestones = privateMetadata?.subscription_milestones;
 

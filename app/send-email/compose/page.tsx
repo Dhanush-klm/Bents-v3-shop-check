@@ -72,6 +72,7 @@ function ComposeEmailContent() {
       }
     });
     setVariables(initialVars);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [template]);
 
   // Sync userEmail with recipientEmail
@@ -79,6 +80,7 @@ function ComposeEmailContent() {
     if (templateVariables.includes('userEmail')) {
       setVariables(prev => ({ ...prev, userEmail: recipientEmail }));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recipientEmail]);
 
   const handleVariableChange = (varName: string, value: string) => {
