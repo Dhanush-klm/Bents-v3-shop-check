@@ -1,11 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ArrowRight, Eye } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+
+// Check if email sending is enabled (default: false for preview-only mode)
+const ENABLE_EMAIL_SENDING = process.env.NEXT_PUBLIC_ENABLE_EMAIL_SENDING === 'true';
 
 interface EmailTemplate {
   id: string;
@@ -209,6 +212,13 @@ export default function SendEmailPage() {
 
   const selectedTemplateObject = EMAIL_TEMPLATES.find(t => t.id === selectedTemplate);
 
+  // Auto-preview when sending is disabled and template is selected
+  useEffect(() => {
+    if (!ENABLE_EMAIL_SENDING && selectedTemplate && !showPreview) {
+      handlePreview();
+    }
+  }, [selectedTemplate]);
+
   const groupedTemplates = EMAIL_TEMPLATES.reduce((acc, template) => {
     if (!acc[template.category]) {
       acc[template.category] = [];
@@ -269,8 +279,17 @@ export default function SendEmailPage() {
         {/* Header */}
         <div className="mb-8 flex items-center justify-between bg-white/70 backdrop-blur-md rounded-2xl p-6 shadow-lg border border-white/20">
           <div>
-            <h1 className="text-4xl font-bold text-black mb-2">Select Email Template</h1>
-            <p className="text-gray-600">Choose a template to send</p>
+            <h1 className="text-4xl font-bold text-black mb-2">
+              Select Email Template
+              {!ENABLE_EMAIL_SENDING && (
+                <span className="ml-3 text-base font-normal bg-blue-100 text-blue-700 px-3 py-1 rounded-full">
+                  Preview Mode
+                </span>
+              )}
+            </h1>
+            <p className="text-gray-600">
+              {ENABLE_EMAIL_SENDING ? 'Choose a template to send' : 'Choose a template to preview'}
+            </p>
           </div>
           <Link href="/">
             <Button className="bg-gray-600 hover:bg-gray-700 text-white shadow-md">
@@ -359,13 +378,15 @@ export default function SendEmailPage() {
                       {loadingPreview ? 'Loading Preview...' : 'Preview Template'}
                     </Button>
 
-                    <Button
-                      onClick={handleNext}
-                      className="w-full bg-green-600 hover:bg-green-700 text-white"
-                    >
-                      Next: Enter Details
-                      <ArrowRight className="h-4 w-4 ml-2" />
-                    </Button>
+                    {ENABLE_EMAIL_SENDING && (
+                      <Button
+                        onClick={handleNext}
+                        className="w-full bg-green-600 hover:bg-green-700 text-white"
+                      >
+                        Next: Enter Details
+                        <ArrowRight className="h-4 w-4 ml-2" />
+                      </Button>
+                    )}
                   </div>
                 </div>
               )}

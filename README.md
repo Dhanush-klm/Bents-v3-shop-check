@@ -1,5 +1,29 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Email Campaign System
+
+This application manages email campaigns for Loft with template preview and sending capabilities.
+
+### Email Sending Toggle
+
+The app supports two modes controlled by the `NEXT_PUBLIC_ENABLE_EMAIL_SENDING` environment variable:
+
+**Preview-Only Mode (default):**
+- Set `NEXT_PUBLIC_ENABLE_EMAIL_SENDING=false` or leave unset
+- Templates open in preview mode automatically when clicked
+- No email sending functionality is available
+- Perfect for reviewing templates without risk of sending
+
+**Full Sending Mode:**
+- Set `NEXT_PUBLIC_ENABLE_EMAIL_SENDING=true`
+- Full email composition and sending workflow enabled
+- Access to audience management and campaign tools
+
+Add this to your `.env.local` file:
+```bash
+NEXT_PUBLIC_ENABLE_EMAIL_SENDING=false  # or true for full sending
+```
+
 ## Getting Started
 
 First, run the development server:
