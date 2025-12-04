@@ -114,7 +114,7 @@ function getEnv(name: string): string | undefined {
 function getResendFrom(): string {
   const from = getEnv("RESEND_FROM");
   if (from) return from;
-      return "Loft <info@loftit.ai>";
+  return "Loft <info@loftit.ai>";
 }
 
 function getDelayMs(): number {
@@ -166,11 +166,11 @@ export async function POST(request: Request) {
   try {
     const payload: unknown = await request.json();
     console.log("[Webhook] Received payload:", JSON.stringify(payload, null, 2));
-    
+
     const root = payload as { type?: string; data?: unknown } | undefined;
     const type = root?.type;
     console.log("[Webhook] Event type:", type);
-    
+
     if (!payload || !type) {
       console.log("[Webhook] No payload or type, returning 204");
       return new Response(null, { status: 204 });
@@ -185,7 +185,7 @@ export async function POST(request: Request) {
       const createdAt = Number.isFinite(createdAtMs) ? new Date(createdAtMs as number) : new Date();
       const firstName = user.first_name || "";
       const lastName = user.last_name || "";
-      const fullName = [firstName, lastName].filter(Boolean).join(" ") || null;
+      const fullName = firstName || null;
 
       if (!clerkId || !email) {
         return new Response(JSON.stringify({ error: "Missing required fields (id/email) from Clerk payload" }), {
@@ -336,7 +336,7 @@ export async function POST(request: Request) {
     // Handle user.updated for Pro upgrades
     if (type === "user.updated") {
       console.log("[Webhook] Processing user.updated event");
-      
+
       const userData = (root as ClerkUserUpdated).data;
       const clerkId = userData.id;
       const unsafeMetadata = userData.unsafe_metadata;
@@ -371,8 +371,8 @@ export async function POST(request: Request) {
 
       // Pro trial start detection
       const isProTrialStart = (subscriptionMilestones?.trial_started === true) &&
-                             (subscriptionMilestones?.trial_type === 'store_trial') &&
-                             (subscriptionMilestones?.trial_duration_days === 7);
+        (subscriptionMilestones?.trial_type === 'store_trial') &&
+        (subscriptionMilestones?.trial_duration_days === 7);
 
       // Subscription renewal detection
       const isSubscriptionRenewed = (subscriptionMilestones?.subscription_renewed === true);
@@ -394,9 +394,9 @@ export async function POST(request: Request) {
       }
 
       const dataDb = getDataDb();
-      
+
       console.log("[Webhook] Querying SUPABASE_URL_DATA for user:", clerkId);
-      
+
       // Get user details from the data database (no database updates)
       const result = await dataDb.query(
         `select email, full_name 
@@ -404,9 +404,9 @@ export async function POST(request: Request) {
          where id = $1`,
         [clerkId]
       );
-      
+
       console.log("[Webhook] Database query result:", result.rows);
-      
+
       const userRecord = result.rows?.[0];
       const email = userRecord?.email;
       const fullName = userRecord?.full_name;
@@ -424,21 +424,21 @@ export async function POST(request: Request) {
       // Extract name from Clerk data or database
       const firstName = userData.first_name || "";
       const lastName = userData.last_name || "";
-      const clerkFullName = [firstName, lastName].filter(Boolean).join(" ");
+      const clerkFullName = firstName;
       const displayName = clerkFullName || fullName || "there";
 
       // Send appropriate emails based on triggers
       const resendApiKey = getEnv("RESEND_API_KEY");
       const actions: string[] = [];
-      
+
       console.log("[Webhook] RESEND_API_KEY exists:", !!resendApiKey);
       console.log("[Webhook] Display name:", displayName);
       console.log("[Webhook] Target email:", email);
-      
+
       if (resendApiKey) {
         const resend = new Resend(resendApiKey);
         const delayMs = getDelayMs();
-        
+
         // Handle Pro upgrade email
         if (isProUpgrade) {
           console.log("[Webhook] Attempting to send upgrade confirmation email");
@@ -446,14 +446,14 @@ export async function POST(request: Request) {
             if (delayMs > 0) {
               await sleep(delayMs);
             }
-            
+
             const emailPayload = {
               from: getResendFrom(),
               to: email,
               subject: getEmailSubject("UpgradeConfirmation"),
               react: UpgradeConfirmation({ username: displayName, userEmail: email }),
             };
-            
+
             console.log("[Webhook] Email payload:", {
               from: emailPayload.from,
               to: emailPayload.to,
@@ -461,11 +461,11 @@ export async function POST(request: Request) {
               username: displayName,
               userEmail: email
             });
-            
+
             const sendResult = await resend.emails.send(emailPayload);
-            
+
             console.log("[Webhook] Resend API response:", sendResult);
-            
+
             if (!sendResult?.data?.id) {
               console.error("[Resend] Upgrade confirmation email send returned no id", sendResult);
               actions.push("upgrade_confirmation_failed");
@@ -478,7 +478,7 @@ export async function POST(request: Request) {
             actions.push("upgrade_confirmation_failed");
           }
         }
-        
+
         // Handle trial conversion email
         if (isTrialConverted) {
           console.log("[Webhook] Attempting to send trial conversion email");
@@ -486,14 +486,14 @@ export async function POST(request: Request) {
             if (delayMs > 0 && actions.length > 0) {
               await sleep(delayMs);
             }
-            
+
             const emailPayload = {
               from: getResendFrom(),
               to: email,
               subject: getEmailSubject("UpgradeConfirmation"),
               react: UpgradeConfirmation({ username: displayName, userEmail: email }),
             };
-            
+
             console.log("[Webhook] Trial conversion email payload:", {
               from: emailPayload.from,
               to: emailPayload.to,
@@ -501,11 +501,11 @@ export async function POST(request: Request) {
               username: displayName,
               userEmail: email
             });
-            
+
             const sendResult = await resend.emails.send(emailPayload);
-            
+
             console.log("[Webhook] Trial conversion Resend API response:", sendResult);
-            
+
             if (!sendResult?.data?.id) {
               console.error("[Resend] Trial conversion email send returned no id", sendResult);
               actions.push("trial_conversion_failed");
@@ -518,21 +518,21 @@ export async function POST(request: Request) {
             actions.push("trial_conversion_failed");
           }
         }
-        
+
         // Handle 100th link milestone email
         if (isHundredthLink) {
           try {
             if (delayMs > 0 && actions.length > 0) {
               await sleep(delayMs);
             }
-            
+
             const sendResult = await resend.emails.send({
               from: getResendFrom(),
               to: email,
               subject: getEmailSubject("MilestoneEmail"),
               react: MilestoneEmail({ username: displayName, userEmail: email }),
             });
-            
+
             if (!sendResult?.data?.id) {
               console.error("[Resend] 100th link milestone email send returned no id", sendResult);
               actions.push("hundredth_link_email_failed");
@@ -545,7 +545,7 @@ export async function POST(request: Request) {
             actions.push("hundredth_link_email_failed");
           }
         }
-        
+
         // Handle Pro trial start email
         if (isProTrialStart) {
           console.log("[Webhook] Attempting to send Pro trial welcome email");
@@ -553,14 +553,14 @@ export async function POST(request: Request) {
             if (delayMs > 0 && actions.length > 0) {
               await sleep(delayMs);
             }
-            
+
             const emailPayload = {
               from: getResendFrom(),
               to: email,
               subject: getEmailSubject("ProTrialWelcome"),
               react: ProTrialWelcome({ username: displayName, userEmail: email }),
             };
-            
+
             console.log("[Webhook] Pro trial email payload:", {
               from: emailPayload.from,
               to: emailPayload.to,
@@ -568,11 +568,11 @@ export async function POST(request: Request) {
               username: displayName,
               userEmail: email
             });
-            
+
             const sendResult = await resend.emails.send(emailPayload);
-            
+
             console.log("[Webhook] Pro trial Resend API response:", sendResult);
-            
+
             if (!sendResult?.data?.id) {
               console.error("[Resend] Pro trial welcome email send returned no id", sendResult);
               actions.push("pro_trial_welcome_failed");
@@ -585,7 +585,7 @@ export async function POST(request: Request) {
             actions.push("pro_trial_welcome_failed");
           }
         }
-        
+
         // Handle subscription renewal email
         if (isSubscriptionRenewed) {
           console.log("[Webhook] Attempting to send subscription renewal email");
@@ -593,37 +593,37 @@ export async function POST(request: Request) {
             if (delayMs > 0 && actions.length > 0) {
               await sleep(delayMs);
             }
-            
+
             // Extract plan information from webhook data
             const subscriptionInfo = subscriptionMilestones?.subscription_info;
             const planPrice = subscriptionInfo?.plan_price || 9.99;
             const planCurrency = subscriptionInfo?.plan_currency || 'USD';
             const nextRenewalDate = subscriptionInfo?.subscription_end_date;
-            
+
             // Format amount with currency code
             const amount = `${planPrice} ${planCurrency}`;
-            
+
             // Format next renewal date
-            const formattedNextRenewalDate = nextRenewalDate 
+            const formattedNextRenewalDate = nextRenewalDate
               ? new Date(nextRenewalDate).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })
               : undefined;
-            
+
             const emailPayload = {
               from: getResendFrom(),
               to: email,
               subject: getEmailSubject("SubscriptionRenewed"),
-              react: SubscriptionRenewed({ 
-                username: displayName, 
+              react: SubscriptionRenewed({
+                username: displayName,
                 userEmail: email,
                 amount: amount,
                 nextRenewalDate: formattedNextRenewalDate
               }),
             };
-            
+
             console.log("[Webhook] Subscription renewal email payload:", {
               from: emailPayload.from,
               to: emailPayload.to,
@@ -633,11 +633,11 @@ export async function POST(request: Request) {
               amount: amount,
               nextRenewalDate: formattedNextRenewalDate
             });
-            
+
             const sendResult = await resend.emails.send(emailPayload);
-            
+
             console.log("[Webhook] Subscription renewal Resend API response:", sendResult);
-            
+
             if (!sendResult?.data?.id) {
               console.error("[Resend] Subscription renewal email send returned no id", sendResult);
               actions.push("subscription_renewed_failed");
@@ -650,7 +650,7 @@ export async function POST(request: Request) {
             actions.push("subscription_renewed_failed");
           }
         }
-        
+
         // Handle payment error email
         if (isPaymentError) {
           console.log("[Webhook] Attempting to send payment error email");
@@ -658,17 +658,17 @@ export async function POST(request: Request) {
             if (delayMs > 0 && actions.length > 0) {
               await sleep(delayMs);
             }
-            
+
             const emailPayload = {
               from: getResendFrom(),
               to: email,
               subject: getEmailSubject("PaymentError"),
-              react: PaymentError({ 
-                username: displayName, 
+              react: PaymentError({
+                username: displayName,
                 userEmail: email
               }),
             };
-            
+
             console.log("[Webhook] Payment error email payload:", {
               from: emailPayload.from,
               to: emailPayload.to,
@@ -676,11 +676,11 @@ export async function POST(request: Request) {
               username: displayName,
               userEmail: email
             });
-            
+
             const sendResult = await resend.emails.send(emailPayload);
-            
+
             console.log("[Webhook] Payment error Resend API response:", sendResult);
-            
+
             if (!sendResult?.data?.id) {
               console.error("[Resend] Payment error email send returned no id", sendResult);
               actions.push("payment_error_failed");
@@ -693,7 +693,7 @@ export async function POST(request: Request) {
             actions.push("payment_error_failed");
           }
         }
-        
+
         // Handle subscription cancellation email
         if (isSubscriptionCancelled) {
           console.log("[Webhook] Attempting to send subscription cancellation email");
@@ -701,18 +701,18 @@ export async function POST(request: Request) {
             if (delayMs > 0 && actions.length > 0) {
               await sleep(delayMs);
             }
-            
+
             // Extract end date from webhook data
             const subscriptionInfo = subscriptionMilestones?.subscription_info;
             const endDate = subscriptionInfo?.subscription_end_date;
-            
+
             // Skip email if user came from Play Store
             const store = subscriptionInfo?.store;
             if (store === "PLAY_STORE") {
               console.log("[Webhook] Skipping subscription cancellation email - user from Play Store:", store);
               actions.push("subscription_cancelled_skipped_play_store");
-              return new Response(JSON.stringify({ 
-                success: true, 
+              return new Response(JSON.stringify({
+                success: true,
                 actions,
                 triggers: {
                   pro_upgrade: isProUpgrade,
@@ -727,27 +727,27 @@ export async function POST(request: Request) {
                 headers: { "Content-Type": "application/json" },
               });
             }
-            
+
             // Format end date
-            const formattedEndDate = endDate 
+            const formattedEndDate = endDate
               ? new Date(endDate).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })
               : 'the end of your billing cycle';
-            
+
             const emailPayload = {
               from: getResendFrom(),
               to: email,
               subject: getEmailSubject("SubscriptionCancelled"),
-              react: SubscriptionCancelled({ 
-                username: displayName, 
+              react: SubscriptionCancelled({
+                username: displayName,
                 userEmail: email,
                 endDate: formattedEndDate
               }),
             };
-            
+
             console.log("[Webhook] Subscription cancellation email payload:", {
               from: emailPayload.from,
               to: emailPayload.to,
@@ -756,11 +756,11 @@ export async function POST(request: Request) {
               userEmail: email,
               endDate: formattedEndDate
             });
-            
+
             const sendResult = await resend.emails.send(emailPayload);
-            
+
             console.log("[Webhook] Subscription cancellation Resend API response:", sendResult);
-            
+
             if (!sendResult?.data?.id) {
               console.error("[Resend] Subscription cancellation email send returned no id", sendResult);
               actions.push("subscription_cancelled_failed");
@@ -778,8 +778,8 @@ export async function POST(request: Request) {
         actions.push("resend_api_key_missing");
       }
 
-      return new Response(JSON.stringify({ 
-        success: true, 
+      return new Response(JSON.stringify({
+        success: true,
         actions,
         triggers: {
           pro_upgrade: isProUpgrade,
