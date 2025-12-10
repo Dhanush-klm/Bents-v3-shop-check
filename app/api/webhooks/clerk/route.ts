@@ -588,66 +588,78 @@ export async function POST(request: Request) {
 
         // Handle subscription renewal email
         if (isSubscriptionRenewed) {
-          console.log("[Webhook] Attempting to send subscription renewal email");
-          try {
-            if (delayMs > 0 && actions.length > 0) {
-              await sleep(delayMs);
-            }
+          const productId = subscriptionMilestones?.product_id;
+          // Also check subscription_info?.plan_id as a fallback or if mapped there
+          const planId = subscriptionMilestones?.subscription_info?.plan_id;
 
-            // Extract plan information from webhook data
-            const subscriptionInfo = subscriptionMilestones?.subscription_info;
-            const planPrice = subscriptionInfo?.plan_price || 9.99;
-            const planCurrency = subscriptionInfo?.plan_currency || 'USD';
-            const nextRenewalDate = subscriptionInfo?.subscription_end_date;
+          const targetProductId = productId || planId;
+          const allowedProducts = ['loft_pro_monthly:loftpro-yearly', 'Loft_Core_Yearly'];
 
-            // Format amount with currency code
-            const amount = `${planPrice} ${planCurrency}`;
+          if (!targetProductId || !allowedProducts.includes(targetProductId)) {
+            console.log("[Webhook] Skipping subscription renewal email. Product ID not in allowlist:", targetProductId);
+          } else {
+            console.log("[Webhook] Attempting to send subscription renewal email for product:", targetProductId);
 
-            // Format next renewal date
-            const formattedNextRenewalDate = nextRenewalDate
-              ? new Date(nextRenewalDate).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })
-              : undefined;
+            try {
+              if (delayMs > 0 && actions.length > 0) {
+                await sleep(delayMs);
+              }
 
-            const emailPayload = {
-              from: getResendFrom(),
-              to: email,
-              subject: getEmailSubject("SubscriptionRenewed"),
-              react: SubscriptionRenewed({
+              // Extract plan information from webhook data
+              const subscriptionInfo = subscriptionMilestones?.subscription_info;
+              const planPrice = subscriptionInfo?.plan_price || 9.99;
+              const planCurrency = subscriptionInfo?.plan_currency || 'USD';
+              const nextRenewalDate = subscriptionInfo?.subscription_end_date;
+
+              // Format amount with currency code
+              const amount = `${planPrice} ${planCurrency}`;
+
+              // Format next renewal date
+              const formattedNextRenewalDate = nextRenewalDate
+                ? new Date(nextRenewalDate).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })
+                : undefined;
+
+              const emailPayload = {
+                from: getResendFrom(),
+                to: email,
+                subject: getEmailSubject("SubscriptionRenewed"),
+                react: SubscriptionRenewed({
+                  username: displayName,
+                  userEmail: email,
+                  amount: amount,
+                  nextRenewalDate: formattedNextRenewalDate
+                }),
+              };
+
+              console.log("[Webhook] Subscription renewal email payload:", {
+                from: emailPayload.from,
+                to: emailPayload.to,
+                subject: emailPayload.subject,
                 username: displayName,
                 userEmail: email,
                 amount: amount,
                 nextRenewalDate: formattedNextRenewalDate
-              }),
-            };
+              });
 
-            console.log("[Webhook] Subscription renewal email payload:", {
-              from: emailPayload.from,
-              to: emailPayload.to,
-              subject: emailPayload.subject,
-              username: displayName,
-              userEmail: email,
-              amount: amount,
-              nextRenewalDate: formattedNextRenewalDate
-            });
+              const sendResult = await resend.emails.send(emailPayload);
 
-            const sendResult = await resend.emails.send(emailPayload);
+              console.log("[Webhook] Subscription renewal Resend API response:", sendResult);
 
-            console.log("[Webhook] Subscription renewal Resend API response:", sendResult);
-
-            if (!sendResult?.data?.id) {
-              console.error("[Resend] Subscription renewal email send returned no id", sendResult);
+              if (!sendResult?.data?.id) {
+                console.error("[Resend] Subscription renewal email send returned no id", sendResult);
+                actions.push("subscription_renewed_failed");
+              } else {
+                console.log(`[Resend] Subscription renewal email sent to ${email} with id ${sendResult.data.id}`);
+                actions.push("subscription_renewed_sent");
+              }
+            } catch (sendErr) {
+              console.error("[Resend] Subscription renewal email send failed", sendErr);
               actions.push("subscription_renewed_failed");
-            } else {
-              console.log(`[Resend] Subscription renewal email sent to ${email} with id ${sendResult.data.id}`);
-              actions.push("subscription_renewed_sent");
             }
-          } catch (sendErr) {
-            console.error("[Resend] Subscription renewal email send failed", sendErr);
-            actions.push("subscription_renewed_failed");
           }
         }
 

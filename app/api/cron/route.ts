@@ -34,7 +34,7 @@ function getDataDb(): Pool {
 
 function getResendFrom(): string {
   const from = getEnv("RESEND_FROM");
-      return from || "Loft <info@loftit.ai>";
+  return from || "Loft <info@loftit.ai>";
 }
 
 function getDelayMs(): number {
@@ -401,10 +401,10 @@ export async function GET() {
           from: getResendFrom(),
           to: user.email,
           subject: getEmailSubject("FeedbackSurvey30Days"),
-          react: FeedbackSurvey30Days({ 
-            username: name, 
+          react: FeedbackSurvey30Days({
+            username: name,
             userEmail: user.email,
-            surveyUrl: "https://tally.so/r/mOqv08" 
+            surveyUrl: "https://tally.so/r/mOqv08"
           }),
         });
         if (res?.data?.id) sent30Days += 1;
@@ -450,13 +450,13 @@ export async function GET() {
       try {
         if (!user.email) continue;
         const name = (user.full_name || "there").toString();
-                const res = await resend.emails.send({
+        const res = await resend.emails.send({
           from: getResendFrom(),
           to: user.email,
           subject: getEmailSubject("Month1PaidUser"),
-          react: Month1PaidUser({ 
-            username: name, 
-            userEmail: user.email 
+          react: Month1PaidUser({
+            username: name,
+            userEmail: user.email
           }),
         });
         if (res?.data?.id) sent1MonthPaid += 1;
@@ -473,21 +473,37 @@ export async function GET() {
     let processedRenewalEvents = 0;
 
     // Get paid users approaching subscription expiration using entitlement_pro_until
+    // Get paid users approaching subscription expiration using entitlement_pro_until
+    // AND filter by product_id in subscription_events
     const renewalUsersResult = await db.query(
-      `select u.id, u.email, u.full_name, u.entitlement_pro_until,
-              (u.entitlement_pro_until::date - now()::date) as days_until_expiration
-       from public.users u
-       where u.entitlement_pro_until > now()
-         and lower(coalesce(u.subscription_status, '')) = 'active'
-         and (u.entitlement_pro_until::date - now()::date) in (1, 7, 30)`
+      `with target_users as (
+         select u.id, u.email, u.full_name, u.entitlement_pro_until,
+                (u.entitlement_pro_until::date - now()::date) as days_until_expiration
+         from public.users u
+         where u.entitlement_pro_until > now()
+           and lower(coalesce(u.subscription_status, '')) = 'active'
+           and (u.entitlement_pro_until::date - now()::date) = 30
+       ),
+       latest_events as (
+         select distinct on (user_id) 
+           user_id,
+           payload->'event'->>'product_id' as product_id
+         from public.subscription_events
+         where user_id in (select id from target_users)
+         order by user_id, received_at desc
+       )
+       select t.*
+       from target_users t
+       join latest_events e on t.id = e.user_id
+       where e.product_id in ('loft_pro_monthly:loftpro-yearly', 'Loft_Core_Yearly')`
     );
 
-    const renewalUsers: Array<{ 
-      id: string; 
-      email: string; 
+    const renewalUsers: Array<{
+      id: string;
+      email: string;
       full_name?: string | null;
       entitlement_pro_until: string;
-      days_until_expiration: number 
+      days_until_expiration: number
     }> = renewalUsersResult.rows || [];
 
     // Send emails based on days until expiration
@@ -512,46 +528,14 @@ export async function GET() {
             from: getResendFrom(),
             to: user.email,
             subject: getEmailSubject("SubscriptionRenewal"),
-            react: SubscriptionRenewal({ 
-              username: name, 
+            react: SubscriptionRenewal({
+              username: name,
               userEmail: user.email,
               renewalDate: expirationDate
             }),
           });
           if (res?.data?.id) {
             sentRenewal30Day += 1;
-            emailSent = true;
-          }
-        } else if (days === 7) {
-          // Exactly 7 days before expiration
-          const res = await resend.emails.send({
-            from: getResendFrom(),
-            to: user.email,
-            subject: getEmailSubject("SubscriptionRenewalWeek"),
-            react: SubscriptionRenewalWeek({ 
-              username: name, 
-              userEmail: user.email,
-              renewalDate: expirationDate
-            }),
-          });
-          if (res?.data?.id) {
-            sentRenewalWeek += 1;
-            emailSent = true;
-          }
-        } else if (days === 1) {
-          // Exactly 1 day before expiration
-          const res = await resend.emails.send({
-            from: getResendFrom(),
-            to: user.email,
-            subject: getEmailSubject("SubscriptionRenewalDay"),
-            react: SubscriptionRenewalDay({ 
-              username: name, 
-              userEmail: user.email,
-              renewalDate: expirationDate
-            }),
-          });
-          if (res?.data?.id) {
-            sentRenewalDay += 1;
             emailSent = true;
           }
         }
@@ -583,15 +567,15 @@ export async function GET() {
       try {
         if (!user.email) continue;
         const firstName = (user.first_name || "there").toString();
-        const subject = getEmailSubjectWithReplacements("Anniversary", { 
+        const subject = getEmailSubjectWithReplacements("Anniversary", {
           firstName: firstName
         });
         const res = await resend.emails.send({
           from: getResendFrom(),
           to: user.email,
           subject: subject,
-          react: Anniversary({ 
-            username: firstName, 
+          react: Anniversary({
+            username: firstName,
             userEmail: user.email,
             anniversaryDuration: "6 months"
           }),
@@ -620,15 +604,15 @@ export async function GET() {
       try {
         if (!user.email) continue;
         const firstName = (user.first_name || "there").toString();
-        const subject = getEmailSubjectWithReplacements("Anniversary", { 
+        const subject = getEmailSubjectWithReplacements("Anniversary", {
           firstName: firstName
         });
         const res = await resend.emails.send({
           from: getResendFrom(),
           to: user.email,
           subject: subject,
-          react: Anniversary({ 
-            username: firstName, 
+          react: Anniversary({
+            username: firstName,
             userEmail: user.email,
             anniversaryDuration: "1 year"
           }),
@@ -640,31 +624,31 @@ export async function GET() {
       if (delayMs > 0) await sleep(delayMs);
     }
 
-    return new Response(JSON.stringify({ 
-      success: true, 
-      processed3: processed3Count, 
-      sent3, 
-      processed5: users5.length, 
-      sent5, 
-      processed6: users6.length, 
-      sent6, 
-      processed7: users7.length, 
-      sent7, 
-      processed_7: users_7.length, 
-      sent_7, 
-      processed_30: users_30.length, 
-      sent_30, 
-      processedW1: usersW1.length, 
-      sentW1, 
-      processedW2: usersW2.length, 
-      sentW2, 
-      processedW3: usersW3.length, 
-      sentW3, 
-      processedW4: usersW4.length, 
-      sentW4, 
-      processed30Days: users30Days.length, 
-      sent30Days, 
-      processed1MonthPaid: users1MonthPaid.length, 
+    return new Response(JSON.stringify({
+      success: true,
+      processed3: processed3Count,
+      sent3,
+      processed5: users5.length,
+      sent5,
+      processed6: users6.length,
+      sent6,
+      processed7: users7.length,
+      sent7,
+      processed_7: users_7.length,
+      sent_7,
+      processed_30: users_30.length,
+      sent_30,
+      processedW1: usersW1.length,
+      sentW1,
+      processedW2: usersW2.length,
+      sentW2,
+      processedW3: usersW3.length,
+      sentW3,
+      processedW4: usersW4.length,
+      sentW4,
+      processed30Days: users30Days.length,
+      sent30Days,
+      processed1MonthPaid: users1MonthPaid.length,
       sent1MonthPaid,
       processedRenewalEvents,
       sentRenewalWeek,
