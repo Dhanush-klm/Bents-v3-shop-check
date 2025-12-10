@@ -355,8 +355,6 @@ export async function POST(request: Request) {
       }
 
       // Check for trigger events
-      const _subscription = unsafeMetadata?.subscription;
-      const _events = unsafeMetadata?.events;
       const milestones = unsafeMetadata?.milestones;
       const subscriptionMilestones = privateMetadata?.subscription_milestones;
 
@@ -423,7 +421,7 @@ export async function POST(request: Request) {
 
       // Extract name from Clerk data or database
       const firstName = userData.first_name || "";
-      const lastName = userData.last_name || "";
+
       const clerkFullName = firstName;
       const displayName = clerkFullName || fullName || "there";
 

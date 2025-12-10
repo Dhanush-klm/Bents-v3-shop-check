@@ -14,8 +14,7 @@ import FeedbackSurvey30Days from "@/app/emails/FeedbackSurvey30Days";
 import Month1PaidUser from "@/app/emails/Month1PaidUser";
 import Anniversary from "@/app/emails/Anniversary";
 import SubscriptionRenewal from "@/app/emails/SubscriptionRenewal";
-import SubscriptionRenewalDay from "@/app/emails/SubscriptionRenewalDay";
-import SubscriptionRenewalWeek from "@/app/emails/SubscriptionRenewalWeek";
+
 import { getEmailSubject, getEmailSubjectWithReplacements } from "@/lib/email-subjects";
 
 function getEnv(name: string): string | undefined {
@@ -467,8 +466,6 @@ export async function GET() {
     }
 
     // Subscription renewal reminders - using entitlement_pro_until and excluding trial users
-    let sentRenewalWeek = 0;
-    let sentRenewalDay = 0;
     let sentRenewal30Day = 0;
     let processedRenewalEvents = 0;
 
@@ -651,8 +648,8 @@ export async function GET() {
       processed1MonthPaid: users1MonthPaid.length,
       sent1MonthPaid,
       processedRenewalEvents,
-      sentRenewalWeek,
-      sentRenewalDay,
+      sentRenewalWeek: 0,
+      sentRenewalDay: 0,
       sentRenewal30Day,
       processed6MonthsAnniversary: users6MonthsAnniversary.length,
       sent6MonthsAnniversary,
