@@ -18,13 +18,13 @@ export default function SubscriptionRenewed({
 }: SubscriptionRenewedProps) {
   return (
     <EmailLayout userEmail={userEmail}>
-      
+
       {/* Main Content */}
       <Section style={{ padding: '0 16px 12px 16px' }}>
         <div
-              style={{
+          style={{
             background: '#fff2',
-                  borderRadius: '8px',
+            borderRadius: '8px',
             padding: '16px',
             margin: '0 0 12px 0',
             display: 'block',
@@ -41,17 +41,17 @@ export default function SubscriptionRenewed({
                   lineHeight: '1.5',
                 }}>
                   Hi {username},
-                  </Text>
-                
-                  <Text style={{ 
-                    fontSize: '16px', 
+                </Text>
+
+                <Text style={{
+                  fontSize: '16px',
                   color: LoftColors.textSecondary,
                   margin: '0 0 24px 0',
                   lineHeight: '1.6',
                 }}>
-                    Your Loft Pro subscription has been successfully renewed.
-                  </Text>
-                  
+                  Your Loft Pro annual subscription has been successfully renewed.
+                </Text>
+
                 <Text style={{
                   fontSize: '16px',
                   color: LoftColors.textSecondary,
@@ -59,56 +59,56 @@ export default function SubscriptionRenewed({
                   lineHeight: '1.6',
                 }}>
                   You've been charged {amount} and will continue enjoying full access to everything Loft offers.
-                  </Text>
-                  
+                </Text>
+
                 <Text style={{
                   fontSize: '16px',
                   color: LoftColors.textSecondary,
                   margin: '0 0 16px 0',
                   lineHeight: '1.6',
                 }}>
-                    Want to view your receipt or update billing info?
-                  </Text>
-                  
-                  <Text style={{
-                            fontSize: '16px',
-                            color: '#ffffff',
-                            margin: '16px 0',
-                            padding: '14px 20px',
-                            backgroundColor: '#FF5A5F',
-                            borderRadius: '8px',
-                            textAlign: 'center' as const,
-                            fontWeight: '600',
-                            display: 'inline-block',
-                            border: 'none',
-                            cursor: 'pointer',
-                          }}>
-                            Go to Loft {'>'}  Settings {'>'}  Subscription
-                          </Text>
-                  
-                  <Text style={{ 
-                    fontSize: '16px', 
+                  Want to view your receipt or update billing info?
+                </Text>
+
+                <Text style={{
+                  fontSize: '16px',
+                  color: '#ffffff',
+                  margin: '16px 0',
+                  padding: '14px 20px',
+                  backgroundColor: '#FF5A5F',
+                  borderRadius: '8px',
+                  textAlign: 'center' as const,
+                  fontWeight: '600',
+                  display: 'inline-block',
+                  border: 'none',
+                  cursor: 'pointer',
+                }}>
+                  Go to Loft {'>'}  Settings {'>'}  Subscription
+                </Text>
+
+                <Text style={{
+                  fontSize: '16px',
                   color: LoftColors.textSecondary,
                   margin: '32px 0 0 0',
                   lineHeight: '1.6',
                 }}>
                   Thanks for being part of the Loft community 💙
-                  </Text>
-                  
+                </Text>
+
                 {/* Signature */}
                 <Text style={{
-                      fontSize: '16px',
+                  fontSize: '16px',
                   color: LoftColors.textSecondary,
                   margin: '16px 0 0 0',
-                      lineHeight: '1.6',
+                  lineHeight: '1.6',
                 }}>
                   — The Loft Team
-                        </Text>
-                      </td>
-                    </tr>
-                  </table>
+                </Text>
+              </td>
+            </tr>
+          </table>
         </div>
-                </Section>
+      </Section>
     </EmailLayout>
   );
 } 
